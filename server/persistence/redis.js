@@ -1,52 +1,109 @@
-var redisPersistence = module.exports = {}
+'use strict';
+
+var util = require('util'),
+	redis = require('redis'),
+	model = require('../domain/model');
+
+//TODO: Consider moving this into a constructor and making the redis calls an object
+var redisClient = redis.createClient();
+
+var redisPersistence = module.exports = {},
+	documentTypes = redisPersistence.documentTypes = {},
+	documents = redisPersistence.documents = {},
+	templates = redisPersistence.templates = {},
+	siteMaps = redisPersistence.siteMaps = {};
+
+//Flattening/unflattening assumes that our schemas always go exactly one level deep, no more, no less.
+var flattenDocumentType = function(name, documentType) {
+	var flattened = {}, key1, key2;
+
+	for (key1 in documentType) {
+		for (key2 in documentType[key1]) {
+			flattened[util.format("%s:%s:%s", name, key1, key2)] = documentType[key1][key2];
+		}
+	}
+
+	return flattened;
+};
+
+var unflattenDocumentType = function(flattened) {
+	var documentType = {}, property, key, splitKeys, i;
+
+	for (key in flattened) {
+		splitKeys = key.split(':');
+		property = documentType[splitKeys[1]] = documentType[splitKeys[1]] || {};
+		property[splitKeys[2]] = flattened[key];
+	}
+
+	return model.DocumentType(documentType);
+};
 
 //Data Types
-redisPersistence.createDataType = function(name, dataType, callback) {
-	callback(null, 'createDataType');
+documentTypes.create = function(name, documentType, callback) {
+	redisClient.HMSET(name, flattenDocumentType(name, documentType), callback);
 };
 
-redisPersistence.readDataType = function(name, callback) {
-	callback(null, 'readDataType');
+documentTypes.read = function(name, callback) {
+	redisClient.HGETALL(name, function(error, result) {
+		callback(error, unflattenDocumentType(result));
+	});
 };
 
-redisPersistence.updateDataType = function(name, dataType, callback) {
-	callback(null, 'updateDataType');
+documentTypes.update = function(name, documentType, callback) {
+	redisClient.HMSET(name, flattenDocumentType(documentType), callback);
 };
 
-redisPersistence.deleteDataType = function(name, callback) {
-	callback(null, 'deleteDataType');
+documentTypes.delete = function(name, callback) {
+	redisClient.DEL(name, callback);
 };
 
-//Entities
-redisPersistence.createEntity = function(name, entity, callback) {
-	callback(null, 'createEntity');
+//Documents
+documents.create = function(name, document, callback) {
+	redisClient.HMSET(name, document, callback);
 };
 
-redisPersistence.readEntity = function(name, callback) {
-	callback(null, 'readEntity');
+documents.read = function(name, callback) {
+	redisClient.HGETALL(name, callback);
 };
 
-redisPersistence.updateEntity = function(name, entity, callback) {
-	callback(null, 'updateEntity');
+documents.update = function(name, document, callback) {
+	redisClient.HMSET(name, document, callback);
 };
 
-redisPersistence.deleteEntity = function(name, callback) {
-	callback(null, 'deleteEntity');
+documents.delete = function(name, callback) {
+	redisClient.DEL(name, callback);
 };
 
 //Templates
-redisPersistence.createTemplate = function(name, template, callback) {
-	callback(null, 'createTemplate');
+templates.create = function(name, template, callback) {
+	redisClient.HMSET(name, template, callback);
 };
 
-redisPersistence.readTemplate = function(name, callback) {
-	callback(null, 'readTemplate');
+templates.read = function(name, callback) {
+	redisClient.HGETALL(name, callback);
 };
 
-redisPersistence.updateTemplate = function(name, template, callback) {
-	callback(null, 'updateTemplate');
+templates.update = function(name, template, callback) {
+	redisClient.HMSET(name, template, callback);
 };
 
-redisPersistence.deleteTemplate = function(name, callback) {
-	callback(null, 'deleteTemplate');
+templates.delete = function(name, callback) {
+	redisClient.DEL(name, callback);
+};
+
+//Site Maps
+siteMaps.create = function(name, siteMap, callback) {
+	redisClient.HMSET(name, siteMap, callback);
+};
+
+siteMaps.read = function(name, callback) {
+	redisClient.HGETALL(name, callback);
+};
+
+siteMaps.update = function(name, siteMap, callback) {
+	redisClient.HMSET(name, siteMap, callback);
+};
+
+siteMaps.delete = function(name, callback) {
+	redisClient.DEL(name, callback);
 };

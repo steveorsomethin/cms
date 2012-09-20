@@ -8,7 +8,7 @@ var linkImplementation = function(source, target, expectedFuncs) {
 
 		if (typeof source[funcName] !== 'function') {
 			throw new Error(
-				'Supplied datatype module implementation is ' +
+				'Supplied documentType module implementation is ' +
 				'missing required function ' + funcName);
 		} else {
 			target[funcName] = source[funcName];
@@ -16,19 +16,22 @@ var linkImplementation = function(source, target, expectedFuncs) {
 	}
 }
 
+var crud = ['create', 'read', 'update', 'delete'];
+
 module.exports = {
-	DataTypeRepo: function(impl) {
-		linkImplementation(impl, this, 
-			['createDataType', 'readDataType', 'updateDataType', 'deleteDataType']);
+	DocumentTypeRepo: function(impl) {
+		linkImplementation(impl, this, crud);
 	},
 
-	EntityRepo: function(impl) {
-		linkImplementation(impl, this, 
-			['createEntity', 'readEntity', 'updateEntity', 'deleteEntity']);
+	DocumentRepo: function(impl) {
+		linkImplementation(impl, this, crud);
 	},
 
 	TemplateRepo: function(impl) {
-		linkImplementation(impl, this, 
-			['createTemplate', 'readTemplate', 'updateTemplate', 'deleteTemplate']);
+		linkImplementation(impl, this, crud);
+	},
+
+	SiteMapRepo: function(impl) {
+		linkImplementation(impl, this, crud);
 	}
 };

@@ -1,1 +1,28 @@
 Be sure to run ./bootstrap.sh before proceeding.
+
+Inline editing of rendered templates that affect backing data.
+Media library available. Allow for drag drop of media to targets, such as images.
+Inline sitemap editing and manipulation.
+Typically, you can add fields to datatypes freely, but they aren't allowed to be mandatory. Consider retrofitting existing data with a default.
+If you remove a field without updating the referencing template, crash occurs.
+If our technology is front-end agnostic, how is query filtering handled?
+WYSIWYG editor, pure js, front-end agnostic.
+Problem: asp.net views are compiled. Evaluating a template at runtime is not feasible.
+
+Need to think about blob storage. Images, movies, docs, etc.
+Can use a message queue to have clean middleware for handling workflow, like order placements. Consider allowing handlers to be in the front end tech or as javascript.
+Static content storage.
+APIs:
+	Sitemap - Binds to templates, simply acts as a backbone
+	Media Blobs -
+	Templates - Views, possibly technology dependent
+	DocumentTypes - Existing
+	Documents - Exsiting
+	Static markup - Just html. Styles?
+	Metadata - Can describe/attach to static markup or media blobs
+	Profile - Who are you?
+	Authorization - What can you do?
+
+Problem: Managing partial views, for example razor
+Consider using cloud9 for code editing
+Focus on drag-drop, non-experts.
