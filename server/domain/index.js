@@ -4,6 +4,7 @@
 
 var util = require('util'),
 	async = require('async'),
+	errors = require('../errors'),
 	expect = require('./expect'),
 	persistence = require('../persistence'),
 	redisPersistence = require('../persistence/redis');
@@ -19,42 +20,37 @@ var DocumentManager = domainManagers.DocumentManager = function() {
 };
 
 var validateDocument = function(document, documentType) {
-	var errors = {}, key, prop, validator, valid;
+	var errorDetails = {}, key, prop, validator, valid;
 
 	for (key in documentType) {
 		prop = documentType[key];
 		validator = expect[prop.type + (prop.required ? '' : 'OrEmpty')];
 		valid = validator.func(document[key]);
-		console.log([validator, document[key], valid, prop.required]);
+		
 		if (!valid) {
-			errors[key] = util.format(validator.error, key);
+			errorDetails[key] = util.format(validator.error, key);
 		}
 	}
 
-	return Object.keys(errors).length ? errors : null;
+	return Object.keys(errorDetails).length ? 
+		new errors.InvalidInput('Invalid input document', errorDetails) : null;
 };
 
 //TODO: Pass documentType to persistence module
 DocumentManager.prototype.create = function(documentType, documentName, document, onComplete) {
-	var errors = validateDocument(document);
-
-	if (!documentType) {
-		return callback('Missing required field "documentType"');
-	}
-
 	async.waterfall([
 		function(callback) {
 			documentTypeRepo.read(documentType, callback);
 		},
 
 		function(documentType, callback) {
-			var errors = validateDocument(document, documentType);
-			if (!errors) {
+			var validError = validateDocument(document, documentType);
+			if (validError) {
+				return callback(validError);
+			} else {
 				return documentRepo.create(documentName, document, function(error, result) {
 					callback(error, document);
 				});
-			} else {
-				callback(errors);
 			}
 		}
 	], onComplete);
