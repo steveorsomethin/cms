@@ -13,7 +13,10 @@ var redisPersistence = module.exports = {},
 	templates = redisPersistence.templates = {},
 	siteMaps = redisPersistence.siteMaps = {};
 
-//Flattening/unflattening assumes that our schemas always go exactly one level deep, no more, no less.
+/*
+* Flattening/unflattening assumes that our schemas always go
+* exactly one level deep, no more, no less.
+*/
 var flattenDocumentType = function(name, documentType) {
 	var flattened = {}, key1, key2;
 
@@ -31,6 +34,8 @@ var unflattenDocumentType = function(flattened) {
 
 	for (key in flattened) {
 		splitKeys = key.split(':');
+
+		//Start at index 1 here, as index 0 is the name of the root object
 		property = documentType[splitKeys[1]] = documentType[splitKeys[1]] || {};
 		property[splitKeys[2]] = flattened[key];
 	}
@@ -40,7 +45,13 @@ var unflattenDocumentType = function(flattened) {
 
 //Data Types
 documentTypes.create = function(name, documentType, callback) {
-	redisClient.HMSET(name, flattenDocumentType(name, documentType), callback);
+	redisClient.HMSET(name, flattenDocumentType(name, documentType), function(error, result) {
+		if (error) {
+			return callback(error);
+		} else {
+			return callback(null, documentType);
+		}
+	});
 };
 
 documentTypes.read = function(name, callback) {

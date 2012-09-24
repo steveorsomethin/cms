@@ -5,3 +5,4 @@ Write integration tests for end-to-end sanity checks.
 Write regression tests to make sure changes don't negatively impact performance/stability.
 Make http endpoints return proper response codes and helpful errors. Return stack traces when in dev mode
 Look into forking http processes and fail gracefully.
+Automate server setup. Generate public/private ssh keys for easier/more secure automation.

@@ -1,20 +1,19 @@
 'use strict';
 
 var linkImplementation = function(source, target, expectedFuncs) {
-	var i, funcName;
-	
+	var i, funcName,
+		implError = 'Supplied documentType module implementation is missing required function ';
+
 	for (i = 0; i < expectedFuncs.length; i++) {
 		funcName = expectedFuncs[i];
 
 		if (typeof source[funcName] !== 'function') {
-			throw new Error(
-				'Supplied documentType module implementation is ' +
-				'missing required function ' + funcName);
+			throw new Error(implError + funcName);
 		} else {
 			target[funcName] = source[funcName];
 		}
 	}
-}
+};
 
 var crud = ['create', 'read', 'update', 'delete'];
 

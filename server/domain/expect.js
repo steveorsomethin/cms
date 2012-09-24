@@ -3,13 +3,14 @@
 var util = require('util');
 
 var typeError = function(type, required) {
-	return util.format('Property "%s" must be of type %s%s', '%s', type, required ? '' : ', or empty');
+	return util.format('Property "%s" must be of type %s%s',
+		'%s', type, required ? '' : ', or empty');
 };
 
 var typeValidators = module.exports = {},
 	empty = typeValidators.empty = {
 		error: 'Property "%s" must not be set',
-		func: 
+		func:
 			function(value) {
 				return value === undefined || value === null;
 			}
@@ -17,7 +18,7 @@ var typeValidators = module.exports = {},
 
 	string = typeValidators.string = {
 		error: typeError('string', true),
-		func: 
+		func:
 			function(value) {
 				return typeof value === 'string';
 			}
@@ -25,7 +26,7 @@ var typeValidators = module.exports = {},
 
 	stringOrEmpty = typeValidators.stringOrEmpty = {
 		error: typeError('string'),
-		func: 
+		func:
 			function(value) {
 				return string.func(value) || empty.func(value);
 			}
@@ -33,7 +34,7 @@ var typeValidators = module.exports = {},
 
 	number = typeValidators.number =  {
 		error: typeError('number', true),
-		func: 
+		func:
 			function(value) {
 				return typeof value === 'number';
 			}
@@ -41,7 +42,7 @@ var typeValidators = module.exports = {},
 
 	numberOrEmpty = typeValidators.numberOrEmpty = {
 		error: typeError('number'),
-		func: 
+		func:
 			function(value) {
 				return number.func(value) || empty.func(value);
 			}
@@ -49,7 +50,7 @@ var typeValidators = module.exports = {},
 
 	boolean = typeValidators.boolean = {
 		error: typeError('boolean', true),
-		func: 
+		func:
 			function(value) {
 				return typeof value === 'boolean';
 			}
@@ -57,23 +58,23 @@ var typeValidators = module.exports = {},
 
 	booleanOrEmpty = typeValidators.booleanOrEmpty = {
 		error: typeError('boolean'),
-		func: 
+		func:
 			function(value) {
-				return bool.func(value) || empty.func(value);
+				return boolean.func(value) || empty.func(value);
 			}
 	},
 
 	object = typeValidators.object = {
 		error: typeError('object', true),
-		func: 
+		func:
 			function(value) {
-				return typeof value === 'object' && value != null;
+				return typeof value === 'object' && value !== null;
 			}
 	},
 
 	objectOrEmpty = typeValidators.objectOrEmpty = {
 		error: typeError('object'),
-		func: 
+		func:
 			function(value) {
 				return object.func(value) || empty.func(value);
 			}
@@ -81,15 +82,15 @@ var typeValidators = module.exports = {},
 
 	document = typeValidators.document = {
 		error: typeError('document', true),
-		func: 
+		func:
 			function(value) {
-				return typeof value === 'object' && value != null;
+				return typeof value === 'object' && value !== null;
 			}
 	},
 
 	documentOrEmpty = typeValidators.documentOrEmpty = {
 		error: typeError('document'),
-		func: 
+		func:
 			function(value) {
 				return document.func(value) || empty.func(value);
 			}

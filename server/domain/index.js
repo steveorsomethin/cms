@@ -23,17 +23,19 @@ var validateDocument = function(document, documentType) {
 	var errorDetails = {}, key, prop, validator, valid;
 
 	for (key in documentType) {
-		prop = documentType[key];
-		validator = expect[prop.type + (prop.required ? '' : 'OrEmpty')];
-		valid = validator.func(document[key]);
-		
-		if (!valid) {
-			errorDetails[key] = util.format(validator.error, key);
+		if (documentType.hasOwnProperty(key)) {
+			prop = documentType[key];
+			validator = expect[prop.type + (prop.required ? '' : 'OrEmpty')];
+			valid = validator.func(document[key]);
+
+			if (!valid) {
+				errorDetails[key] = util.format(validator.error, key);
+			}
 		}
 	}
 
-	return Object.keys(errorDetails).length ? 
-		new errors.InvalidInput('Invalid input document', errorDetails) : null;
+	return Object.keys(errorDetails).length ?
+			new errors.InvalidInput('Invalid input document', errorDetails) : null;
 };
 
 //TODO: Pass documentType to persistence module
@@ -47,11 +49,10 @@ DocumentManager.prototype.create = function(documentType, documentName, document
 			var validError = validateDocument(document, documentType);
 			if (validError) {
 				return callback(validError);
-			} else {
-				return documentRepo.create(documentName, document, function(error, result) {
-					callback(error, document);
-				});
 			}
+			return documentRepo.create(documentName, document, function(error, result) {
+				callback(error, document);
+			});
 		}
 	], onComplete);
 };

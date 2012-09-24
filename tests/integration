@@ -1,0 +1,74 @@
+#!/usr/bin/env node
+'use strict';
+
+var util = require('util'),
+	uuid = require('node-uuid'),
+	async = require('async'),
+	request = require('request');
+
+var baseUrl = "http://localhost:8080";
+
+var testResults = {};
+
+var expectResponse = function(testName, statusCode, responseBody, callback) {
+	var newLine = '\n    ';
+	return function(error, response, body) {
+		var failure,
+			jsonBody = JSON.stringify(body),
+			bodyMatches = !responseBody || jsonBody === responseBody;
+		if (error || response.statusCode !== statusCode || !bodyMatches) {
+			failure = 'Failed to get expected response';
+			if (error) {
+				failure += util.format('%sGot error: %s%s%s', newLine, newLine, error, newLine);
+			} else {
+				if (response.statusCode !== statusCode) {
+					failure += util.format('%sExpected status %d but saw %d', newLine, statusCode, response.statusCode);
+				}
+				if (responseBody) {
+					failure += util.format('%sExpected body %s%s%s but saw %s%s%s', 
+						newLine, newLine, responseBody, newLine, newLine, jsonBody, newLine);
+				}
+			}
+		}
+
+		testResults[testName] = failure ? failure : 'SUCCESS';
+		callback();
+	};
+};
+
+var createDocumentType = function(name, documentType, callback) {
+	var opt = {method: 'PUT', uri: baseUrl + '/documentTypes/' + name, json: documentType};
+	request(opt, callback);
+};
+
+var tests = {
+	createDocumentTypeSuccess: function(callback) {
+
+		var documentName = uuid.v4(),
+			documentType = require('./mock/documentTypes/valid.json'),
+			expected = expectResponse('createDocumentTypeSuccess', 201, JSON.stringify(documentType), callback);
+
+		createDocumentType(documentName, documentType, expected);
+	},
+	createDocumentTypeInvalidFailure: function(callback) {
+		var documentName = uuid.v4(),
+			documentType = require('./mock/documentTypes/invalid.json'),
+			expected = expectResponse('createDocumentTypeSuccess', 400, JSON.stringify(documentType), callback);
+
+		createDocumentType(documentName, documentType, expected);
+	}
+};
+
+//Run tests
+async.parallel((function() {
+	var tasks = [];
+	for (var key in tests) {
+		tasks.push(tests[key]);
+	}
+	return tasks;
+})(), function(error, result) {
+	if (error) {
+		console.log(error);
+	}
+	console.log(testResults);
+});

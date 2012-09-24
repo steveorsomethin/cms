@@ -3,10 +3,12 @@
 var model = module.exports = {};
 
 var enforceTypes = function(obj, definition) {
-	var property;
-	for (var key in definition) {
-		property = definition[key];
-		obj[key] = property.type(obj[key] || property.default);
+	var key, property;
+	for (key in definition) {
+		if (definition.hasOwnProperty(key)) {
+			property = definition[key];
+			obj[key] = property.type(obj[key] || property.defaultValue);
+		}
 	}
 
 	return obj;
@@ -18,23 +20,23 @@ model.Number = Number;
 
 //Javascript's default Boolean('false') returns true. Thus, the following
 model.Boolean = function(value) {
-	if (!Boolean(value) || (typeof value === 'string' && value.toLowerCase() === 'false')) 
-		return false;
-
-	return true;
-}
+	return !(!Boolean(value) || (typeof value === 'string' && value.toLowerCase() === 'false'));
+};
 
 model.DocumentProperty = function(obj) {
 	return enforceTypes(obj, {
-		type: {type: model.String, default: 'string'},
-		required: {type: model.Boolean, default: false}
+		type: {type: model.String, defaultValue: 'string'},
+		required: {type: model.Boolean, defaultValue: false}
 	});
 };
 
 model.DocumentType = function(obj) {
-	for (var key in obj) {
-		obj[key] = model.DocumentProperty(obj[key]);
+	var key;
+	for (key in obj) {
+		if (obj.hasOwnProperty(key)) {
+			obj[key] = model.DocumentProperty(obj[key]);
+		}
 	}
 
 	return obj;
-}
+};

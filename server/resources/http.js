@@ -8,6 +8,8 @@ var util = require('util'),
 	persistence = require('../persistence'),
 	redisPersistence = require('../persistence/redis');
 
+var httpResources = module.exports = {};
+
 //HTTP status codes
 var OK = 200,
 	CREATED = 201,
@@ -23,23 +25,23 @@ var errorMap = (function() {
 
 	var mapError = function(error, statusCode) {
 		if (errorMap[error]) {
-			console.error(util.format("WARNING: Error %s is already mapped!", error));
+			throw new Error(util.format('Error %s is already mapped', error));
 		}
 
 		errorMap[error] = statusCode;
 	};
-
-	mapError(errors.ResourceNotFound.prototype.name, NOT_FOUND);
-	mapError(errors.ResourceExists.prototype.name, BAD_REQUEST);
-	mapError(errors.InvalidInput.prototype.name, BAD_REQUEST);
+	
+	mapError(errors.ResourceNotFound.type, NOT_FOUND);
+	mapError(errors.ResourceExists.type, BAD_REQUEST);
+	mapError(errors.InvalidInput.type, BAD_REQUEST);
 
 	return errorMap;
 })();
 
 var sendError = function(error, response) {
 	var status = error.name && errorMap[error.name] ? errorMap[error.name] : 500;
-
-	response.status(status).send(error);
+	console.log(error);
+	response.status(status).send(error.toString());
 };
 
 //TODO: Blow this out to inspect Accept headers and serialize appropriately
@@ -50,8 +52,6 @@ var sendResponse = function(error, body, successCode, response) {
 		return response.status(successCode).send(body);
 	}
 };
-
-var httpResources = module.exports = {};
 
 var 
 	putHandler = function(response) {

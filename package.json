@@ -21,10 +21,13 @@
   },
   "dependencies": {
     "express": "2.x.x",
-    "underscore": "1.x.x",
     "async": "0.x.x",
     "hiredis": "0.x.x",
-    "redis": "0.x.x",
-    "node-uuid": "1.x.x"
+    "redis": "0.x.x"
+  },
+  "devDependencies": {
+    "node-uuid": "1.x.x",
+    "nodelint": ">0.0.0",
+    "request": "2.x.x"
   }
 }
