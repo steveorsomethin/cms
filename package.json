@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "express": "2.x.x",
+    "underscore": "1.x.x",
     "async": "0.x.x",
     "hiredis": "0.x.x",
     "redis": "0.x.x",

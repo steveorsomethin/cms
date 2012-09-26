@@ -81,7 +81,7 @@ var
 
 httpResources.initialize = function(port) {
 	var app = express.createServer(),
-		documentTypeRepo = new persistence.DocumentTypeRepo(redisPersistence.documentTypes),
+		documentTypeManager = new domain.DocumentTypeManager(),
 		documentManager = new domain.DocumentManager(),
 		templateRepo = new persistence.TemplateRepo(redisPersistence.templates);
 
@@ -96,12 +96,12 @@ httpResources.initialize = function(port) {
 		if (validationError) {
 			sendError(validationError, res);
 		} else {
-			documentTypeRepo.create(req.params.documentType, req.body, putHandler(res));
+			documentTypeManager.create(req.params.documentType, req.body, putHandler(res));
 		}
 	});	
 
 	app.get(documentTypeRoute, function(req, res) {
-		documentTypeRepo.read(req.params.documentType, getHandler(res));
+		documentTypeManager.read(req.params.documentType, getHandler(res));
 	});
 
 	app.post(documentTypeRoute, function(req, res) {
@@ -109,12 +109,12 @@ httpResources.initialize = function(port) {
 		if (validationError) {
 			sendError(validationError, res);
 		} else {
-			documentTypeRepo.update(req.params.documentType, req.body, postHandler(res));
+			documentTypeManager.update(req.params.documentType, req.body, postHandler(res));
 		}
 	});
 
 	app.delete(documentTypeRoute, function(req, res) {
-		documentTypeRepo.delete(req.params.documentType, deleteHandler(res));
+		documentTypeManager.delete(req.params.documentType, deleteHandler(res));
 	});
 
 	//Documents

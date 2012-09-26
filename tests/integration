@@ -2,31 +2,34 @@
 'use strict';
 
 var util = require('util'),
+	_ = require('underscore'),
 	uuid = require('node-uuid'),
 	async = require('async'),
 	request = require('request');
 
-var baseUrl = "http://localhost:8080";
-
+var baseUrl = 'http://localhost:8080';
+var uuidRegex = /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/g,
+	uuidReplacement = '00000000-0000-0000-0000-000000000000';
 var testResults = {};
 
-var expectResponse = function(testName, statusCode, responseBody, callback) {
-	var newLine = '\n    ';
+var expectResponse = function(testName, statusCode, callback, predicate) {
 	return function(error, response, body) {
 		var failure,
 			jsonBody = typeof body === 'string' ? body : JSON.stringify(body),
-			bodyMatches = !responseBody || jsonBody === responseBody;
+			bodyMatches = !predicate || predicate(jsonBody);
 		if (error || response.statusCode !== statusCode || !bodyMatches) {
-			failure = 'Failed to get expected response';
+			failure = {
+				messages: ['Failed to get expected response']
+			};
+
 			if (error) {
-				failure += util.format('%sGot error: %s%s%s', newLine, newLine, error, newLine);
+				failure.error = error;
 			} else {
 				if (response.statusCode !== statusCode) {
-					failure += util.format('%sExpected status %d but saw %d', newLine, statusCode, response.statusCode);
+					failure.messages.push(util.format('Expected status %d but saw %d', statusCode, response.statusCode));
 				}
-				if (responseBody) {
-					failure += util.format('%sExpected body %s%s%s but saw %s%s%s', 
-						newLine, newLine, responseBody, newLine, newLine, jsonBody, newLine);
+				if (!bodyMatches) {
+					failure.messages.push(util.format('Got unexpected response body %s', jsonBody));
 				}
 			}
 		}
@@ -49,30 +52,45 @@ var createDocumentType = function(name, documentType, callback) {
 		request(baseUrl + '/documentTypes/' + name, callback);
 	};
 
-//TODO: Make error output deterministic so we can test them as well
 var tests = {
 	createDocumentTypeSuccess: function(callback) {
 		var documentName = this.name,
 			documentType = require('./mock/documentTypes/valid.json'),
-			expected = expectResponse(this.name, 201, JSON.stringify(documentType), callback);
+			expected = expectResponse(this.name, 201, callback, function(body) {
+				return body === JSON.stringify(documentType);
+			});
 
 		createDocumentType(documentName, documentType, expected);
 	},
-	createDocumentTypeInvalidFailure: function(callback) {
+	createDocumentTypeInvalid: function(callback) {
 		var documentName = this.name,
 			documentType = require('./mock/documentTypes/invalid.json'),
-			expected = expectResponse(this.name, 400, null, callback);
+			error400 = require('./mock/documentTypes/error400.json'),
+			expected = expectResponse(this.name, 400, callback, function(body) {
+				return body.replace(uuidRegex, uuidReplacement) === JSON.stringify(error400);
+			});
 
 		createDocumentType(documentName, documentType, expected);
 	},
 	readDocumentTypeSuccess: function(callback) {
 		var documentName = this.name,
 			documentType = require('./mock/documentTypes/valid.json'),
-			expected = expectResponse(this.name, 200, JSON.stringify(documentType), callback);
+			expected = expectResponse(this.name, 200, callback, function(body) {
+				return body === JSON.stringify(documentType);
+			});
 
 		createDocumentType(documentName, documentType, function(error, result) {
 			readDocumentType(documentName, expected);
 		});
+	},
+	readDocumentTypeNotFound: function(callback) {
+		var documentName = this.name,
+			error404 = require('./mock/documentTypes/error404.json'),
+			expected = expectResponse(this.name, 404, callback, function(body) {
+				return body.replace(documentName, 'testName') === JSON.stringify(error404);
+			});
+
+		readDocumentType(documentName, expected);
 	}
 };
 

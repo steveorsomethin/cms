@@ -6,6 +6,7 @@
 	    "id": {"type": "string", "required": true},
 	    "email": {"type": "string", "required": true},
 	    "firstName": {"type": "string", "required": true},
-	    "lastName": "string"
+	    "lastName": "string",
+	    "age": "integer"
 	}
 }

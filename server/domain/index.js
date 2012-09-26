@@ -15,6 +15,37 @@ var documentTypeRepo = new persistence.DocumentTypeRepo(redisPersistence.documen
 
 var domainManagers = module.exports = {};
 
+//DocumentTypes
+var DocumentTypeManager = domainManagers.DocumentTypeManager = function() {
+
+};
+
+DocumentTypeManager.prototype.create = function(documentTypeName, documentType, onComplete) {
+	return documentTypeRepo.create(documentTypeName, documentType, onComplete);
+};
+
+DocumentTypeManager.prototype.read = function(documentTypeName, onComplete) {
+	documentTypeRepo.read(documentTypeName, function(error, result) {
+		if (error) {
+			return onComplete(error);
+		} else if (!result) {
+			error = new errors.ResourceNotFound(util.format('DocumentType with name %s not found.', documentTypeName));
+			return onComplete(error);
+		} else {
+			return onComplete(null, result);
+		}
+	});
+};
+
+DocumentTypeManager.prototype.update = function(documentTypeName, documentType, onComplete) {
+	documentTypeRepo.update(documentTypeName, documentType, onComplete);
+};
+
+DocumentTypeManager.prototype.delete = function(documentTypeName, onComplete) {
+	documentTypeRepo.delete(documentTypeName, onComplete);
+};
+
+//Documents
 var DocumentManager = domainManagers.DocumentManager = function() {
 	//Whatever here
 };
@@ -39,10 +70,10 @@ var validateDocument = function(document, documentType) {
 };
 
 //TODO: Pass documentType to persistence module
-DocumentManager.prototype.create = function(documentType, documentName, document, onComplete) {
+DocumentManager.prototype.create = function(documentTypeName, documentName, document, onComplete) {
 	async.waterfall([
 		function(callback) {
-			documentTypeRepo.read(documentType, callback);
+			documentTypeRepo.read(documentTypeName, callback);
 		},
 
 		function(documentType, callback) {
@@ -57,14 +88,14 @@ DocumentManager.prototype.create = function(documentType, documentName, document
 	], onComplete);
 };
 
-DocumentManager.prototype.read = function(documentType, documentName, onComplete) {
+DocumentManager.prototype.read = function(documentTypeName, documentName, onComplete) {
 	documentRepo.read(documentName, onComplete);
 };
 
-DocumentManager.prototype.update = function(documentType, documentName, document, onComplete) {
+DocumentManager.prototype.update = function(documentTypeName, documentName, document, onComplete) {
 	documentRepo.update(documentName, document, onComplete);
 };
 
-DocumentManager.prototype.delete = function(documentType, documentName, onComplete) {
+DocumentManager.prototype.delete = function(documentTypeName, documentName, onComplete) {
 	documentRepo.delete(documentName, onComplete);
 };
