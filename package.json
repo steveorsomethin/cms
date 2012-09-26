@@ -23,7 +23,8 @@
     "express": "2.x.x",
     "async": "0.x.x",
     "hiredis": "0.x.x",
-    "redis": "0.x.x"
+    "redis": "0.x.x",
+    "JSV": "4.x.x"
   },
   "devDependencies": {
     "node-uuid": "1.x.x",

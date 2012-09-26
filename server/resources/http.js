@@ -4,6 +4,7 @@ var util = require('util'),
 	express = require('express'),
 	domain = require('../domain'),
 	model = require('../domain/model'),
+	validators = model.validators,
 	errors = require('../errors'),
 	persistence = require('../persistence'),
 	redisPersistence = require('../persistence/redis');
@@ -39,9 +40,9 @@ var errorMap = (function() {
 })();
 
 var sendError = function(error, response) {
-	var status = error.name && errorMap[error.name] ? errorMap[error.name] : 500;
-	console.log(error);
-	response.status(status).send(error.toString());
+	var status = error.type && errorMap[error.type] ? errorMap[error.type] : 500;
+	//console.error(JSON.stringify(error));
+	response.status(status).json(error);
 };
 
 //TODO: Blow this out to inspect Accept headers and serialize appropriately
@@ -49,7 +50,7 @@ var sendResponse = function(error, body, successCode, response) {
 	if (error) {
 		return sendError(error, response);
 	} else {
-		return response.status(successCode).send(body);
+		return response.status(successCode).json(body);
 	}
 };
 
@@ -91,7 +92,12 @@ httpResources.initialize = function(port) {
 	var documentTypeRoute = '/documentTypes/:documentType';
 
 	app.put(documentTypeRoute, function(req, res) {
-		documentTypeRepo.create(req.params.documentType, model.DocumentType(req.body), putHandler(res));
+		var validationError = validators.DocumentType(req.body);
+		if (validationError) {
+			sendError(validationError, res);
+		} else {
+			documentTypeRepo.create(req.params.documentType, req.body, putHandler(res));
+		}
 	});	
 
 	app.get(documentTypeRoute, function(req, res) {
@@ -99,7 +105,12 @@ httpResources.initialize = function(port) {
 	});
 
 	app.post(documentTypeRoute, function(req, res) {
-		documentTypeRepo.update(req.params.documentType, model.DocumentType(req.body), postHandler(res));
+		var validationError = validators.DocumentType(req.body);
+		if (validationError) {
+			sendError(validationError, res);
+		} else {
+			documentTypeRepo.update(req.params.documentType, req.body, postHandler(res));
+		}
 	});
 
 	app.delete(documentTypeRoute, function(req, res) {

@@ -33,6 +33,7 @@ var defineError = function(name, definition) {
 
 defineError('ResourceNotFound');
 defineError('ResourceExists');
+defineError('TypeMismatch');
 
 /* 
 * The 'details' argument here should come in the form of a map
@@ -43,19 +44,5 @@ defineError('InvalidInput', {
 	constructor: function(message, details) {
 	  this.constructor.super_.call(this, message, this.constructor);
 	  this.details = details;
-	},
-	toString: function() {
-		var key, string = 'Error: ' + this.message;
-		if (this.details && Object.keys(this.details).length) {
-			string += '\nDetails:';
-			for (key in this.details) {
-				if (this.details.hasOwnProperty(key)) {
-					string += util.format('\n    %s: %s', key, this.details[key]);
-				}
-			}
-			string += '\n';
-		}
-
-		return string;
 	}
 });

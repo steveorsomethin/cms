@@ -13,39 +13,9 @@ var redisPersistence = module.exports = {},
 	templates = redisPersistence.templates = {},
 	siteMaps = redisPersistence.siteMaps = {};
 
-/*
-* Flattening/unflattening assumes that our schemas always go
-* exactly one level deep, no more, no less.
-*/
-var flattenDocumentType = function(name, documentType) {
-	var flattened = {}, key1, key2;
-
-	for (key1 in documentType) {
-		for (key2 in documentType[key1]) {
-			flattened[util.format("%s:%s:%s", name, key1, key2)] = documentType[key1][key2];
-		}
-	}
-
-	return flattened;
-};
-
-var unflattenDocumentType = function(flattened) {
-	var documentType = {}, property, key, splitKeys, i;
-
-	for (key in flattened) {
-		splitKeys = key.split(':');
-
-		//Start at index 1 here, as index 0 is the name of the root object
-		property = documentType[splitKeys[1]] = documentType[splitKeys[1]] || {};
-		property[splitKeys[2]] = flattened[key];
-	}
-
-	return model.DocumentType(documentType);
-};
-
-//Data Types
+//Document Types
 documentTypes.create = function(name, documentType, callback) {
-	redisClient.HMSET(name, flattenDocumentType(name, documentType), function(error, result) {
+	redisClient.SET(name, JSON.stringify(documentType), function(error, result) {
 		if (error) {
 			return callback(error);
 		} else {
@@ -55,13 +25,17 @@ documentTypes.create = function(name, documentType, callback) {
 };
 
 documentTypes.read = function(name, callback) {
-	redisClient.HGETALL(name, function(error, result) {
-		callback(error, unflattenDocumentType(result));
+	redisClient.GET(name, function(error, result) {
+		if (error) {
+			return callback(error);
+		} else {
+			return callback(null, JSON.parse(result));
+		}
 	});
 };
 
 documentTypes.update = function(name, documentType, callback) {
-	redisClient.HMSET(name, flattenDocumentType(documentType), callback);
+	redisClient.SET(name, JSON.stringify(documentType), callback);
 };
 
 documentTypes.delete = function(name, callback) {
@@ -70,15 +44,17 @@ documentTypes.delete = function(name, callback) {
 
 //Documents
 documents.create = function(name, document, callback) {
-	redisClient.HMSET(name, document, callback);
+	redisClient.HMSET(name, JSON.stringify(document), callback);
 };
 
 documents.read = function(name, callback) {
-	redisClient.HGETALL(name, callback);
+	redisClient.HGETALL(name, function(error, result) {
+		callback(error, JSON.parse(result));
+	});
 };
 
 documents.update = function(name, document, callback) {
-	redisClient.HMSET(name, document, callback);
+	redisClient.HMSET(name, JSON.stringify(document), callback);
 };
 
 documents.delete = function(name, callback) {

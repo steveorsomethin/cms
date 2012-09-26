@@ -14,7 +14,7 @@ var expectResponse = function(testName, statusCode, responseBody, callback) {
 	var newLine = '\n    ';
 	return function(error, response, body) {
 		var failure,
-			jsonBody = JSON.stringify(body),
+			jsonBody = typeof body === 'string' ? body : JSON.stringify(body),
 			bodyMatches = !responseBody || jsonBody === responseBody;
 		if (error || response.statusCode !== statusCode || !bodyMatches) {
 			failure = 'Failed to get expected response';
@@ -37,33 +37,53 @@ var expectResponse = function(testName, statusCode, responseBody, callback) {
 };
 
 var createDocumentType = function(name, documentType, callback) {
-	var opt = {method: 'PUT', uri: baseUrl + '/documentTypes/' + name, json: documentType};
-	request(opt, callback);
-};
+		var opt = {method: 'PUT', uri: baseUrl + '/documentTypes/' + name, json: documentType};
+		request(opt, callback);
+	},
+	readDocumentType = function(name, callback) {
+		var opt = {
+			method: 'GET', 
+			uri: baseUrl + '/documentTypes/' + name, 
+			headers: {'Accept': 'application/json'}
+		};
+		request(baseUrl + '/documentTypes/' + name, callback);
+	};
 
+//TODO: Make error output deterministic so we can test them as well
 var tests = {
 	createDocumentTypeSuccess: function(callback) {
-
-		var documentName = uuid.v4(),
+		var documentName = this.name,
 			documentType = require('./mock/documentTypes/valid.json'),
-			expected = expectResponse('createDocumentTypeSuccess', 201, JSON.stringify(documentType), callback);
+			expected = expectResponse(this.name, 201, JSON.stringify(documentType), callback);
 
 		createDocumentType(documentName, documentType, expected);
 	},
 	createDocumentTypeInvalidFailure: function(callback) {
-		var documentName = uuid.v4(),
+		var documentName = this.name,
 			documentType = require('./mock/documentTypes/invalid.json'),
-			expected = expectResponse('createDocumentTypeSuccess', 400, JSON.stringify(documentType), callback);
+			expected = expectResponse(this.name, 400, null, callback);
 
 		createDocumentType(documentName, documentType, expected);
+	},
+	readDocumentTypeSuccess: function(callback) {
+		var documentName = this.name,
+			documentType = require('./mock/documentTypes/valid.json'),
+			expected = expectResponse(this.name, 200, JSON.stringify(documentType), callback);
+
+		createDocumentType(documentName, documentType, function(error, result) {
+			readDocumentType(documentName, expected);
+		});
 	}
 };
+
+//TODO: Fork a process to isolate log events instead of printing them in this context
+require("../server/application").run();
 
 //Run tests
 async.parallel((function() {
 	var tasks = [];
 	for (var key in tests) {
-		tasks.push(tests[key]);
+		tasks.push(tests[key].bind({name: key}));
 	}
 	return tasks;
 })(), function(error, result) {
@@ -71,4 +91,6 @@ async.parallel((function() {
 		console.log(error);
 	}
 	console.log(testResults);
+	process.exit();
 });
+
