@@ -35,7 +35,13 @@ documentTypes.read = function(name, callback) {
 };
 
 documentTypes.update = function(name, documentType, callback) {
-	redisClient.SET(name, JSON.stringify(documentType), callback);
+	redisClient.SET(name, JSON.stringify(documentType), function(error, result) {
+		if (error) {
+			return callback(error);
+		} else {
+			return callback(null, documentType);
+		}
+	});
 };
 
 documentTypes.delete = function(name, callback) {

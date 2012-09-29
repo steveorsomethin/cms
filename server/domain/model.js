@@ -9,7 +9,17 @@ var model = module.exports = {},
 	validators = model.validators = {};
 
 validators.DocumentType = function(documentType) {
+	//TODO: Create a better way of self-validating document types
+	if (!documentType.properties || !documentType.type) {
+		return new errors.InvalidInput('DocumentType validation failed', 
+			{
+				'type': 'Property is required',
+				'properties': 'Property is required'
+			});
+	}
+
 	var validResult = env.validate(documentType, documentTypeSchema);
+
 	if (validResult.errors.length) {
 		return new errors.InvalidInput('DocumentType validation failed', validResult.errors);
 	}
