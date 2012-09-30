@@ -50,17 +50,29 @@ documentTypes.delete = function(name, callback) {
 
 //Documents
 documents.create = function(name, document, callback) {
-	redisClient.HMSET(name, JSON.stringify(document), callback);
+	redisClient.SET(name, JSON.stringify(document), function(error, result) {
+		if (error) {
+			return callback(error);
+		} else {
+			return callback(null, document);
+		}
+	});
 };
 
 documents.read = function(name, callback) {
-	redisClient.HGETALL(name, function(error, result) {
+	redisClient.GET(name, function(error, result) {
 		callback(error, JSON.parse(result));
 	});
 };
 
 documents.update = function(name, document, callback) {
-	redisClient.HMSET(name, JSON.stringify(document), callback);
+	redisClient.SET(name, JSON.stringify(document), function(error, result) {
+		if (error) {
+			return callback(error);
+		} else {
+			return callback(null, document);
+		}
+	});
 };
 
 documents.delete = function(name, callback) {

@@ -92,12 +92,7 @@ httpResources.initialize = function(port) {
 	var documentTypeRoute = '/documentTypes/:documentType';
 
 	app.put(documentTypeRoute, function(req, res) {
-		var validationError = validators.DocumentType(req.body);
-		if (validationError) {
-			sendError(validationError, res);
-		} else {
-			documentTypeManager.create(req.params.documentType, req.body, putHandler(res));
-		}
+		documentTypeManager.create(req.params.documentType, req.body, putHandler(res));
 	});	
 
 	app.get(documentTypeRoute, function(req, res) {
@@ -105,12 +100,7 @@ httpResources.initialize = function(port) {
 	});
 
 	app.post(documentTypeRoute, function(req, res) {
-		var validationError = validators.DocumentType(req.body);
-		if (validationError) {
-			sendError(validationError, res);
-		} else {
-			documentTypeManager.update(req.params.documentType, req.body, postHandler(res));
-		}
+		documentTypeManager.update(req.params.documentType, req.body, postHandler(res));
 	});
 
 	app.delete(documentTypeRoute, function(req, res) {

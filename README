@@ -28,5 +28,9 @@ Consider using cloud9 for code editing
 Focus on drag-drop, non-experts.
 The things every manager wants, and never gets in a satisfactory manner: 
 	Full data history
+		Could use ZSETs pointing to hash maps with keys that changed, allowing "replay" in conjunction with snapshots.
+		Could also use operational transformation with ZSETS
 	Full knowledge of who did what and when
+		Make it easy for someone creating a document type to say "track changes" and be done with it.
 	Reporting
+		Use a separate database which is notified of relevant data and report from that.

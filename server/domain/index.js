@@ -5,9 +5,13 @@
 var util = require('util'),
 	async = require('async'),
 	errors = require('../errors'),
-	expect = require('./expect'),
+	model = require('./model'),
+	validators = model.validators,
 	persistence = require('../persistence'),
 	redisPersistence = require('../persistence/redis');
+
+var documentTypeNotFound = 'DocumentType with name %s not found.',
+	documentNotFound = 'Document with name %s not found.';
 
 var documentTypeRepo = new persistence.DocumentTypeRepo(redisPersistence.documentTypes),
 	documentRepo = new persistence.DocumentRepo(redisPersistence.documents),
@@ -21,7 +25,12 @@ var DocumentTypeManager = domainManagers.DocumentTypeManager = function() {
 };
 
 DocumentTypeManager.prototype.create = function(documentTypeName, documentType, onComplete) {
-	return documentTypeRepo.create(documentTypeName, documentType, onComplete);
+	var validationError = validators.DocumentType(documentType);
+	if (validationError) {
+		return onComplete(validationError);
+	} else {
+		return documentTypeRepo.create(documentTypeName, documentType, onComplete);
+	}
 };
 
 DocumentTypeManager.prototype.read = function(documentTypeName, onComplete) {
@@ -29,7 +38,7 @@ DocumentTypeManager.prototype.read = function(documentTypeName, onComplete) {
 		if (error) {
 			return onComplete(error);
 		} else if (!result) {
-			error = new errors.ResourceNotFound(util.format('DocumentType with name %s not found.', documentTypeName));
+			error = new errors.ResourceNotFound(util.format(documentTypeNotFound, documentTypeName));
 			return onComplete(error);
 		} else {
 			return onComplete(null, result);
@@ -38,7 +47,12 @@ DocumentTypeManager.prototype.read = function(documentTypeName, onComplete) {
 };
 
 DocumentTypeManager.prototype.update = function(documentTypeName, documentType, onComplete) {
-	documentTypeRepo.update(documentTypeName, documentType, onComplete);
+	var validationError = validators.DocumentType(documentType);
+	if (validationError) {
+		return onComplete(validationError);
+	} else {
+		documentTypeRepo.update(documentTypeName, documentType, onComplete);
+	}
 };
 
 DocumentTypeManager.prototype.delete = function(documentTypeName, onComplete) {
@@ -50,50 +64,76 @@ var DocumentManager = domainManagers.DocumentManager = function() {
 	//Whatever here
 };
 
-var validateDocument = function(document, documentType) {
-	var errorDetails = {}, key, prop, validator, valid;
-
-	for (key in documentType) {
-		if (documentType.hasOwnProperty(key)) {
-			prop = documentType[key];
-			validator = expect[prop.type + (prop.required ? '' : 'OrEmpty')];
-			valid = validator.func(document[key]);
-
-			if (!valid) {
-				errorDetails[key] = util.format(validator.error, key);
-			}
-		}
-	}
-
-	return Object.keys(errorDetails).length ?
-			new errors.InvalidInput('Invalid input document', errorDetails) : null;
-};
-
-//TODO: Pass documentType to persistence module
-DocumentManager.prototype.create = function(documentTypeName, documentName, document, onComplete) {
+var preSaveDocument = function(documentTypeName, document, callback) {
 	async.waterfall([
 		function(callback) {
 			documentTypeRepo.read(documentTypeName, callback);
 		},
 
 		function(documentType, callback) {
-			var validError = validateDocument(document, documentType);
-			if (validError) {
-				return callback(validError);
+			if (!documentType) {
+				var error = new errors.ResourceNotFound(util.format(documentTypeNotFound, documentTypeName));
+				return callback(error);
 			}
-			return documentRepo.create(documentName, document, function(error, result) {
-				callback(error, document);
+
+			var validationError = validators.Document(document, documentType);
+			if (validationError) {
+				return callback(validationError);
+			} 
+
+			return callback();
+		}
+	], callback);
+};
+
+//TODO: Pass documentType to persistence module
+DocumentManager.prototype.create = function(documentTypeName, documentName, document, onComplete) {
+	async.waterfall([
+		function(callback) {
+			preSaveDocument(documentTypeName, document, callback);
+		},
+
+		function(callback) {
+			documentRepo.create(documentName, document, function(error, result) {
+				if (error) {
+					return callback(error);
+				} 
+
+				return callback(null, result);
 			});
 		}
 	], onComplete);
 };
 
 DocumentManager.prototype.read = function(documentTypeName, documentName, onComplete) {
-	documentRepo.read(documentName, onComplete);
+	documentRepo.read(documentName, function(error, result) {
+		if (error) {
+			return onComplete(error);
+		} else if (!result) {
+			error = new errors.ResourceNotFound(util.format(documentNotFound, documentName));
+			return onComplete(error);
+		} else {
+			return onComplete(null, result);
+		}
+	});
 };
 
 DocumentManager.prototype.update = function(documentTypeName, documentName, document, onComplete) {
-	documentRepo.update(documentName, document, onComplete);
+	async.waterfall([
+		function(callback) {
+			preSaveDocument(documentTypeName, document, callback);
+		},
+
+		function(callback) {
+			documentRepo.update(documentName, document, function(error, result) {
+				if (error) {
+					return callback(error);
+				} 
+
+				return callback(null, result);
+			});
+		}
+	], onComplete);
 };
 
 DocumentManager.prototype.delete = function(documentTypeName, documentName, onComplete) {

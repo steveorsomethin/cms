@@ -25,6 +25,14 @@ validators.DocumentType = function(documentType) {
 	}
 };
 
+validators.Document = function(document, documentType) {
+	var validResult = env.validate(document, documentType);
+
+	if (validResult.errors.length) {
+		return new errors.InvalidInput('Document validation failed', validResult.errors);
+	}
+};
+
 var enforceTypes = function(obj, definition) {
 	var key, property, error;
 	for (key in definition) {
