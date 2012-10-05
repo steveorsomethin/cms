@@ -277,7 +277,7 @@ var tests = {
 				});
 			},
 			function(createdDocumentType, callback) {
-				createDocument(name + "Instance", name, document, callback);
+				createDocument(name + 'Instance', name, document, callback);
 			}
 		], expected);
 	},
@@ -301,7 +301,7 @@ var tests = {
 				});
 			},
 			function(createdDocumentType, callback) {
-				createDocument(name + "Instance", name, document, callback);
+				createDocument(name + 'Instance', name, document, callback);
 			}
 		], expected);
 	},
@@ -313,7 +313,7 @@ var tests = {
 				return body.replace(name, 'testName') === JSON.stringify(error404);
 			});
 
-		createDocument(name + "Instance", name, document, expected);
+		createDocument(name + 'Instance', name, document, expected);
 	},
 	readDocumentSuccess: function(callback) {
 		var name = this.name,
@@ -334,7 +334,7 @@ var tests = {
 				});
 			},
 			function(createdDocumentType, callback) {
-				createDocument(name + "Instance", name, document, function(error, response, body) {
+				createDocument(name + 'Instance', name, document, function(error, response, body) {
 					if (error) {
 						return callback(error);
 					} else {
@@ -343,13 +343,13 @@ var tests = {
 				});
 			},
 			function(createdDocument, callback) {
-				readDocument(name + "Instance", name, callback);
+				readDocument(name + 'Instance', name, callback);
 			}
 		], expected);
 	},
 	readDocumentNotFound: function(callback) {
 		var name = this.name,
-			documentName = name + "Instance",
+			documentName = name + 'Instance',
 			documentType = require('./mock/documentTypes/valid.json'),
 			error404 = require('./mock/documents/error404.json'),
 			expected = expectResponse(name, NOT_FOUND, callback, function(body) {
@@ -390,7 +390,7 @@ var tests = {
 				});
 			},
 			function(createdDocumentType, callback) {
-				createDocument(name + "Instance", name, document, function(error, response, body) {
+				createDocument(name + 'Instance', name, document, function(error, response, body) {
 					if (error) {
 						return callback(error);
 					} else {
@@ -399,7 +399,7 @@ var tests = {
 				});
 			},
 			function(createdDocument, callback) {
-				updateDocument(name + "Instance", name, createdDocument, callback);
+				updateDocument(name + 'Instance', name, createdDocument, callback);
 			}
 		], expected);
 	},
@@ -424,7 +424,7 @@ var tests = {
 				});
 			},
 			function(createdDocumentType, callback) {
-				createDocument(name + "Instance", name, document, function(error, response, body) {
+				createDocument(name + 'Instance', name, document, function(error, response, body) {
 					if (error) {
 						return callback(error);
 					} else {
@@ -433,7 +433,7 @@ var tests = {
 				});
 			},
 			function(createdDocument, callback) {
-				updateDocument(name + "Instance", name, invalidDocument, callback);
+				updateDocument(name + 'Instance', name, invalidDocument, callback);
 			}
 		], expected);
 	},
@@ -445,7 +445,7 @@ var tests = {
 				return body.replace(name, 'testName') === JSON.stringify(error404);
 			});
 
-		updateDocument(name + "Instance", name, document, expected);
+		updateDocument(name + 'Instance', name, document, expected);
 	},
 	deleteDocumentSuccess: function(callback) {
 		var name = this.name,
@@ -464,7 +464,7 @@ var tests = {
 				});
 			},
 			function(createdDocumentType, callback) {
-				createDocument(name + "Instance", name, document, function(error, response, body) {
+				createDocument(name + 'Instance', name, document, function(error, response, body) {
 					if (error) {
 						return callback(error);
 					} else {
@@ -473,7 +473,7 @@ var tests = {
 				});
 			},
 			function(createdDocument, callback) {
-				deleteDocument(name + "Instance", name, callback);
+				deleteDocument(name + 'Instance', name, callback);
 			}
 		], expected);
 	},
@@ -500,7 +500,7 @@ var tests = {
 				});
 			},
 			function(createdDocumentType, callback) {
-				createTemplate(name + "Template", name, template, callback);
+				createTemplate(name + 'Template', name, template, callback);
 			}
 		], expected);
 	},
@@ -524,7 +524,7 @@ var tests = {
 				});
 			},
 			function(createdDocumentType, callback) {
-				createDocument(name + "Instance", name, document, callback);
+				createDocument(name + 'Instance', name, document, callback);
 			}
 		], expected);
 	},
@@ -536,7 +536,7 @@ var tests = {
 				return body.replace(name, 'testName') === JSON.stringify(error404);
 			});
 
-		createDocument(name + "Instance", name, document, expected);
+		createDocument(name + 'Instance', name, document, expected);
 	},*/
 	readTemplateSuccess: function(callback) {
 		var name = this.name,
@@ -557,7 +557,7 @@ var tests = {
 				});
 			},
 			function(createdDocumentType, callback) {
-				createTemplate(name + "Template", name, template, function(error, response, body) {
+				createTemplate(name + 'Template', name, template, function(error, response, body) {
 					if (error) {
 						return callback(error);
 					} else {
@@ -566,14 +566,14 @@ var tests = {
 				});
 			},
 			function(createdDocument, callback) {
-				readTemplate(name + "Template", name, callback);
+				readTemplate(name + 'Template', name, callback);
 			}
 		], expected);
 	}
 };
 
 //TODO: Fork a process to isolate log events instead of printing them in this context
-require("../server/application").run();
+require('../server/application').run();
 
 //Run tests
 async.parallel((function() {

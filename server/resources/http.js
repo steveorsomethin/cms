@@ -86,7 +86,7 @@ httpResources.initialize = function(port) {
 		documentManager = new domain.DocumentManager(),
 		templateRepo = new persistence.TemplateRepo(redisPersistence.templates);
 
-	app.use('/public', express.static(__dirname + '/../../public'));
+	app.use('/public', express.static(__dirname + '/../../client'));
 
 	//TODO: Switch out/augment bodyParser to work with content types other than JSON
 	app.use(express.bodyParser());
