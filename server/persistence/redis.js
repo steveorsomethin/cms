@@ -5,6 +5,7 @@ var util = require('util'),
 	model = require('../domain/model');
 
 //TODO: Consider moving this into a constructor and making the redis calls an object
+//var redisClient = redis.createClient(6379, 'gutenberg.cloudapp.net');
 var redisClient = redis.createClient();
 
 var redisPersistence = module.exports = {},
@@ -44,7 +45,7 @@ documentTypes.update = function(name, documentType, callback) {
 	});
 };
 
-documentTypes.delete = function(name, callback) {
+documentTypes.del = function(name, callback) {
 	redisClient.DEL(name, callback);
 };
 
@@ -75,40 +76,52 @@ documents.update = function(name, document, callback) {
 	});
 };
 
-documents.delete = function(name, callback) {
+documents.del = function(name, callback) {
 	redisClient.DEL(name, callback);
 };
 
 //Templates
 templates.create = function(name, template, callback) {
-	redisClient.HMSET(name, template, callback);
+	redisClient.SET(name, template, function(error, result) {
+		if (error) {
+			return callback(error);
+		} else {
+			return callback(null, template);
+		}
+	});
 };
 
 templates.read = function(name, callback) {
-	redisClient.HGETALL(name, callback);
+	redisClient.GET(name, callback);
 };
 
 templates.update = function(name, template, callback) {
-	redisClient.HMSET(name, template, callback);
+	redisClient.SET(name, template, function(error, result) {
+		if (error) {
+			return callback(error);
+		} else {
+			return callback(null, template);
+		}
+	});
 };
 
-templates.delete = function(name, callback) {
+templates.del = function(name, callback) {
 	redisClient.DEL(name, callback);
 };
 
 //Site Maps
 siteMaps.create = function(name, siteMap, callback) {
-	redisClient.HMSET(name, siteMap, callback);
+	redisClient.SET(name, JSON.stringify(siteMap), callback);
 };
 
 siteMaps.read = function(name, callback) {
-	redisClient.HGETALL(name, callback);
+	redisClient.GET(name, callback);
 };
 
 siteMaps.update = function(name, siteMap, callback) {
-	redisClient.HMSET(name, siteMap, callback);
+	redisClient.SET(name, siteMap, callback);
 };
 
-siteMaps.delete = function(name, callback) {
+siteMaps.del = function(name, callback) {
 	redisClient.DEL(name, callback);
 };

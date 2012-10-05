@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Create Document Type</title>
+        <style>
+            #property-list {
+                margin: 0;
+                padding: 0;
+                list-style-type: none;
+            }
+        </style>
+        <script src="./jquery.js"></script>
+        <script>
+            $(function() {
+                var listItemProto = $('#property-list li')[0];
+                    typeListProto = $(listItemProto).find('select.type-list'),
+                    propertyList = $('#property-list');
+
+                $(['string', 'integer', 'float', 'boolean']).each(function(index, value) {
+                    typeListProto.append($('<option></option>').val(value).html(value));
+                });
+
+                $(listItemProto).remove();
+
+                $('#document-name-text').change(function(event) {
+                    $('#document-form').attr('action', '/dt/' + $(this).val());
+                });
+
+                $('#add-property-button').click(function(event) {
+                    var newListItem = $(listItemProto).clone(),
+                        fieldNameInput = $(newListItem).find('input.field-name-text'),
+                        typeList = $(newListItem).find('select.type-list'),
+                        requiredCheckbox = $(newListItem).find('input.required-checkbox');
+
+                    $(propertyList).append(newListItem);
+
+                    fieldNameInput.change(function(event) {
+                        var name = event.target.value;
+
+                        fieldNameInput.attr('name', name + ':field-name');
+                        typeList.attr('name', name + ':type');
+                        requiredCheckbox.attr('name', name + ':required');
+                    });
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <form id="document-form" method="POST">
+            Name: <input id="document-name-text" name="name" />
+            <ul id="property-list">
+                <li>
+                    Field Name: <input class="field-name-text" /> 
+                    <select class="type-list"><option>Type</option></select> 
+                    Required: <input type="checkbox" class="required-checkbox" />
+                </li> 
+            </ul>
+            <button id="add-property-button" onclick='return false;'>+</button>
+            <input type="submit" value="Submit"></input>
+        </form>
+    </body>
+</html>

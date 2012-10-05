@@ -19,7 +19,8 @@ var OK = 200,
 	BAD_REQUEST = 400,
 	UNAUTHORIZED = 401,
 	FORBIDDEN = 403,
-	NOT_FOUND = 404;
+	NOT_FOUND = 404,
+	INTERNAL_ERROR = 500;
 
 var errorMap = (function() {
 	var errorMap = {};
@@ -85,6 +86,8 @@ httpResources.initialize = function(port) {
 		documentManager = new domain.DocumentManager(),
 		templateRepo = new persistence.TemplateRepo(redisPersistence.templates);
 
+	app.use('/public', express.static(__dirname + '/../../public'));
+
 	//TODO: Switch out/augment bodyParser to work with content types other than JSON
 	app.use(express.bodyParser());
 
@@ -103,8 +106,8 @@ httpResources.initialize = function(port) {
 		documentTypeManager.update(req.params.documentType, req.body, postHandler(res));
 	});
 
-	app.delete(documentTypeRoute, function(req, res) {
-		documentTypeManager.delete(req.params.documentType, deleteHandler(res));
+	app.del(documentTypeRoute, function(req, res) {
+		documentTypeManager.del(req.params.documentType, deleteHandler(res));
 	});
 
 	//Documents
@@ -122,27 +125,88 @@ httpResources.initialize = function(port) {
 		documentManager.update(req.params.documentType, req.params.document, req.body, postHandler(res));
 	});
 
-	app.delete(documentRoute, function(req, res) {
-		documentManager.delete(req.params.documentType, req.params.document, deleteHandler(res));
+	app.del(documentRoute, function(req, res) {
+		documentManager.del(req.params.documentType, req.params.document, deleteHandler(res));
 	});
 
 	//Templates
-	var templateRoute = '/templates/:name';
+	var templateRoute = '/documentTypes/:documentType/templates/:template';
 
 	app.put(templateRoute, function(req, res) {
-		templateRepo.create(req.params.name, req.body, putHandler(res));
+		templateRepo.create(req.params.template, req.body, putHandler(res));
 	});
 
 	app.get(templateRoute, function(req, res) {
-		templateRepo.read(req.params.name, getHandler(res));
+		templateRepo.read(req.params.template, getHandler(res));
 	});
 
 	app.post(templateRoute, function(req, res) {
-		templateRepo.update(req.params.name, req.body, postHandler(res));
+		templateRepo.update(req.params.template, req.body, postHandler(res));
 	});
 
-	app.delete(templateRoute, function(req, res) {
-		templateRepo.delete(req.params.name, deleteHandler(res));
+	app.del(templateRoute, function(req, res) {
+		templateRepo.del(req.params.template, deleteHandler(res));
+	});
+
+	app.post('/dt/:name', function(req, res) {
+		var lastProperty, split, propertyName, subProperty;
+		var documentType = 
+			{
+			    "name" : req.body.name,
+			    "type" : "object",
+			    "additionalProperties" : false,
+			    "properties" :{}
+			},
+			properties = documentType.properties;
+
+		for (var key in req.body) {
+			split = key.split(':');
+
+			propertyName = split[0];
+			subProperty = split[1];
+
+			if (key != 'name') {
+				if (!lastProperty || lastProperty !== propertyName) {
+					properties[propertyName] = {}; 
+				} else {
+					properties[propertyName][subProperty] = 
+						subProperty === 'required' ? true : req.body[key];
+				}
+
+				lastProperty = propertyName;
+			}
+		}
+		
+		documentTypeManager.create(req.params.name, documentType, putHandler);
+		res.redirect('/public/index.html');
+	});
+
+	app.get('/documentTypes/:documentType/templates/:template/documents/:document', function(req, res) {
+		require('async').waterfall([
+			function(callback) {
+				documentManager.read(req.params.documentType, req.params.document, callback);
+			},
+			function(document, callback) {
+				templateRepo.read(req.params.template, function(error, result) {
+					if (error) {
+						return callback(error);
+					}
+					return callback(null, document, result);
+				});
+			},
+			function(document, template, callback) {
+				var dust = require('dustjs-linkedin');
+				var compiled = dust.compile(template, 'test');
+				dust.loadSource(compiled);
+				dust.render('test', document, callback);
+			}
+		], function(error, result) {
+			if (error) {
+				console.error(error);
+				return res.status(INTERNAL_ERROR).send(error.toString());
+			}
+			return res.status(OK).send(result);
+		});
 	});
 
 	app.listen(port);

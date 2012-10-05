@@ -16,20 +16,19 @@
       "name": "Kennie Davis"
     }
   ],
-  "engines: ": {
-    "node": "0.8.x"
-  },
   "dependencies": {
     "express": "2.x.x",
     "underscore": "1.x.x",
     "async": "0.x.x",
     "hiredis": "0.x.x",
     "redis": "0.x.x",
-    "JSV": "4.x.x"
+    "JSV": "4.x.x",
+    "dustjs-linkedin": "1.x.x",
+    "dustjs-helpers": "1.x.x"
   },
   "devDependencies": {
     "node-uuid": "1.x.x",
-    "nodelint": ">0.0.0",
+    "nodelint": "0.x.x",
     "request": "2.x.x"
   }
 }

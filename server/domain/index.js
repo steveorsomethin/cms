@@ -55,8 +55,8 @@ DocumentTypeManager.prototype.update = function(documentTypeName, documentType, 
 	}
 };
 
-DocumentTypeManager.prototype.delete = function(documentTypeName, onComplete) {
-	documentTypeRepo.delete(documentTypeName, onComplete);
+DocumentTypeManager.prototype.del = function(documentTypeName, onComplete) {
+	documentTypeRepo.del(documentTypeName, onComplete);
 };
 
 //Documents
@@ -136,6 +136,6 @@ DocumentManager.prototype.update = function(documentTypeName, documentName, docu
 	], onComplete);
 };
 
-DocumentManager.prototype.delete = function(documentTypeName, documentName, onComplete) {
-	documentRepo.delete(documentName, onComplete);
+DocumentManager.prototype.del = function(documentTypeName, documentName, onComplete) {
+	documentRepo.del(documentName, onComplete);
 };

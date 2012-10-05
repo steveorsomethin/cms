@@ -2,7 +2,7 @@
 'use strict';
 
 var util = require('util'),
-	_ = require('underscore'),
+	fs = require('fs'),
 	uuid = require('node-uuid'),
 	async = require('async'),
 	request = require('request');
@@ -44,7 +44,7 @@ var expectResponse = function(testName, statusCode, callback, predicate) {
 			}
 		}
 
-		testResults[testName] = failure ? failure : 'SUCCESS';
+		testResults[testName] = failure ? failure : 'PASSED';
 		callback();
 	};
 };
@@ -102,10 +102,44 @@ var
 			uri: util.format('%s/documentTypes/%s/documents/%s', baseUrl, documentTypeName, name)
 		};
 		request(opt, callback);
+	},
+	//Templates
+	createTemplate = function(name, documentTypeName, template, callback) {
+		var opt = {
+			method: 'PUT',
+			uri: util.format('%s/documentTypes/%s/templates/%s', baseUrl, documentTypeName, name),
+			json: template
+		};
+		request(opt, callback);
+	},
+	readTemplate = function(name, documentTypeName, callback) {
+		var opt = {
+			method: 'GET',
+			uri: util.format('%s/documentTypes/%s/templates/%s', baseUrl, documentTypeName, name)
+		};
+		request(opt, callback);
+	},
+	updateTemplate = function(name, documentTypeName, template, callback) {
+		var opt = {
+			method: 'POST',
+			uri: util.format('%s/documentTypes/%s/templates/%s', baseUrl, documentTypeName, name),
+			json: template
+		};
+		request(opt, callback);
+	},
+	deleteTemplate = function(name, documentTypeName, callback) {
+		var opt = {
+			method: 'DELETE',
+			uri: util.format('%s/documentTypes/%s/templates/%s', baseUrl, documentTypeName, name)
+		};
+		request(opt, callback);
 	};
 
 var tests = {
-	//Document Types
+
+	/*****************************************************************************
+	* Document types
+	*****************************************************************************/
 	createDocumentTypeSuccess: function(callback) {
 		var documentType = require('./mock/documentTypes/valid.json'),
 			expected = expectResponse(this.name, CREATED, callback, function(body) {
@@ -221,7 +255,9 @@ var tests = {
 		], expected);
 	},
 
-	//Documents
+	/*****************************************************************************
+	* Documents
+	*****************************************************************************/
 	createDocumentSuccess: function(callback) {
 		var name = this.name,
 			document = require('./mock/documents/valid.json'),
@@ -438,6 +474,99 @@ var tests = {
 			},
 			function(createdDocument, callback) {
 				deleteDocument(name + "Instance", name, callback);
+			}
+		], expected);
+	},
+
+	/*****************************************************************************
+	* Templates
+	*****************************************************************************/
+	createTemplateSuccess: function(callback) {
+		var name = this.name,
+			template = fs.readFileSync(__dirname + '/mock/templates/valid.dust').toString(),
+			documentType = require('./mock/documentTypes/valid.json'),
+			expected = expectResponse(name, CREATED, callback, function(body) {
+				return body === template;
+			});
+
+		async.waterfall([
+			function(callback) {
+				createDocumentType(name, documentType, function(error, response, body) {
+					if (error) {
+						return callback(error);
+					} else {
+						return callback(null, body);
+					}
+				});
+			},
+			function(createdDocumentType, callback) {
+				createTemplate(name + "Template", name, template, callback);
+			}
+		], expected);
+	},
+	/*createTemplateInvalid: function(callback) {
+		var name = this.name,
+			document = require('./mock/documents/invalid.json'),
+			documentType = require('./mock/documentTypes/valid.json'),
+			error400 = require('./mock/documents/error400.json'),
+			expected = expectResponse(name, BAD_REQUEST, callback, function(body) {
+				return body.replace(uuidRegex, uuidReplacement) === JSON.stringify(error400);
+			});
+
+		async.waterfall([
+			function(callback) {
+				createDocumentType(name, documentType, function(error, response, body) {
+					if (error) {
+						return callback(error);
+					} else {
+						return callback(null, body);
+					}
+				});
+			},
+			function(createdDocumentType, callback) {
+				createDocument(name + "Instance", name, document, callback);
+			}
+		], expected);
+	},
+	createTemplateDocumentTypeNotFound: function(callback) {
+		var name = this.name,
+			document = require('./mock/documents/invalid.json'),
+			error404 = require('./mock/documentTypes/error404.json'),
+			expected = expectResponse(name, NOT_FOUND, callback, function(body) {
+				return body.replace(name, 'testName') === JSON.stringify(error404);
+			});
+
+		createDocument(name + "Instance", name, document, expected);
+	},*/
+	readTemplateSuccess: function(callback) {
+		var name = this.name,
+			template = fs.readFileSync(__dirname + '/mock/templates/valid.dust').toString(),
+			documentType = require('./mock/documentTypes/valid.json'),
+			expected = expectResponse(name, OK, callback, function(body) {
+				return JSON.parse(body) === template;
+			});
+
+		async.waterfall([
+			function(callback) {
+				createDocumentType(name, documentType, function(error, response, body) {
+					if (error) {
+						return callback(error);
+					} else {
+						return callback(null, body);
+					}
+				});
+			},
+			function(createdDocumentType, callback) {
+				createTemplate(name + "Template", name, template, function(error, response, body) {
+					if (error) {
+						return callback(error);
+					} else {
+						return callback(null, body);
+					}
+				});
+			},
+			function(createdDocument, callback) {
+				readTemplate(name + "Template", name, callback);
 			}
 		], expected);
 	}

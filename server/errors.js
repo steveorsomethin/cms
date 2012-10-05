@@ -13,7 +13,7 @@ util.inherits(ErrorBase, Error);
 var defineError = function(name, definition) {
 	var key,
 		defaultConstructor = function(message) {
-		  this.constructor.super_.call(this, message, this.constructor);
+			this.constructor.super_.call(this, message, this.constructor);
 		},
 		errorType = definition && definition.constructor ? definition.constructor : defaultConstructor;
 
@@ -42,7 +42,7 @@ defineError('TypeMismatch');
 */
 defineError('InvalidInput', {
 	constructor: function(message, details) {
-	  this.constructor.super_.call(this, message, this.constructor);
-	  this.details = details;
+		this.constructor.super_.call(this, message, this.constructor);
+		this.details = details;
 	}
 });
