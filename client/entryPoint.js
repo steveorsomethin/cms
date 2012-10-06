@@ -10,7 +10,7 @@ define('ApplicationContext', ['./lib/model'], function(model) {
 	};
 });
 
-define(['jquery', 'underscore', 'backbone'], function($, _, backbone) {
+define(['jquery'], function($) {
 	$(function() {
 		var listItemProto = $('#property-list li')[0],
 	        typeListProto = $(listItemProto).find('select.type-list'),

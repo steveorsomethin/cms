@@ -1,3 +1,5 @@
+'use strict';
+
 var require = {
     paths: {
         'use': './deps/requirejs/use',
@@ -8,7 +10,7 @@ var require = {
         'knockout': './deps/knockout/knockout-min',
         'knockback': './deps/knockback/knockback-min'
     },
-    deps: ['jquery', 'underscore', 'backbone', 'knockout', 'knockback', './application'],
+    deps: ['jquery', 'underscore', 'backbone', 'knockout', 'knockback', './entryPoint'],
     callback: function($, _, backbone) {
         //Remove our helper libs from the global namespace
         $.noConflict();
