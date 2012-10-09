@@ -5,7 +5,7 @@ define([
 	'EventBus',
 	'./documentType',
 	'text!./main.html',
-	'../../model'],
+	'../model'],
 	function($, kb, ko, eventBus, DocumentTypeViewModel, mainHtml, model) {
 		var MainViewModel =  kb.ViewModel.extend({
 		    documentType: new DocumentTypeViewModel(new model.DocumentType())

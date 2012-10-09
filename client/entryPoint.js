@@ -15,7 +15,7 @@ define('ApplicationContext', ['./lib/model'], function(model) {
 define([
 	'jquery',
 	'EventBus',
-	'./lib/views/ko/main',
+	'./lib/views/main',
 	'./lib/commands/documentType'
 	], 
 	function($, eventBus, MainViewModel, DocumentTypeCommandMap) {
