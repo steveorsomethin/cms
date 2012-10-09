@@ -1,0 +1,4 @@
+Name: <input id="document-name-text" name="name" value="{name}" />
+<div></div>
+<button class="add-property-button" onclick='return false;'>+</button>
+<button class="save-button" onclick='return false;'>Save</button>

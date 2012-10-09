@@ -1,0 +1,16 @@
+Name: <input data-bind="value: name" />
+<div>
+	<ul data-bind="foreach: properties()">
+        <li>
+            <span>Field Name:</span> 
+            <input type="text" data-bind="value: name" />
+            <input type="checkbox" data-bind="checked: required" />
+        </li>
+    </ul>
+</div>
+
+<div>
+    <button href="#" data-bind="click: addProperty">+</button>
+    <button href="#" data-bind="click: save">Save</button>
+</div>
+​

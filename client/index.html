@@ -1,30 +1,11 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Create Document Type</title>
+        <title>Editor</title>
         <link rel="stylesheet" type="text/css" href="./css/main.css" />
         <script src="./config.js"></script>
         <script src="./deps/requirejs/require.js"></script>
     </head>
     <body>
-        <div id="header">
-            <h1>Create Document Type</h1>
-        </div>
-        <div id="content">
-            <form id="document-form" method="POST">
-                Name: <input id="document-name-text" name="name" />
-                <ul id="property-list">
-                    <li style="display:none;">
-                        Field Name: <input class="field-name-text" /> 
-                        <select class="type-list"><option>Type</option></select> 
-                        Required: <input type="checkbox" class="required-checkbox" />
-                    </li> 
-                </ul>
-                <button id="add-property-button" onclick='return false;'>+</button>
-                <input type="submit" value="Submit"></input>
-            </form>
-        </div>
-        <div id="footer">
-        </div>
     </body>
 </html>
