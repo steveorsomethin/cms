@@ -1,9 +1,9 @@
 'use strict';
 
 define([
-	'EventBus',
-	'../core/commandMap',
-	'../model'
+		'EventBus',
+		'../core/commandMap',
+		'../model'
 	], 
 	function(eventBus, CommandMap, model) {
 		return CommandMap.extend({

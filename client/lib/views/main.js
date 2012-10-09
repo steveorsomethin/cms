@@ -1,14 +1,14 @@
 'use strict';
 
 define([
-	'jquery',
-	'knockback',
-	'knockout',
-	'EventBus',
-	'./documentType',
-	'text!./main.html',
-	'../model'],
-	function($, kb, ko, eventBus, DocumentTypeViewModel, mainHtml, model) {
+		'jquery',
+		'knockback',
+		'knockout',
+		'./documentType',
+		'text!./main.html',
+		'../model'
+	],
+	function($, kb, ko, DocumentTypeViewModel, mainHtml, model) {
 		var MainViewModel =  kb.ViewModel.extend({
 		    documentType: new DocumentTypeViewModel(new model.DocumentType())
 		}, {

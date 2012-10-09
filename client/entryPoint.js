@@ -13,10 +13,10 @@ define('ApplicationContext', ['./lib/model'], function(model) {
 });
 
 define([
-	'jquery',
-	'EventBus',
-	'./lib/views/main',
-	'./lib/commands/documentType'
+		'jquery',
+		'EventBus',
+		'./lib/views/main',
+		'./lib/commands/documentType'
 	], 
 	function($, eventBus, MainViewModel, DocumentTypeCommandMap) {
 		$(function() {

@@ -17,7 +17,8 @@ var require = {
 	    'jquery',
 	    'underscore',
 	    'backbone',
-	    './entryPoint'],
+	    './entryPoint'
+    ],
     callback: function($, _, backbone) {
         //Remove our helper libs from the global namespace
         $.noConflict();
