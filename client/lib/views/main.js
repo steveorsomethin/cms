@@ -1,3 +1,5 @@
+'use strict';
+
 define([
 	'jquery',
 	'knockback',
@@ -11,7 +13,7 @@ define([
 		    documentType: new DocumentTypeViewModel(new model.DocumentType())
 		}, {
 			/*
-			* Start should be called from the entry point of the application
+			* Start should be called from the entry point of the application.
 			* targetElement will be receive the main view, allowing for the 
 			* editor to be hosted in just about any parent UI
 			*/

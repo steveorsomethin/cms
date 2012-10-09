@@ -1,3 +1,5 @@
+'use strict';
+
 define([
 	'EventBus',
 	'../core/commandMap',
