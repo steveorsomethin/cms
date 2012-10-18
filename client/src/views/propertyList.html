@@ -1,0 +1,9 @@
+<ul class="property-list" data-bind="foreach: properties">
+    <li>
+        <input type="text" data-bind="value: name" />
+        <select data-bind="options: $parent.types, value: type"></select>
+        <div class="btn-group" data-toggle="buttons-checkbox">
+            <button type="button" class="btn btn-primary" data-bind="click: $parent.toggleRequired">Required</button>
+      	</div>
+    </li>
+</ul>

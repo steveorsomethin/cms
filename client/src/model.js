@@ -3,7 +3,7 @@
 define(['backbone'], function(backbone) {
 	var Property = backbone.Model.extend({
 		defaults: {
-			name: '',
+			name: 'Field Name', //TODO: Localize, move to view
 		    type: 'string',
 		    required: false
 		}
@@ -14,6 +14,10 @@ define(['backbone'], function(backbone) {
 	});
 
 	var DocumentType = backbone.Model.extend({
+		initialize: function() {
+			this.set('properties', new PropertyCollection());
+		},
+
 		toJSON: function() {
 			var i = 0, 
 				json = this.attributes, 
@@ -31,10 +35,9 @@ define(['backbone'], function(backbone) {
 		},
 
 		defaults: {
-			name: '',
+			name: 'New Document Type', //TODO: Localize, move to view
 		    type: 'object',
-		    additionalProperties: false,
-		    properties: new PropertyCollection()
+		    additionalProperties: false
 		}
 	});
 

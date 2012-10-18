@@ -12,15 +12,19 @@ var require = {
 		trafficCop: './deps/knockout/trafficCop',
 		knockout: './deps/knockout/knockout',
 		knockback: './deps/knockback/knockback-min',
-		ace: './deps/ace/ace-shim'
+		ace: './deps/ace/ace-shim',
+		bootstrap: './deps/bootstrap/bootstrap'
 	},
+
 	deps: [
-		'jquery',
-		'underscore',
-		'backbone',
-		'./entryPoint'
+		'order!jquery',
+		'order!bootstrap',
+		'order!underscore',
+		'order!backbone',
+		'order!./entryPoint'
 	],
-	callback: function($, _, backbone) {
+
+	callback: function($, bootstrap, _, backbone) {
 		//Remove our helper libs from the global namespace
 		$.noConflict();
 		_.noConflict();

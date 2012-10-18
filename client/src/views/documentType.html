@@ -1,0 +1,15 @@
+<div class="document-type hero-unit">
+	<input type="text" class="textbox-main" data-bind="value: name" />
+
+	<fieldset>
+		<legend>Fields</legend>
+		<div data-bind="template: {name: 'propertyList', templateUrl: 'src/views', data: propertiesModel}">
+		</div>
+	</fieldset>
+
+	<div class="btn-group">
+	    <button type="button" class="btn btn-primary" href="#" data-bind="click: addProperty">+</button>
+	    <button type="button" class="btn btn-primary" href="#" data-bind="click: save">Save</button>
+	</div>
+​</div>
+<!-- <div data-bind="template: {name: 'editor', templateUrl: 'src/views', data: editorModel}"></div> -->

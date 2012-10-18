@@ -1,0 +1,29 @@
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+		<div class="container-fluid">
+			<a class="brand" href="#">Selected Site Name Here</a>
+		</div>
+	</div>
+</div>
+<div class="container-fluid">
+	<div class="row-fluid" id="content">
+		<div class="span3">
+			<div class="well sidebar-nav">
+				<ul class="nav nav-list">
+					<li class="nav-header">
+						<span>Document Types</span>
+						<button class="btn btn-primary btn-nav-header"
+							data-bind="click: createDocumentType">+</button>
+					</li>
+					<!-- ko foreach: documentTypes -->
+        			<li data-bind="css: { active: $parent.documentType.model() === $data.model() }">
+        				<a href="#" data-bind="text: name, click: $parent.selectDocumentType"></a>
+        			</li>
+    				<!-- /ko -->
+				</ul>
+			</div>
+		</div>
+		<div class="span9" data-bind="template: {name: 'documentType', templateUrl: 'src/views', data: documentType}">
+		</div>
+	</div>
+</div>

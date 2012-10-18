@@ -6,17 +6,23 @@ define('EventBus', ['underscore', 'backbone'], function(_, backbone) {
     return eventBus;
 });
 
-define('ApplicationContext', ['./lib/model'], function(model) {
-    return {
-        documentType: new model.DocumentType('test')
-    };
+define('ApplicationContext', ['backbone', './src/model'], function(backbone, model) {
+    var ApplicationContext = backbone.Model.extend({
+    	initialize: function() {
+    		var defaultDocumentType = new model.DocumentType({name: 'New Document Type'});
+    		this.set('documentType', defaultDocumentType);
+    		this.set('documentTypes', new model.DocumentTypeCollection([defaultDocumentType]));
+    	}
+    });
+
+    return new ApplicationContext();
 });
 
 define([
 		'jquery',
 		'EventBus',
-		'./lib/views/main',
-		'./lib/commands/documentType'
+		'./src/views/main',
+		'./src/commands/documentType'
 	], 
 	function($, eventBus, MainViewModel, DocumentTypeCommandMap) {
 		$(function() {
