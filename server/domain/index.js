@@ -46,6 +46,19 @@ DocumentTypeManager.prototype.read = function(documentTypeName, onComplete) {
 	});
 };
 
+DocumentTypeManager.prototype.readAll = function(documentTypeName, onComplete) {
+	documentTypeRepo.readAll(documentTypeName, function(error, result) {
+		if (error) {
+			return onComplete(error);
+		} else if (!result) {
+			error = new errors.ResourceNotFound(util.format(documentTypeNotFound, documentTypeName));
+			return onComplete(error);
+		} else {
+			return onComplete(null, result);
+		}
+	});
+};
+
 DocumentTypeManager.prototype.update = function(documentTypeName, documentType, onComplete) {
 	var validationError = validators.DocumentType(documentType);
 	if (validationError) {

@@ -16,7 +16,9 @@ var redisPersistence = module.exports = {},
 
 //Document Types
 documentTypes.create = function(name, documentType, callback) {
-	redisClient.SET(name, JSON.stringify(documentType), function(error, result) {
+	var body = {};
+	body[name] = JSON.stringify(documentType);
+	redisClient.HMSET('DocumentTypes', body, function(error, result) {
 		if (error) {
 			return callback(error);
 		} else {
@@ -26,17 +28,35 @@ documentTypes.create = function(name, documentType, callback) {
 };
 
 documentTypes.read = function(name, callback) {
-	redisClient.GET(name, function(error, result) {
+	redisClient.HMGET('DocumentTypes', name, function(error, result) {
 		if (error) {
 			return callback(error);
+		} else if (!result.length || !result[0]) {
+			return callback(null, null);
 		} else {
 			return callback(null, JSON.parse(result));
 		}
 	});
 };
 
+documentTypes.readAll = function(name, callback) {
+	redisClient.HGETALL('DocumentTypes', function(error, result) {
+		var items = [], key;
+		if (error) {
+			return callback(error);
+		} else {
+			for (key in result) {
+				items.push(JSON.parse(result[key]));
+			}
+			return callback(null, items);
+		}
+	});
+};
+
 documentTypes.update = function(name, documentType, callback) {
-	redisClient.SET(name, JSON.stringify(documentType), function(error, result) {
+	var body = {};
+	body[name] = JSON.stringify(documentType);
+	redisClient.HMSET('DocumentTypes', body, function(error, result) {
 		if (error) {
 			return callback(error);
 		} else {
@@ -46,7 +66,7 @@ documentTypes.update = function(name, documentType, callback) {
 };
 
 documentTypes.del = function(name, callback) {
-	redisClient.DEL(name, callback);
+	redisClient.HDEL('DocumentTypes', name, callback);
 };
 
 //Documents
@@ -64,6 +84,10 @@ documents.read = function(name, callback) {
 	redisClient.GET(name, function(error, result) {
 		callback(error, JSON.parse(result));
 	});
+};
+
+documents.readAll = function(name, callback) {
+	callback('Not implemented');
 };
 
 documents.update = function(name, document, callback) {
@@ -93,6 +117,10 @@ templates.create = function(name, template, callback) {
 
 templates.read = function(name, callback) {
 	redisClient.GET(name, callback);
+};
+
+templates.readAll = function(name, callback) {
+	callback('Not implemented');
 };
 
 templates.update = function(name, template, callback) {

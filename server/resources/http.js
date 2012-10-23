@@ -110,6 +110,10 @@ httpResources.initialize = function(port) {
 		documentTypeManager.del(req.params.documentType, deleteHandler(res));
 	});
 
+	app.get('/documentTypes', function(req, res) {
+		documentTypeManager.readAll(req.params.documentType, getHandler(res));
+	});
+
 	//Documents
 	var documentRoute = '/documentTypes/:documentType/documents/:document';
 

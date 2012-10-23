@@ -15,7 +15,7 @@ var linkImplementation = function(source, target, expectedFuncs) {
 	}
 };
 
-var crud = ['create', 'read', 'update', 'del'];
+var crud = ['create', 'read', 'readAll', 'update', 'del'];
 
 module.exports = {
 	DocumentTypeRepo: function(impl) {
