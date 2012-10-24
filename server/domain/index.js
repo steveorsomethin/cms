@@ -46,8 +46,8 @@ DocumentTypeManager.prototype.read = function(documentTypeName, onComplete) {
 	});
 };
 
-DocumentTypeManager.prototype.readAll = function(documentTypeName, onComplete) {
-	documentTypeRepo.readAll(documentTypeName, function(error, result) {
+DocumentTypeManager.prototype.readAll = function(onComplete) {
+	documentTypeRepo.readAll(function(error, result) {
 		if (error) {
 			return onComplete(error);
 		} else if (!result) {

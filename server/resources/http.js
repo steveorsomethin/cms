@@ -111,7 +111,7 @@ httpResources.initialize = function(port) {
 	});
 
 	app.get('/documentTypes', function(req, res) {
-		documentTypeManager.readAll(req.params.documentType, getHandler(res));
+		documentTypeManager.readAll(getHandler(res));
 	});
 
 	//Documents
@@ -150,6 +150,10 @@ httpResources.initialize = function(port) {
 
 	app.del(templateRoute, function(req, res) {
 		templateRepo.del(req.params.template, deleteHandler(res));
+	});
+
+	app.get('/templates', function(req, res) {
+		templateRepo.readAll(getHandler(res));
 	});
 
 	app.post('/dt/:name', function(req, res) {

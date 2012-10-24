@@ -39,7 +39,7 @@ documentTypes.read = function(name, callback) {
 	});
 };
 
-documentTypes.readAll = function(name, callback) {
+documentTypes.readAll = function(callback) {
 	redisClient.HGETALL('DocumentTypes', function(error, result) {
 		var items = [], key;
 		if (error) {
@@ -106,7 +106,9 @@ documents.del = function(name, callback) {
 
 //Templates
 templates.create = function(name, template, callback) {
-	redisClient.SET(name, template, function(error, result) {
+	var body = {};
+	body[name] = template;
+	redisClient.HMSET('Templates', body, function(error, result) {
 		if (error) {
 			return callback(error);
 		} else {
@@ -116,15 +118,35 @@ templates.create = function(name, template, callback) {
 };
 
 templates.read = function(name, callback) {
-	redisClient.GET(name, callback);
+	redisClient.HMGET('Templates', name, function(error, result) {
+		if (error) {
+			return callback(error);
+		} else if (!result.length || !result[0]) {
+			return callback(null, null);
+		} else {
+			return callback(null, result[0]);
+		}
+	});
 };
 
-templates.readAll = function(name, callback) {
-	callback('Not implemented');
+templates.readAll = function(callback) {
+	redisClient.HGETALL('Templates', function(error, result) {
+		var items = [], key;
+		if (error) {
+			return callback(error);
+		} else {
+			for (key in result) {
+				items.push(result[key]);
+			}
+			return callback(null, items);
+		}
+	});
 };
 
 templates.update = function(name, template, callback) {
-	redisClient.SET(name, template, function(error, result) {
+	var body = {};
+	body[name] = template;
+	redisClient.HMSET('Templates', body, function(error, result) {
 		if (error) {
 			return callback(error);
 		} else {
@@ -134,7 +156,7 @@ templates.update = function(name, template, callback) {
 };
 
 templates.del = function(name, callback) {
-	redisClient.DEL(name, callback);
+	redisClient.HDEL('Templates', name, callback);
 };
 
 //Site Maps
