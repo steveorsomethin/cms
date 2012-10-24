@@ -1,19 +1,22 @@
 'use strict';
 
 define([
+		'underscore',
 		'backbone',
 		'knockout',
 		'knockback',
-		'ApplicationContext',
 		'./documentTypeForm',
 		'./editor.js',
+		'../model',
+		'ApplicationContext',
 		'EventBus'
 	], 
-	function(backbone, ko, kb, applicationContext, DocumentTypeFormViewModel, EditorViewModel, eventBus) {
+	function(_, backbone, ko, kb, DocumentTypeFormViewModel, EditorViewModel, model, applicationContext, eventBus) {
 		var refreshModel = function(model) {
 			this.model(model);
 			this.editorModel.model(model);
 			this.formModel.model(model);
+			//TODO: Give control to the child model in how to handle its own children
 			this.formModel.propertiesModel.model(model);
 		};
 
@@ -29,30 +32,35 @@ define([
 				kb.ViewModel.prototype.constructor.apply(this, arguments);
 				addHandlers.call(this);
 				refreshModel.call(this, model);
+
 				this.views = {
-					form: new backbone.Model({view: 'documentTypeForm', model: this.formModel, url: 'src/views'}),
-					editor: new backbone.Model({template: 'editor', model: this.editorModel, url: 'src/views'})
+					form: {view: 'documentTypeForm', model: this.formModel, url: 'src/views'},
+					editor: {view: 'editor', model: this.editorModel, url: 'src/views'}
 				};
+
+				this.active = ko.observable(this.views.form);
 			},
 
-			activeView: function(viewModel) { 
-				console.log(arguments);
-				var test = viewModel._activeView();
-				return test; 
-			},
-			//activeModel: function() return ''
-			_activeView: ko.observable('documentTypeForm'),
-			_activeModel: ko.observable(),
-
-			editorModel: new EditorViewModel(),
 			formModel: new DocumentTypeFormViewModel(),
+			editorModel: new EditorViewModel(),
 
 			setFormView: function() {
-				
+				//TODO: Ensure JSON is valid
+				var documentType = JSON.parse(this.editorModel.editor.getValue()),
+					propertyPairs = _.pairs(documentType.properties),
+					propertyArray = _.map(propertyPairs, function(pair) {
+						pair[1].name = pair[0];
+						return new model.Property(pair[1]);
+					});
+
+				this.editorModel.model().get('properties').reset(propertyArray);
+				this.editorModel.model().set(_.omit(documentType, 'properties'));
+
+				this.active(this.views.form);
 			},
 
 			setSourceView: function() {
-				
+				this.active(this.views.editor);
 			}
 		});
 	}

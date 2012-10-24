@@ -3,11 +3,11 @@
 define([
 		'knockout',
 		'knockback',
-		'ApplicationContext',
 		'./propertyList',
+		'ApplicationContext',
 		'EventBus'
 	], 
-	function(ko, kb, applicationContext, PropertyListViewModel, eventBus) {
+	function(ko, kb, PropertyListViewModel, applicationContext, eventBus) {
 		return kb.ViewModel.extend({
 			propertiesModel: new PropertyListViewModel(),
 

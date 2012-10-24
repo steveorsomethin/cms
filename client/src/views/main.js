@@ -4,13 +4,13 @@ define([
 		'jquery',
 		'knockback',
 		'knockout',
-		'ApplicationContext',
-		'EventBus',
 		'./documentType',
 		'text!./main.html',
-		'../model'
+		'../model',
+		'ApplicationContext',
+		'EventBus'
 	],
-	function($, kb, ko, applicationContext, eventBus, DocumentTypeViewModel, mainHtml, model) {
+	function($, kb, ko, DocumentTypeViewModel, mainHtml, model, applicationContext, eventBus) {
 		var MainViewModel =  kb.ViewModel.extend({
 			documentTypes: new kb.CollectionObservable(applicationContext.get('documentTypes')),
 		    documentType: new DocumentTypeViewModel(applicationContext.get('documentType')),
