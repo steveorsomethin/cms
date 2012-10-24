@@ -1,9 +1,9 @@
 'use strict';
 
-define(['backbone'], function(backbone) {
+define(['underscore', 'backbone'], function(_, backbone) {
 	var Property = backbone.Model.extend({
 		defaults: {
-			name: 'Field Name', //TODO: Localize, move to view
+			name: '',
 		    type: 'string',
 		    required: false
 		}
@@ -15,12 +15,12 @@ define(['backbone'], function(backbone) {
 
 	var DocumentType = backbone.Model.extend({
 		initialize: function() {
-			this.set('properties', new PropertyCollection());
+			this.set('properties', new PropertyCollection([new Property()]));
 		},
 
 		toJSON: function() {
 			var i = 0, 
-				json = this.attributes, 
+				json = _.clone(this.attributes),
 				properties = this.get('properties'),
 				property;
 
@@ -30,12 +30,12 @@ define(['backbone'], function(backbone) {
 				json.properties[property.get('name')] = 
 					{type: property.get('type'), required: property.get('required')};
 			}
-
+			
 			return json;
 		},
 
 		defaults: {
-			name: 'New Document Type', //TODO: Localize, move to view
+			name: '',
 		    type: 'object',
 		    additionalProperties: false
 		}

@@ -1,17 +1,20 @@
 'use strict';
 
 define([
+		'backbone',
 		'knockout',
 		'knockback',
 		'ApplicationContext',
-		'./propertyList',
+		'./documentTypeForm',
 		'./editor.js',
 		'EventBus'
 	], 
-	function(ko, kb, applicationContext, PropertyListViewModel, EditorViewModel, eventBus) {
+	function(backbone, ko, kb, applicationContext, DocumentTypeFormViewModel, EditorViewModel, eventBus) {
 		var refreshModel = function(model) {
 			this.model(model);
-			this.propertiesModel.model(model);
+			this.editorModel.model(model);
+			this.formModel.model(model);
+			this.formModel.propertiesModel.model(model);
 		};
 
 		var addHandlers = function() {
@@ -24,20 +27,33 @@ define([
 		return kb.ViewModel.extend({
 			constructor: function(model) {
 				kb.ViewModel.prototype.constructor.apply(this, arguments);
-				addHandlers.call(this)
+				addHandlers.call(this);
 				refreshModel.call(this, model);
+				this.views = {
+					form: new backbone.Model({view: 'documentTypeForm', model: this.formModel, url: 'src/views'}),
+					editor: new backbone.Model({template: 'editor', model: this.editorModel, url: 'src/views'})
+				};
 			},
 
-			editorModel: new EditorViewModel(),
-			propertiesModel: new PropertyListViewModel(),
+			activeView: function(viewModel) { 
+				console.log(arguments);
+				var test = viewModel._activeView();
+				return test; 
+			},
+			//activeModel: function() return ''
+			_activeView: ko.observable('documentTypeForm'),
+			_activeModel: ko.observable(),
 
-		    addProperty: function() {
-		    	eventBus.trigger('addProperty', this.model().get('properties'));
-		    },
-		    
-		    save: function() {
-		        console.log(this.model().toJSON());
-		    }
+			editorModel: new EditorViewModel(),
+			formModel: new DocumentTypeFormViewModel(),
+
+			setFormView: function() {
+				
+			},
+
+			setSourceView: function() {
+				
+			}
 		});
 	}
 );

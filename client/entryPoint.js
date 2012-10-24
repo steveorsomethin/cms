@@ -9,6 +9,7 @@ define('EventBus', ['underscore', 'backbone'], function(_, backbone) {
 define('ApplicationContext', ['backbone', './src/model'], function(backbone, model) {
     var ApplicationContext = backbone.Model.extend({
     	initialize: function() {
+    		//TODO: localize, move to view
     		var defaultDocumentType = new model.DocumentType({name: 'New Document Type'});
     		this.set('documentType', defaultDocumentType);
     		this.set('documentTypes', new model.DocumentTypeCollection([defaultDocumentType]));
@@ -29,6 +30,8 @@ define([
 			var documentTypeMap = new DocumentTypeCommandMap(eventBus);
 			MainViewModel.start($('body'));
 
+			eventBus.trigger('loadDocumentTypes');
+			
 			console.log('Application started');
 		});
 	}
