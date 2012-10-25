@@ -1,7 +1,9 @@
 'use strict';
 
 define(['underscore', 'backbone'], function(_, backbone) {
-	var Property = backbone.Model.extend({
+	var exports = {};
+
+	var Property = exports.Property = backbone.Model.extend({
 		defaults: {
 			name: '',
 		    type: 'string',
@@ -9,13 +11,19 @@ define(['underscore', 'backbone'], function(_, backbone) {
 		}
 	});
 
-	var PropertyCollection = backbone.Collection.extend({
+	var PropertyCollection = exports.PropertyCollection = backbone.Collection.extend({
 		model: Property
 	});
 
-	var DocumentType = backbone.Model.extend({
+	var DocumentType = exports.DocumentType = backbone.Model.extend({
 		initialize: function() {
-			this.set('properties', new PropertyCollection([new Property()]));
+			var rawProperties = this.get('properties'),
+				pairs = _.pairs(rawProperties),
+				propertyArray = _.map(pairs, function(pair) {
+					pair[1].name = pair[0];
+					return new Property(pair[1]);
+				});
+			this.set('properties', new PropertyCollection(propertyArray));
 		},
 
 		toJSON: function() {
@@ -41,14 +49,21 @@ define(['underscore', 'backbone'], function(_, backbone) {
 		}
 	});
 
-	var DocumentTypeCollection = backbone.Collection.extend({
+	var DocumentTypeCollection = exports.DocumentTypeCollection = backbone.Collection.extend({
 		model: DocumentType
 	});
 
-	return {
-		Property: Property,
-		PropertyCollection: PropertyCollection,
-		DocumentType: DocumentType,
-		DocumentTypeCollection: DocumentTypeCollection
-	};
+	var Template = exports.Template =  backbone.Model.extend({
+		defaults: {
+			name: '',
+			documentType: '',
+		    body: '<!DOCTYPE html>\n<html>\n	<head>\n	</head>\n	<body>\n 	</body>\n</html>'
+		}
+	});
+
+	var TemplateCollection = exports.TemplateCollection = backbone.Collection.extend({
+		model: Template
+	});
+
+	return exports;
 });

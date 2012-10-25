@@ -107,7 +107,7 @@ documents.del = function(name, callback) {
 //Templates
 templates.create = function(name, template, callback) {
 	var body = {};
-	body[name] = template;
+	body[name] = JSON.stringify(template);
 	redisClient.HMSET('Templates', body, function(error, result) {
 		if (error) {
 			return callback(error);
@@ -124,7 +124,7 @@ templates.read = function(name, callback) {
 		} else if (!result.length || !result[0]) {
 			return callback(null, null);
 		} else {
-			return callback(null, result[0]);
+			return callback(null, JSON.parse(result));
 		}
 	});
 };
@@ -136,7 +136,7 @@ templates.readAll = function(callback) {
 			return callback(error);
 		} else {
 			for (key in result) {
-				items.push(result[key]);
+				items.push(JSON.parse(result[key]));
 			}
 			return callback(null, items);
 		}
@@ -145,7 +145,7 @@ templates.readAll = function(callback) {
 
 templates.update = function(name, template, callback) {
 	var body = {};
-	body[name] = template;
+	body[name] = JSON.stringify(template);
 	redisClient.HMSET('Templates', body, function(error, result) {
 		if (error) {
 			return callback(error);

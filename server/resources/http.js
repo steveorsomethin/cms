@@ -204,7 +204,7 @@ httpResources.initialize = function(port) {
 			},
 			function(document, template, callback) {
 				var dust = require('dustjs-linkedin');
-				var compiled = dust.compile(template, 'test');
+				var compiled = dust.compile(template.body, 'test');
 				dust.loadSource(compiled);
 				dust.render('test', document, callback);
 			}

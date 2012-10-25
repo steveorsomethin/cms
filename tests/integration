@@ -484,9 +484,12 @@ var tests = {
 	createTemplateSuccess: function(callback) {
 		var name = this.name,
 			template = fs.readFileSync(__dirname + '/mock/templates/valid.dust').toString(),
-			documentType = require('./mock/documentTypes/valid.json'),
-			expected = expectResponse(name, CREATED, callback, function(body) {
-				return body === template;
+			templateJson = require('./mock/templates/valid.json'),
+			documentType = require('./mock/documentTypes/valid.json');
+
+		templateJson.body = template;
+		var expected = expectResponse(name, CREATED, callback, function(body) {
+				return body === JSON.stringify(templateJson);
 			});
 
 		async.waterfall([
@@ -500,7 +503,7 @@ var tests = {
 				});
 			},
 			function(createdDocumentType, callback) {
-				createTemplate(name + 'Template', name, template, callback);
+				createTemplate(name + 'Template', name, templateJson, callback);
 			}
 		], expected);
 	},
@@ -541,9 +544,12 @@ var tests = {
 	readTemplateSuccess: function(callback) {
 		var name = this.name,
 			template = fs.readFileSync(__dirname + '/mock/templates/valid.dust').toString(),
-			documentType = require('./mock/documentTypes/valid.json'),
-			expected = expectResponse(name, OK, callback, function(body) {
-				return JSON.parse(body) === template;
+			templateJson = require('./mock/templates/valid.json'),
+			documentType = require('./mock/documentTypes/valid.json');
+
+		templateJson.body = template;
+		var expected = expectResponse(name, OK, callback, function(body) {
+				return body === JSON.stringify(templateJson);
 			});
 
 		async.waterfall([
@@ -557,7 +563,7 @@ var tests = {
 				});
 			},
 			function(createdDocumentType, callback) {
-				createTemplate(name + 'Template', name, template, function(error, response, body) {
+				createTemplate(name + 'Template', name, templateJson, function(error, response, body) {
 					if (error) {
 						return callback(error);
 					} else {
