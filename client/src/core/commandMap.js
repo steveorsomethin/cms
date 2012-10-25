@@ -36,20 +36,13 @@ define(['underscore', 'backbone'], function(_, backbone) {
 		// pairs. Callbacks will be bound to the shared event emitter, with `this` set properly.
 		mapCommands: function(events) {
 			if (!(events || (events = getValue(this, 'events')))) return;
-			this.unmapCommands();
+
 			for (var key in events) {
 				var method = events[key];
 				if (!_.isFunction(method)) method = this[events[key]];
 				if (!method) throw new Error('Event "' + events[key] + '" does not exist');
 				this.eventMap.on(key, method);
 			}
-		},
-
-		// Clears all callbacks previously bound to the command map with `delegateEvents`.
-		// You usually don't need to use this, but may wish to if you have multiple
-		// Backbone views attached to the same DOM element.
-		unmapCommands: function() {
-			this.eventMap.off();
 		}
 	};
 
