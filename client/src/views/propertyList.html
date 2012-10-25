@@ -2,8 +2,9 @@
     <li>
         <input type="text" data-bind="value: name, valueUpdate: 'afterkeydown'" placeholder="Enter a name..." />
         <select data-bind="options: $parent.types, value: type"></select>
-        <div class="btn-group" data-toggle="buttons-checkbox">
-            <button type="button" class="btn btn-primary" data-bind="click: $parent.toggleRequired">Required</button>
+        <div class="btn-group">
+            <button type="button" class="btn btn-primary"
+              data-bind="click: $parent.toggleRequired, css: { active: required }">Required</button>
       	</div>
       	<div class="btn-group">
       		<button type="button" class="btn btn-primary" data-bind="click: $parent.removeProperty">X</button>

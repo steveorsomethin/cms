@@ -16,14 +16,26 @@
 							data-bind="click: createDocumentType">+</button>
 					</li>
 					<!-- ko foreach: documentTypes -->
-        			<li data-bind="css: { active: $parent.documentType.model() === $data.model() }">
+        			<li data-bind="css: { active: $parent.active().model.model() === $data.model() }">
         				<a href="#" data-bind="text: name, click: $parent.selectDocumentType"></a>
+        			</li>
+    				<!-- /ko -->
+
+					<li class="nav-header">
+						<span>Templates</span>
+						<button class="btn btn-primary btn-nav-header"
+							data-bind="click: createTemplate">+</button>
+					</li>
+    				<!-- ko foreach: templates -->
+        			<li data-bind="css: { active: $parent.active().model.model() === $data.model() }">
+        				<a href="#" data-bind="text: name, click: $parent.selectTemplate"></a>
         			</li>
     				<!-- /ko -->
 				</ul>
 			</div>
 		</div>
-		<div class="span9" data-bind="template: {name: 'documentType', templateUrl: 'src/views', data: documentType}">
+		<div class="span9" 
+			data-bind="template: {name: active().view, templateUrl: active().url, data: active().model}">
 		</div>
 	</div>
 </div>

@@ -5,15 +5,43 @@ define([
 		'knockback',
 		'knockout',
 		'./documentType',
+		'./template',
 		'text!./main.html',
 		'../model',
 		'ApplicationContext',
 		'EventBus'
 	],
-	function($, kb, ko, DocumentTypeViewModel, mainHtml, model, applicationContext, eventBus) {
+	function($, kb, ko, DocumentTypeViewModel, TemplateViewModel, mainHtml, model, applicationContext, eventBus) {
+		var addHandlers = function() {
+			var self = this;
+
+			//TODO: These should probably be handled elsewhere
+			eventBus.on('selectDocumentType', function() {
+				self.active(self.views.documentType);
+			});
+
+			eventBus.on('selectTemplate', function() {
+				self.active(self.views.template);
+			});
+		};
+
 		var MainViewModel =  kb.ViewModel.extend({
-			documentTypes: new kb.CollectionObservable(applicationContext.get('documentTypes')),
-		    documentType: new DocumentTypeViewModel(applicationContext.get('documentType')),
+			constructor: function(model) {
+				kb.ViewModel.prototype.constructor.apply(this, arguments);
+
+				this.documentTypesModel = new kb.CollectionObservable(applicationContext.get('documentTypes'));
+			    this.documentTypeModel = new DocumentTypeViewModel(applicationContext.get('documentType'));
+			    this.templateModel = new TemplateViewModel(applicationContext.get('template'));
+
+				this.views = {
+					documentType: {view: 'documentType', model: this.documentTypeModel, url: 'src/views'},
+					template: {view: 'template', model: this.templateModel, url: 'src/views'}
+				};
+
+				this.active = ko.observable(this.views.documentType);
+
+				addHandlers.call(this);
+			},
 
 		    createDocumentType: function() {
 		    	eventBus.trigger('createDocumentType');
@@ -21,6 +49,14 @@ define([
 
 		    selectDocumentType: function(documentType) {
 		    	eventBus.trigger('selectDocumentType', documentType.model());
+		    },
+
+		    createTemplate: function() {
+		    	eventBus.trigger('createTemplate');
+		    },
+
+		    selectTemplate: function(template) {
+		    	eventBus.trigger('selectTemplate', template.model());
 		    }
 		}, {
 			/*

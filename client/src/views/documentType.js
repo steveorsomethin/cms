@@ -30,8 +30,9 @@ define([
 		return kb.ViewModel.extend({
 			constructor: function(model) {
 				kb.ViewModel.prototype.constructor.apply(this, arguments);
-				addHandlers.call(this);
-				refreshModel.call(this, model);
+
+				this.formModel = new DocumentTypeFormViewModel();
+				this.editorModel = new EditorViewModel();
 
 				this.views = {
 					form: {view: 'documentTypeForm', model: this.formModel, url: 'src/views'},
@@ -39,11 +40,11 @@ define([
 				};
 
 				this.active = ko.observable(this.views.form);
+				
+				addHandlers.call(this);
+				refreshModel.call(this, model);
 			},
-
-			formModel: new DocumentTypeFormViewModel(),
-			editorModel: new EditorViewModel(),
-
+			
 			setFormView: function() {
 				//TODO: Ensure JSON is valid
 				var documentType = JSON.parse(this.editorModel.editor.getValue()),

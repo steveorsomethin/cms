@@ -9,8 +9,12 @@ define([
 	], 
 	function(ko, kb, PropertyListViewModel, applicationContext, eventBus) {
 		return kb.ViewModel.extend({
-			propertiesModel: new PropertyListViewModel(),
+			constructor: function(model) {
+				kb.ViewModel.prototype.constructor.apply(this, arguments);
 
+				this.propertiesModel = new PropertyListViewModel();
+			},
+			
 		    addProperty: function() {
 		    	eventBus.trigger('addProperty');
 		    },

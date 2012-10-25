@@ -1,0 +1,16 @@
+<div class="document-type hero-unit">
+
+<input type="text" class="textbox-main span12"
+	data-bind="value: name, valueUpdate: 'afterkeydown'" />
+
+<input type="text" class="textbox-main span12"
+	data-bind="value: documentType, valueUpdate: 'afterkeydown'" />
+
+<div class="btn-group">
+    <button type="button" class="btn btn-primary" href="#" data-bind="click: save">Save</button>
+</div>
+
+<div data-bind="template: {name: 'editor', templateUrl: 'src/views', data: editorModel}">
+</div>
+
+</div>
