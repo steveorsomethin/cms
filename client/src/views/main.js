@@ -43,21 +43,21 @@ define([
 				addHandlers.call(this);
 			},
 
-		    createDocumentType: function() {
-		    	eventBus.trigger('createDocumentType');
-		    },
+			createDocumentType: function() {
+				eventBus.trigger('createDocumentType');
+			},
 
-		    selectDocumentType: function(documentType) {
-		    	eventBus.trigger('selectDocumentType', documentType.model());
-		    },
+			selectDocumentType: function(documentType) {
+				eventBus.trigger('selectDocumentType', documentType.model());
+			},
 
-		    createTemplate: function() {
-		    	eventBus.trigger('createTemplate');
-		    },
+			createTemplate: function() {
+				eventBus.trigger('createTemplate');
+			},
 
-		    selectTemplate: function(template) {
-		    	eventBus.trigger('selectTemplate', template.model());
-		    }
+			selectTemplate: function(template) {
+				eventBus.trigger('selectTemplate', template.model());
+			}
 		}, {
 			/*
 			* Start should be called from the entry point of the application.

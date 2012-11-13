@@ -6,8 +6,8 @@ define(['underscore', 'backbone'], function(_, backbone) {
 	var Property = exports.Property = backbone.Model.extend({
 		defaults: {
 			name: '',
-		    type: 'string',
-		    required: false
+			type: 'string',
+			required: false
 		}
 	});
 

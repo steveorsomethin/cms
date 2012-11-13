@@ -1,5 +1,5 @@
 <div class="navbar navbar-inverse navbar-fixed-top">
-    <div class="navbar-inner">
+	<div class="navbar-inner">
 		<div class="container-fluid">
 			<a class="brand" href="#">Selected Site Name Here</a>
 		</div>
@@ -16,21 +16,21 @@
 							data-bind="click: createDocumentType">+</button>
 					</li>
 					<!-- ko foreach: documentTypes -->
-        			<li data-bind="css: { active: $parent.active().model.model() === $data.model() }">
-        				<a href="#" data-bind="text: name, click: $parent.selectDocumentType"></a>
-        			</li>
-    				<!-- /ko -->
+					<li data-bind="css: { active: $parent.active().model.model() === $data.model() }">
+						<a href="#" data-bind="text: name, click: $parent.selectDocumentType"></a>
+					</li>
+					<!-- /ko -->
 
 					<li class="nav-header">
 						<span>Templates</span>
 						<button class="btn btn-primary btn-nav-header"
 							data-bind="click: createTemplate">+</button>
 					</li>
-    				<!-- ko foreach: templates -->
-        			<li data-bind="css: { active: $parent.active().model.model() === $data.model() }">
-        				<a href="#" data-bind="text: name, click: $parent.selectTemplate"></a>
-        			</li>
-    				<!-- /ko -->
+					<!-- ko foreach: templates -->
+					<li data-bind="css: { active: $parent.active().model.model() === $data.model() }">
+						<a href="#" data-bind="text: name, click: $parent.selectTemplate"></a>
+					</li>
+					<!-- /ko -->
 				</ul>
 			</div>
 		</div>

@@ -1,34 +1,35 @@
 {
-  "name": "cms",
-  "version": "0.0.1",
-  "description": "CMS core",
-  "homepage": "https://github.com/steveorsomethin/cms",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/steveorsomethin/cms"
-  },
-  "contributors": [
-    {
-      "name": "Steve McGuire",
-      "url": "https://github.com/steveorsomethin"
-    },
-    {
-      "name": "Kennie Davis"
-    }
-  ],
-  "dependencies": {
-    "express": "2.x.x",
-    "underscore": "1.x.x",
-    "async": "0.x.x",
-    "hiredis": "0.x.x",
-    "redis": "0.x.x",
-    "JSV": "4.x.x",
-    "dustjs-linkedin": "1.x.x",
-    "dustjs-helpers": "1.x.x"
-  },
-  "devDependencies": {
-    "node-uuid": "1.x.x",
-    "nodelint": "0.x.x",
-    "request": "2.x.x"
-  }
+	"name": "cms",
+	"version": "0.0.1",
+	"description": "CMS core",
+	"homepage": "https://github.com/steveorsomethin/cms",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/steveorsomethin/cms"
+	},
+	"contributors": [
+		{
+			"name": "Steve McGuire",
+			"url": "https://github.com/steveorsomethin"
+		},
+		{
+			"name": "Kennie Davis"
+		}
+	],
+	"dependencies": {
+		"express": "2.x.x",
+		"underscore": "1.x.x",
+		"async": "0.x.x",
+		"azure": "0.x.x",
+		"hiredis": "0.x.x",
+		"redis": "0.x.x",
+		"JSV": "4.x.x",
+		"dustjs-linkedin": "1.x.x",
+		"dustjs-helpers": "1.x.x"
+	},
+	"devDependencies": {
+		"node-uuid": "1.x.x",
+		"nodelint": "0.x.x",
+		"request": "2.x.x"
+	}
 }
