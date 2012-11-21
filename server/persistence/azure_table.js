@@ -18,114 +18,80 @@ var azureTablePersistence = module.exports = {},
 
 //Document Types
 documentTypes.create = function(name, documentType, callback) {
-	callback(null);
+	callback('Not implemented');
 };
 
 documentTypes.read = function(name, callback) {
-	callback(null);
+	callback('Not implemented');
 };
 
 documentTypes.readAll = function(callback) {
-	callback(null);
+	callback('Not implemented');
 };
 
 documentTypes.update = function(name, documentType, callback) {
-	callback(null);
+	callback('Not implemented');
 };
 
 documentTypes.del = function(name, callback) {
-	callback(null);
+	callback('Not implemented');
 };
 
 //Documents
 documents.create = function(name, document, callback) {
-	callback(null);
+	callback('Not implemented');
 };
 
 documents.read = function(name, callback) {
-	callback(null);
+	callback('Not implemented');
 };
 
 documents.readAll = function(name, callback) {
-	callback(null);
+	callback('Not implemented');
 };
 
 documents.update = function(name, document, callback) {
-	callback(null);
+	callback('Not implemented');
 };
 
 documents.del = function(name, callback) {
-	redisClient.DEL(name, callback);
+	callback('Not implemented');
 };
 
 //Templates
 templates.create = function(name, template, callback) {
-	var body = {};
-	body[name] = JSON.stringify(template);
-	redisClient.HMSET('Templates', body, function(error, result) {
-		if (error) {
-			return callback(error);
-		} else {
-			return callback(null, template);
-		}
-	});
+	callback('Not implemented');
 };
 
 templates.read = function(name, callback) {
-	redisClient.HMGET('Templates', name, function(error, result) {
-		if (error) {
-			return callback(error);
-		} else if (!result.length || !result[0]) {
-			return callback(null, null);
-		} else {
-			return callback(null, JSON.parse(result));
-		}
-	});
+	callback('Not implemented');
 };
 
 templates.readAll = function(callback) {
-	redisClient.HGETALL('Templates', function(error, result) {
-		var items = [], key;
-		if (error) {
-			return callback(error);
-		} else {
-			for (key in result) {
-				items.push(JSON.parse(result[key]));
-			}
-			return callback(null, items);
-		}
-	});
+	callback('Not implemented');
 };
 
 templates.update = function(name, template, callback) {
-	var body = {};
-	body[name] = JSON.stringify(template);
-	redisClient.HMSET('Templates', body, function(error, result) {
-		if (error) {
-			return callback(error);
-		} else {
-			return callback(null, template);
-		}
-	});
+	callback('Not implemented');
 };
 
 templates.del = function(name, callback) {
-	redisClient.HDEL('Templates', name, callback);
+	callback('Not implemented');
 };
 
 //Site Maps
 siteMaps.create = function(name, siteMap, callback) {
-	redisClient.SET(name, JSON.stringify(siteMap), callback);
+	callback('Not implemented');
 };
 
 siteMaps.read = function(name, callback) {
-	redisClient.GET(name, callback);
+	callback('Not implemented');
 };
 
 siteMaps.update = function(name, siteMap, callback) {
-	redisClient.SET(name, siteMap, callback);
+	callback('Not implemented');
 };
 
 siteMaps.del = function(name, callback) {
-	redisClient.DEL(name, callback);
+	callback('Not implemented');
 };
