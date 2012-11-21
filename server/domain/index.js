@@ -4,17 +4,19 @@
 
 var util = require('util'),
 	async = require('async'),
+	uuid = require('node-uuid'),
 	errors = require('../errors'),
 	model = require('./model'),
 	validators = model.validators,
 	persistence = require('../persistence'),
-	redisPersistence = require('../persistence/redis');
+	redisPersistence = require('../persistence/redis'),
+	rethinkdbPersistence = require('../persistence/rethinkdb');
 
 var documentTypeNotFound = 'DocumentType with name %s not found.',
 	documentNotFound = 'Document with name %s not found.';
 
-var documentTypeRepo = new persistence.DocumentTypeRepo(redisPersistence.documentTypes),
-	documentRepo = new persistence.DocumentRepo(redisPersistence.documents),
+var documentTypeRepo = new persistence.DocumentTypeRepo(rethinkdbPersistence.documentTypes),
+	documentRepo = new persistence.DocumentRepo(rethinkdbPersistence.documents),
 	templateRepo = new persistence.TemplateRepo(redisPersistence.templates);
 
 var domainManagers = module.exports = {};
@@ -26,6 +28,7 @@ var DocumentTypeManager = domainManagers.DocumentTypeManager = function() {
 
 DocumentTypeManager.prototype.create = function(documentTypeName, documentType, onComplete) {
 	var validationError = validators.DocumentType(documentType);
+	documentType.id = documentType.name;
 	if (validationError) {
 		return onComplete(validationError);
 	} else {
@@ -61,6 +64,7 @@ DocumentTypeManager.prototype.readAll = function(onComplete) {
 
 DocumentTypeManager.prototype.update = function(documentTypeName, documentType, onComplete) {
 	var validationError = validators.DocumentType(documentType);
+	documentType.id = documentType.name;
 	if (validationError) {
 		return onComplete(validationError);
 	} else {
@@ -80,7 +84,13 @@ var DocumentManager = domainManagers.DocumentManager = function() {
 var preSaveDocument = function(documentTypeName, document, callback) {
 	async.waterfall([
 		function(callback) {
-			documentTypeRepo.read(documentTypeName, callback);
+			documentTypeRepo.read(documentTypeName, function(error, documentType) {
+				if (error) {
+					callback(error);
+				} else {
+					callback(null, documentType);
+				}
+			});
 		},
 
 		function(documentType, callback) {
@@ -129,6 +139,10 @@ DocumentManager.prototype.read = function(documentTypeName, documentName, onComp
 			return onComplete(null, result);
 		}
 	});
+};
+
+DocumentManager.prototype.filter = function(filter, tag, onComplete) {
+	documentRepo.filter(filter, tag, onComplete); //TODO: Fill this out
 };
 
 DocumentManager.prototype.update = function(documentTypeName, documentName, document, onComplete) {
