@@ -27,6 +27,10 @@ documentTypes.create = function(name, documentType, callback) {
 	});
 };
 
+documentTypes.filter = function(filter, callback) {
+	callback('Not implemented');
+};
+
 documentTypes.read = function(name, callback) {
 	redisClient.HMGET('DocumentTypes', name, function(error, result) {
 		if (error) {
@@ -80,6 +84,10 @@ documents.create = function(name, document, callback) {
 	});
 };
 
+documents.filter = function(filter, callback) {
+	callback('Not implemented');
+};
+
 documents.read = function(name, callback) {
 	redisClient.GET(name, function(error, result) {
 		callback(error, JSON.parse(result));
@@ -115,6 +123,10 @@ templates.create = function(name, template, callback) {
 			return callback(null, template);
 		}
 	});
+};
+
+templates.filter = function(filter, callback) {
+	callback('Not implemented');
 };
 
 templates.read = function(name, callback) {
