@@ -23,6 +23,12 @@ define(['underscore', 'backbone'], function(_, backbone) {
 					pair[1].name = pair[0];
 					return new Property(pair[1]);
 				});
+
+			this.on('change:name', function() {
+				this.set('id', this.get('name'));
+			});
+			this.trigger('change:name');
+			
 			this.set('properties', new PropertyCollection(propertyArray));
 		},
 
