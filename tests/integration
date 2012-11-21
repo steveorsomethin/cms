@@ -5,11 +5,17 @@ var util = require('util'),
 	fs = require('fs'),
 	uuid = require('node-uuid'),
 	async = require('async'),
-	request = require('request');
+	request = require('request'),
+	_ = require('underscore');
 
-var baseUrl = 'http://localhost:8080',
+var baseUrl = 'http://localhost:8088',
 	uuidRegex = /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/g,
-	uuidReplacement = '00000000-0000-0000-0000-000000000000';
+	uuidReplacement = '00000000-0000-0000-0000-000000000000',
+	schemaUriRegex = /"schemaUri":"urn:[a-zA-Z0-9]+#/g,
+	schemaUriReplacement = '"schemaUri":"urn:SCHEMAURIPLACEHOLDER#',
+	idRegex = /"(id|name)":?"[a-zA-Z0-9]+"/g,
+	idReplacement = '"$1":"IDPLACEHOLDER"';
+
 var testResults = {};
 
 //HTTP status codes
@@ -44,7 +50,8 @@ var expectResponse = function(testName, statusCode, callback, predicate) {
 			}
 		}
 
-		testResults[testName] = failure ? failure : 'PASSED';
+		testResults[testName] = 
+			failure ? '\u001b[31mFAILED:\u001b[0m ' + JSON.stringify(failure) : '\u001b[32mPASSED\u001b[0m';
 		callback();
 	};
 };
@@ -141,28 +148,38 @@ var tests = {
 	* Document types
 	*****************************************************************************/
 	createDocumentTypeSuccess: function(callback) {
-		var documentType = require('./mock/documentTypes/valid.json'),
+		var documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			expected = expectResponse(this.name, CREATED, callback, function(body) {
 				return body === JSON.stringify(documentType);
 			});
 
+		documentType.id = this.name;
+		documentType.name = this.name;
+
 		createDocumentType(this.name, documentType, expected);
 	},
 	createDocumentTypeInvalid: function(callback) {
-		var documentType = require('./mock/documentTypes/invalid.json'),
+		var documentType = _.clone(require('./mock/documentTypes/invalid.json')),
 			error400 = require('./mock/documentTypes/error400.json'),
 			expected = expectResponse(this.name, BAD_REQUEST, callback, function(body) {
-				return body.replace(uuidRegex, uuidReplacement) === JSON.stringify(error400);
+				body = body.replace(uuidRegex, uuidReplacement).replace(schemaUriRegex, schemaUriReplacement);
+				return body === JSON.stringify(error400);
 			});
+
+		documentType.id = this.name;
+		documentType.name = this.name;
 
 		createDocumentType(this.name, documentType, expected);
 	},
 	readDocumentTypeSuccess: function(callback) {
 		var name = this.name,
-			documentType = require('./mock/documentTypes/valid.json'),
+			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			expected = expectResponse(name, OK, callback, function(body) {
 				return body === JSON.stringify(documentType);
 			});
+
+		documentType.id = this.name;
+		documentType.name = this.name;
 
 		async.waterfall([
 			function(callback) {
@@ -190,10 +207,13 @@ var tests = {
 	},
 	updateDocumentTypeSuccess: function(callback) {
 		var name = this.name,
-			documentType = require('./mock/documentTypes/valid.json'),
+			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			expected = expectResponse(name, ACCEPTED, callback, function(body) {
 				return body === JSON.stringify(documentType);
 			});
+
+		documentType.id = this.name;
+		documentType.name = this.name;
 
 		async.waterfall([
 			function(callback) {
@@ -212,12 +232,18 @@ var tests = {
 	},
 	updateDocumentTypeInvalid: function(callback) {
 		var name = this.name,
-			validDocumentType = require('./mock/documentTypes/valid.json'),
-			invalidDocumentType = require('./mock/documentTypes/invalid.json'),
+			validDocumentType = _.clone(require('./mock/documentTypes/valid.json')),
+			invalidDocumentType = _.clone(require('./mock/documentTypes/invalid.json')),
 			error400 = require('./mock/documentTypes/error400.json'),
 			expected = expectResponse(name, BAD_REQUEST, callback, function(body) {
-				return body.replace(uuidRegex, uuidReplacement) === JSON.stringify(error400);
+				body = body.replace(uuidRegex, uuidReplacement).replace(schemaUriRegex, schemaUriReplacement);
+				return body === JSON.stringify(error400);
 			});
+
+		validDocumentType.id = this.name;
+		validDocumentType.name = this.name;
+		invalidDocumentType.id = this.name;
+		invalidDocumentType.name = this.name;
 
 		async.waterfall([
 			function(callback) {
@@ -236,8 +262,11 @@ var tests = {
 	},
 	deleteDocumentTypeSuccess: function(callback) {
 		var name = this.name,
-			documentType = require('./mock/documentTypes/valid.json'),
+			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			expected = expectResponse(name, NO_CONTENT, callback);
+
+		documentType.id = this.name;
+		documentType.name = this.name;
 
 		async.waterfall([
 			function(callback) {
@@ -260,11 +289,15 @@ var tests = {
 	*****************************************************************************/
 	createDocumentSuccess: function(callback) {
 		var name = this.name,
-			document = require('./mock/documents/valid.json'),
-			documentType = require('./mock/documentTypes/valid.json'),
+			document = _.clone(require('./mock/documents/valid.json')),
+			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			expected = expectResponse(name, CREATED, callback, function(body) {
 				return body === JSON.stringify(document);
 			});
+
+		documentType.id = this.name;
+		documentType.name = this.name;
+		document.id = this.name + 'Instance';
 
 		async.waterfall([
 			function(callback) {
@@ -277,18 +310,22 @@ var tests = {
 				});
 			},
 			function(createdDocumentType, callback) {
-				createDocument(name + 'Instance', name, document, callback);
+				createDocument(document.id, name, document, callback);
 			}
 		], expected);
 	},
 	createDocumentInvalid: function(callback) {
 		var name = this.name,
-			document = require('./mock/documents/invalid.json'),
-			documentType = require('./mock/documentTypes/valid.json'),
+			document = _.clone(require('./mock/documents/invalid.json')),
+			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			error400 = require('./mock/documents/error400.json'),
 			expected = expectResponse(name, BAD_REQUEST, callback, function(body) {
-				return body.replace(uuidRegex, uuidReplacement) === JSON.stringify(error400);
+				body = body.replace(uuidRegex, uuidReplacement).replace(schemaUriRegex, schemaUriReplacement);
+				return body === JSON.stringify(error400);
 			});
+
+		documentType.id = this.name;
+		documentType.name = this.name;
 
 		async.waterfall([
 			function(callback) {
@@ -307,7 +344,7 @@ var tests = {
 	},
 	createDocumentDocumentTypeNotFound: function(callback) {
 		var name = this.name,
-			document = require('./mock/documents/invalid.json'),
+			document = _.clone(require('./mock/documents/invalid.json')),
 			error404 = require('./mock/documentTypes/error404.json'),
 			expected = expectResponse(name, NOT_FOUND, callback, function(body) {
 				return body.replace(name, 'testName') === JSON.stringify(error404);
@@ -317,11 +354,15 @@ var tests = {
 	},
 	readDocumentSuccess: function(callback) {
 		var name = this.name,
-			document = require('./mock/documents/valid.json'),
-			documentType = require('./mock/documentTypes/valid.json'),
+			document = _.clone(require('./mock/documents/valid.json')),
+			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			expected = expectResponse(name, OK, callback, function(body) {
 				return body === JSON.stringify(document);
 			});
+
+		documentType.id = this.name;
+		documentType.name = this.name;
+		document.id = this.name + 'Instance';
 
 		async.waterfall([
 			function(callback) {
@@ -334,7 +375,7 @@ var tests = {
 				});
 			},
 			function(createdDocumentType, callback) {
-				createDocument(name + 'Instance', name, document, function(error, response, body) {
+				createDocument(document.id, name, document, function(error, response, body) {
 					if (error) {
 						return callback(error);
 					} else {
@@ -343,18 +384,21 @@ var tests = {
 				});
 			},
 			function(createdDocument, callback) {
-				readDocument(name + 'Instance', name, callback);
+				readDocument(document.id, name, callback);
 			}
 		], expected);
 	},
 	readDocumentNotFound: function(callback) {
 		var name = this.name,
 			documentName = name + 'Instance',
-			documentType = require('./mock/documentTypes/valid.json'),
+			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			error404 = require('./mock/documents/error404.json'),
 			expected = expectResponse(name, NOT_FOUND, callback, function(body) {
 				return body.replace(documentName, 'testName') === JSON.stringify(error404);
 			});
+
+		documentType.id = this.name;
+		documentType.name = this.name;
 
 		async.waterfall([
 			function(callback) {
@@ -366,18 +410,22 @@ var tests = {
 					}
 				});
 			},
-			function(createdDocument, callback) {
+			function(createdDocumentType, callback) {
 				readDocument(documentName, name, callback);
 			}
 		], expected);
 	},
 	updateDocumentSuccess: function(callback) {
 		var name = this.name,
-			document = require('./mock/documents/valid.json'),
-			documentType = require('./mock/documentTypes/valid.json'),
+			document = _.clone(require('./mock/documents/valid.json')),
+			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			expected = expectResponse(name, ACCEPTED, callback, function(body) {
 				return body === JSON.stringify(document);
 			});
+
+		documentType.id = this.name;
+		documentType.name = this.name;
+		document.id = this.name + 'Instance';
 
 		async.waterfall([
 			function(callback) {
@@ -390,7 +438,7 @@ var tests = {
 				});
 			},
 			function(createdDocumentType, callback) {
-				createDocument(name + 'Instance', name, document, function(error, response, body) {
+				createDocument(document.id, name, document, function(error, response, body) {
 					if (error) {
 						return callback(error);
 					} else {
@@ -399,19 +447,24 @@ var tests = {
 				});
 			},
 			function(createdDocument, callback) {
-				updateDocument(name + 'Instance', name, createdDocument, callback);
+				updateDocument(document.id, name, createdDocument, callback);
 			}
 		], expected);
 	},
 	updateDocumentInvalid: function(callback) {
 		var name = this.name,
-			document = require('./mock/documents/valid.json'),
-			invalidDocument = require('./mock/documents/invalid.json'),
-			documentType = require('./mock/documentTypes/valid.json'),
+			document = _.clone(require('./mock/documents/valid.json')),
+			invalidDocument = _.clone(require('./mock/documents/invalid.json')),
+			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			error400 = require('./mock/documents/error400.json'),
 			expected = expectResponse(name, BAD_REQUEST, callback, function(body) {
-				return body.replace(uuidRegex, uuidReplacement) === JSON.stringify(error400);
+				body = body.replace(uuidRegex, uuidReplacement).replace(schemaUriRegex, schemaUriReplacement);
+				return body === JSON.stringify(error400);
 			});
+
+		documentType.id = this.name;
+		documentType.name = this.name;
+		document.id = this.name + 'Instance';
 
 		async.waterfall([
 			function(callback) {
@@ -424,7 +477,7 @@ var tests = {
 				});
 			},
 			function(createdDocumentType, callback) {
-				createDocument(name + 'Instance', name, document, function(error, response, body) {
+				createDocument(document.id, name, document, function(error, response, body) {
 					if (error) {
 						return callback(error);
 					} else {
@@ -433,13 +486,13 @@ var tests = {
 				});
 			},
 			function(createdDocument, callback) {
-				updateDocument(name + 'Instance', name, invalidDocument, callback);
+				updateDocument(document.id, name, invalidDocument, callback);
 			}
 		], expected);
 	},
 	updateDocumentDocumentTypeNotFound: function(callback) {
 		var name = this.name,
-			document = require('./mock/documents/invalid.json'),
+			document = _.clone(require('./mock/documents/invalid.json')),
 			error404 = require('./mock/documentTypes/error404.json'),
 			expected = expectResponse(name, NOT_FOUND, callback, function(body) {
 				return body.replace(name, 'testName') === JSON.stringify(error404);
@@ -449,9 +502,13 @@ var tests = {
 	},
 	deleteDocumentSuccess: function(callback) {
 		var name = this.name,
-			document = require('./mock/documents/valid.json'),
-			documentType = require('./mock/documentTypes/valid.json'),
+			document = _.clone(require('./mock/documents/valid.json')),
+			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			expected = expectResponse(name, NO_CONTENT, callback);
+
+		documentType.id = this.name;
+		documentType.name = this.name;
+		document.id = this.name + 'Instance';
 
 		async.waterfall([
 			function(callback) {
@@ -464,7 +521,7 @@ var tests = {
 				});
 			},
 			function(createdDocumentType, callback) {
-				createDocument(name + 'Instance', name, document, function(error, response, body) {
+				createDocument(document.id, name, document, function(error, response, body) {
 					if (error) {
 						return callback(error);
 					} else {
@@ -473,7 +530,7 @@ var tests = {
 				});
 			},
 			function(createdDocument, callback) {
-				deleteDocument(name + 'Instance', name, callback);
+				deleteDocument(document.id, name, callback);
 			}
 		], expected);
 	},
@@ -489,8 +546,8 @@ var tests = {
 
 		templateJson.body = template;
 		var expected = expectResponse(name, CREATED, callback, function(body) {
-				return body === JSON.stringify(templateJson);
-			});
+			return body === JSON.stringify(templateJson);
+		});
 
 		async.waterfall([
 			function(callback) {
@@ -510,7 +567,7 @@ var tests = {
 	/*createTemplateInvalid: function(callback) {
 		var name = this.name,
 			document = require('./mock/documents/invalid.json'),
-			documentType = require('./mock/documentTypes/valid.json'),
+			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			error400 = require('./mock/documents/error400.json'),
 			expected = expectResponse(name, BAD_REQUEST, callback, function(body) {
 				return body.replace(uuidRegex, uuidReplacement) === JSON.stringify(error400);
@@ -592,7 +649,9 @@ async.parallel((function() {
 	if (error) {
 		console.log(error);
 	}
-	console.log(testResults);
+	for (var key in testResults) {
+		console.log(util.format('Test %s: %s', key, testResults[key]));
+	}
 	process.exit();
 });
 

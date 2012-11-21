@@ -1,5 +1,6 @@
 {
-    "name" : "employee",
+	"id": "IDPLACEHOLDER",
+    "name" : "IDPLACEHOLDER",
     "type" : "object",
     "additionalProperties" : false,
     "properties" :{
