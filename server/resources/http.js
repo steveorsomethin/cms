@@ -133,6 +133,10 @@ httpResources.initialize = function(port) {
 		documentManager.del(req.params.documentType, req.params.document, deleteHandler(res));
 	});
 
+	app.get('/documents', function(req, res) {
+		documentManager.filter(req.query.filter, req.query.tag, getHandler(res));
+	});
+
 	//Templates
 	var templateRoute = '/documentTypes/:documentType/templates/:template';
 
@@ -192,9 +196,17 @@ httpResources.initialize = function(port) {
 	app.get('/documentTypes/:documentType/templates/:template/documents/:document', function(req, res) {
 		require('async').waterfall([
 			function(callback) {
-				documentManager.read(req.params.documentType, req.params.document, callback);
+				if (req.query.filter) {
+					documentManager.filter(req.query.filter, req.query.tag, callback);
+				} else {
+					documentManager.read(req.params.documentType, req.params.document, callback);
+				}
 			},
 			function(document, callback) {
+				if (document instanceof Array) {
+					document = document[0];
+				}
+
 				templateRepo.read(req.params.template, function(error, result) {
 					if (error) {
 						return callback(error);
