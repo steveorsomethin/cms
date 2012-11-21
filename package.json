@@ -17,10 +17,12 @@
 		}
 	],
 	"dependencies": {
+		"node-uuid": "1.x.x",
 		"express": "2.x.x",
 		"underscore": "1.x.x",
 		"async": "0.x.x",
 		"azure": "0.x.x",
+		"rethinkdb": "1.x.x",
 		"hiredis": "0.x.x",
 		"redis": "0.x.x",
 		"JSV": "4.x.x",
@@ -28,7 +30,6 @@
 		"dustjs-helpers": "1.x.x"
 	},
 	"devDependencies": {
-		"node-uuid": "1.x.x",
 		"nodelint": "0.x.x",
 		"request": "2.x.x"
 	}
