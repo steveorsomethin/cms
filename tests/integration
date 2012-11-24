@@ -175,7 +175,7 @@ var tests = {
 		var name = this.name,
 			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			expected = expectResponse(name, OK, callback, function(body) {
-				return body === JSON.stringify(documentType);
+				return _.isEqual(JSON.parse(body), documentType);
 			});
 
 		documentType.id = this.name;
@@ -209,7 +209,7 @@ var tests = {
 		var name = this.name,
 			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			expected = expectResponse(name, ACCEPTED, callback, function(body) {
-				return body === JSON.stringify(documentType);
+				return _.isEqual(JSON.parse(body), documentType);
 			});
 
 		documentType.id = this.name;
@@ -321,7 +321,7 @@ var tests = {
 			error400 = require('./mock/documents/error400.json'),
 			expected = expectResponse(name, BAD_REQUEST, callback, function(body) {
 				body = body.replace(uuidRegex, uuidReplacement).replace(schemaUriRegex, schemaUriReplacement);
-				return body === JSON.stringify(error400);
+				return _.isEqual(JSON.parse(body), error400);
 			});
 
 		documentType.id = this.name;
@@ -357,7 +357,7 @@ var tests = {
 			document = _.clone(require('./mock/documents/valid.json')),
 			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			expected = expectResponse(name, OK, callback, function(body) {
-				return body === JSON.stringify(document);
+				return _.isEqual(JSON.parse(body), document);
 			});
 
 		documentType.id = this.name;
@@ -420,7 +420,7 @@ var tests = {
 			document = _.clone(require('./mock/documents/valid.json')),
 			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			expected = expectResponse(name, ACCEPTED, callback, function(body) {
-				return body === JSON.stringify(document);
+				return _.isEqual(JSON.parse(body), document);
 			});
 
 		documentType.id = this.name;
@@ -459,7 +459,7 @@ var tests = {
 			error400 = require('./mock/documents/error400.json'),
 			expected = expectResponse(name, BAD_REQUEST, callback, function(body) {
 				body = body.replace(uuidRegex, uuidReplacement).replace(schemaUriRegex, schemaUriReplacement);
-				return body === JSON.stringify(error400);
+				return _.isEqual(JSON.parse(body), error400);
 			});
 
 		documentType.id = this.name;
