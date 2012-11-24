@@ -30,8 +30,8 @@ define([
 				kb.ViewModel.prototype.constructor.apply(this, arguments);
 
 				this.documentTypesModel = new kb.CollectionObservable(applicationContext.get('documentTypes'));
-			    this.documentTypeModel = new DocumentTypeViewModel(applicationContext.get('documentType'));
-			    this.templateModel = new TemplateViewModel(applicationContext.get('template'));
+				this.documentTypeModel = new DocumentTypeViewModel(applicationContext.get('documentType'));
+				this.templateModel = new TemplateViewModel(applicationContext.get('template'));
 
 				this.views = {
 					documentType: {view: 'documentType', model: this.documentTypeModel, url: 'src/views'},

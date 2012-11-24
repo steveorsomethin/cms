@@ -50,8 +50,8 @@ define(['underscore', 'backbone'], function(_, backbone) {
 
 		defaults: {
 			name: '',
-		    type: 'object',
-		    additionalProperties: false
+			type: 'object',
+			additionalProperties: false
 		}
 	});
 
@@ -63,7 +63,7 @@ define(['underscore', 'backbone'], function(_, backbone) {
 		defaults: {
 			name: '',
 			documentType: '',
-		    body: '<!DOCTYPE html>\n<html>\n	<head>\n	</head>\n	<body>\n 	</body>\n</html>'
+			body: '<!DOCTYPE html>\n<html>\n	<head>\n	</head>\n	<body>\n 	</body>\n</html>'
 		}
 	});
 

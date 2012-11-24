@@ -9,7 +9,7 @@ define([
 		'../model',
 		'ApplicationContext',
 		'EventBus'
-	], 
+	],
 	function(_, backbone, ko, kb, EditorViewModel, model, applicationContext, eventBus) {
 		var refreshModel = function(model) {
 			this.model(model);
@@ -40,8 +40,8 @@ define([
 			},
 
 			save: function() {
-		        eventBus.trigger('saveTemplate');
-		    }
+				eventBus.trigger('saveTemplate');
+			}
 		});
 	}
 );

@@ -10,7 +10,7 @@ define([
 		'../model',
 		'ApplicationContext',
 		'EventBus'
-	], 
+	],
 	function(_, backbone, ko, kb, DocumentTypeFormViewModel, EditorViewModel, model, applicationContext, eventBus) {
 		var refreshModel = function(model) {
 			this.model(model);
@@ -40,11 +40,11 @@ define([
 				};
 
 				this.active = ko.observable(this.views.form);
-				
+
 				addHandlers.call(this);
 				refreshModel.call(this, model);
 			},
-			
+
 			setFormView: function() {
 				//TODO: Ensure JSON is valid
 				var documentType = JSON.parse(this.editorModel.editor.getValue()),

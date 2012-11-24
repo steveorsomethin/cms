@@ -6,7 +6,7 @@ define([
 		'EventBus',
 		'../core/commandMap',
 		'../model'
-	], 
+	],
 	function(backbone, applicationContext, eventBus, CommandMap, model) {
 		return CommandMap.extend({
 			events: {
