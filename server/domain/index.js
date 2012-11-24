@@ -10,13 +10,13 @@ var util = require('util'),
 	validators = model.validators,
 	persistence = require('../persistence'),
 	redisPersistence = require('../persistence/redis'),
-	rethinkdbPersistence = require('../persistence/rethinkdb');
+	mongoosePersistence = require('../persistence/mongoose');
 
 var documentTypeNotFound = 'DocumentType with name %s not found.',
 	documentNotFound = 'Document with name %s not found.';
 
-var documentTypeRepo = new persistence.DocumentTypeRepo(rethinkdbPersistence.documentTypes),
-	documentRepo = new persistence.DocumentRepo(rethinkdbPersistence.documents),
+var documentTypeRepo = new persistence.DocumentTypeRepo(mongoosePersistence.documentTypes),
+	documentRepo = new persistence.DocumentRepo(mongoosePersistence.documents),
 	templateRepo = new persistence.TemplateRepo(redisPersistence.templates);
 
 var domainManagers = module.exports = {};
