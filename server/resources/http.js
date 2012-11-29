@@ -84,7 +84,7 @@ httpResources.initialize = function(port) {
 	var app = express.createServer(),
 		documentTypeManager = new domain.DocumentTypeManager(),
 		documentManager = new domain.DocumentManager(),
-		templateRepo = new persistence.TemplateRepo(redisPersistence.templates);
+		templateManager = new domain.TemplateManager();
 
 	app.use('/public', express.static(__dirname + '/../../client'));
 
@@ -141,23 +141,23 @@ httpResources.initialize = function(port) {
 	var templateRoute = '/documentTypes/:documentType/templates/:template';
 
 	app.put(templateRoute, function(req, res) {
-		templateRepo.create(req.params.template, req.body, putHandler(res));
+		templateManager.create(req.params.documentType, req.params.template, req.body, putHandler(res));
 	});
 
 	app.get(templateRoute, function(req, res) {
-		templateRepo.read(req.params.template, getHandler(res));
+		templateManager.read(req.params.documentType, req.params.template, getHandler(res));
 	});
 
 	app.post(templateRoute, function(req, res) {
-		templateRepo.update(req.params.template, req.body, postHandler(res));
+		templateManager.update(req.params.documentType, req.params.template, req.body, postHandler(res));
 	});
 
 	app.del(templateRoute, function(req, res) {
-		templateRepo.del(req.params.template, deleteHandler(res));
+		templateManager.del(req.params.documentType, req.params.template, deleteHandler(res));
 	});
 
 	app.get('/templates', function(req, res) {
-		templateRepo.readAll(getHandler(res));
+		templateManager.readAll(getHandler(res));
 	});
 
 	app.post('/dt/:name', function(req, res) {
@@ -207,7 +207,7 @@ httpResources.initialize = function(port) {
 					document = document[0];
 				}
 
-				templateRepo.read(req.params.template, function(error, result) {
+				templateManager.read(req.params.template, function(error, result) {
 					if (error) {
 						return callback(error);
 					}
