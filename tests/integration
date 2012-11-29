@@ -8,7 +8,8 @@ var util = require('util'),
 	request = require('request'),
 	_ = require('underscore');
 
-var baseUrl = 'http://localhost:8088',
+var port = 8089,
+	baseUrl = 'http://localhost:' + port.toString(),
 	uuidRegex = /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/g,
 	uuidReplacement = '00000000-0000-0000-0000-000000000000',
 	schemaUriRegex = /"schemaUri":"urn:[a-zA-Z0-9]+#/g,
@@ -226,6 +227,8 @@ var tests = {
 				});
 			},
 			function(createdDocumentType, callback) {
+				createdDocumentType.additionalProperties = true;
+				documentType.additionalProperties = true;
 				updateDocumentType(name, createdDocumentType, callback);
 			}
 		], expected);
@@ -541,12 +544,16 @@ var tests = {
 	createTemplateSuccess: function(callback) {
 		var name = this.name,
 			template = fs.readFileSync(__dirname + '/mock/templates/valid.dust').toString(),
-			templateJson = require('./mock/templates/valid.json'),
-			documentType = require('./mock/documentTypes/valid.json');
+			templateJson = _.clone(require('./mock/templates/valid.json')),
+			documentType = _.clone(require('./mock/documentTypes/valid.json'));
 
+		documentType.id = this.name;
+		documentType.name = this.name;
+		templateJson.name = this.name + 'Template';
 		templateJson.body = template;
+
 		var expected = expectResponse(name, CREATED, callback, function(body) {
-			return body === JSON.stringify(templateJson);
+			return _.isEqual(JSON.parse(body), templateJson);
 		});
 
 		async.waterfall([
@@ -560,7 +567,7 @@ var tests = {
 				});
 			},
 			function(createdDocumentType, callback) {
-				createTemplate(name + 'Template', name, templateJson, callback);
+				createTemplate(templateJson.name, name, templateJson, callback);
 			}
 		], expected);
 	},
@@ -601,13 +608,17 @@ var tests = {
 	readTemplateSuccess: function(callback) {
 		var name = this.name,
 			template = fs.readFileSync(__dirname + '/mock/templates/valid.dust').toString(),
-			templateJson = require('./mock/templates/valid.json'),
-			documentType = require('./mock/documentTypes/valid.json');
+			templateJson = _.clone(require('./mock/templates/valid.json')),
+			documentType = _.clone(require('./mock/documentTypes/valid.json'));
 
+		documentType.id = this.name;
+		documentType.name = this.name;
+		templateJson.name = this.name + 'Template';
 		templateJson.body = template;
+
 		var expected = expectResponse(name, OK, callback, function(body) {
-				return body === JSON.stringify(templateJson);
-			});
+			return _.isEqual(JSON.parse(body), templateJson);
+		});
 
 		async.waterfall([
 			function(callback) {
@@ -620,7 +631,7 @@ var tests = {
 				});
 			},
 			function(createdDocumentType, callback) {
-				createTemplate(name + 'Template', name, templateJson, function(error, response, body) {
+				createTemplate(templateJson.name, name, templateJson, function(error, response, body) {
 					if (error) {
 						return callback(error);
 					} else {
@@ -629,14 +640,14 @@ var tests = {
 				});
 			},
 			function(createdDocument, callback) {
-				readTemplate(name + 'Template', name, callback);
+				readTemplate(templateJson.name, name, callback);
 			}
 		], expected);
 	}
 };
 
 //TODO: Fork a process to isolate log events instead of printing them in this context
-require('../server/application').run();
+require('../server/application').run(port);
 
 //Run tests
 async.parallel((function() {
