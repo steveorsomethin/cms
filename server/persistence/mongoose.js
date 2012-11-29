@@ -27,18 +27,29 @@ var db = mongoose.createConnection('mongodb://dbadmin:!Sm3llf4rts@ds041177.mongo
 			metadata: Schema.Types.Mixed,
 			document: Schema.Types.Mixed
 		})
+	),
+	Template = db.model('Templates',
+		new mongoose.Schema({
+			metadata: Schema.Types.Mixed,
+			template: Schema.Types.Mixed
+		})
 	);
 
 //Document Types
 documentTypes.create = function(name, documentType, callback) {
 	var record = new DocumentType({documentType: documentType});
-	DocumentType.create(record, function(error, result) {
-		if (error) {
-			callback(error);
-		} else {
-			callback(null, documentType);
+	DocumentType.update(
+		{'documentType.name': name},
+		{$set: {documentType: documentType}},
+		{upsert: true},
+		function(error, result) {
+			if (error) {
+				callback(error);
+			} else {
+				callback(null, documentType);
+			}
 		}
-	});
+	);
 };
 
 documentTypes.filter = function(filter, callback) {
@@ -73,15 +84,7 @@ documentTypes.readAll = function(callback) {
 	});
 };
 
-documentTypes.update = function(name, documentType, callback) {
-	DocumentType.findOneAndUpdate({'documentType.id': name}, {documentType: documentType}, function(error, result) {
-		if (error) {
-			callback(error);
-		} else {
-			callback(null, documentType);
-		}
-	});
-};
+documentTypes.update = documentTypes.create; //TODO: Do we need this?
 
 documentTypes.del = function(name, callback) {
 	DocumentType.findOneAndRemove({'documentType.id': name}, function(error, result) {
@@ -95,14 +98,18 @@ documentTypes.del = function(name, callback) {
 
 //Documents
 documents.create = function(name, document, callback) {
-	var record = new Document({tags: ['Test'], document: document});
-	Document.create(record, function(error, result) {
-		if (error) {
-			callback(error);
-		} else {
-			callback(null, document);
+	Document.update(
+		{'document.name': name},
+		{$set: {document: document}},
+		{upsert: true},
+		function(error, result) {
+			if (error) {
+				callback(error);
+			} else {
+				callback(null, document);
+			}
 		}
-	});
+	);
 };
 
 documents.filter = function(filter, tag, callback) {
@@ -138,15 +145,7 @@ documents.readAll = function(name, callback) {
 	callback('Not implemented');
 };
 
-documents.update = function(name, document, callback) {
-	Document.findOneAndUpdate({'document.id': name}, {document: document}, function(error, result) {
-		if (error) {
-			callback(error);
-		} else {
-			callback(null, document);
-		}
-	});
-};
+documents.update = documents.create; //TODO: Do we need this?
 
 documents.del = function(name, callback) {
 	Document.findOneAndRemove({'document.id': name}, function(error, result) {
@@ -160,23 +159,62 @@ documents.del = function(name, callback) {
 
 //Templates
 templates.create = function(name, template, callback) {
+	Template.update(
+		{'template.name': name},
+		{$set: {template: template}},
+		{ upsert: true },
+		function(error, result) {
+			if (error) {
+				callback(error);
+			} else {
+				callback(null, template);
+			}
+		}
+	);
+};
+
+templates.filter = function(filter, tag, callback) {
 	callback('Not implemented');
 };
 
 templates.read = function(name, callback) {
-	callback('Not implemented');
+	Template.findOne({'template.name': name}, function(error, result) {
+		var template;
+
+		if (error) {
+			callback(error);
+		} else {
+			template = result ? result.template : null;
+			callback(null, template);
+		}
+	});
 };
 
 templates.readAll = function(callback) {
-	callback('Not implemented');
+	Template.find({}, function(error, results) {
+		var templates = [];
+
+		if (error) {
+			callback(error);
+		} else {
+			for (var i = 0; i < results.length; i++) {
+				templates.push(results[i].template);
+			}
+			callback(null, templates);
+		}
+	});
 };
 
-templates.update = function(name, template, callback) {
-	callback('Not implemented');
-};
+templates.update = templates.create; //TODO: Do we need this?
 
 templates.del = function(name, callback) {
-	callback('Not implemented');
+	Template.findOneAndRemove({'template.name': name}, function(error, result) {
+		if (error) {
+			callback(error);
+		} else {
+			callback();
+		}
+	});
 };
 
 //Site Maps
