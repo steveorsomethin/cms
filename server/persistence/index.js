@@ -2,7 +2,7 @@
 
 var linkImplementation = function(source, target, expectedFuncs) {
 	var i, funcName,
-		implError = 'Supplied documentType module implementation is missing required function ';
+		implError = 'Supplied module implementation is missing required function ';
 
 	for (i = 0; i < expectedFuncs.length; i++) {
 		funcName = expectedFuncs[i];
