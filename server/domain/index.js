@@ -13,11 +13,12 @@ var util = require('util'),
 	mongoosePersistence = require('../persistence/mongoose');
 
 var documentTypeNotFound = 'DocumentType with name %s not found.',
-	documentNotFound = 'Document with name %s not found.';
+	documentNotFound = 'Document with name %s not found.',
+	templateNotFound = 'Template with name %s not found.';
 
 var documentTypeRepo = new persistence.DocumentTypeRepo(mongoosePersistence.documentTypes),
 	documentRepo = new persistence.DocumentRepo(mongoosePersistence.documents),
-	templateRepo = new persistence.TemplateRepo(redisPersistence.templates);
+	templateRepo = new persistence.TemplateRepo(mongoosePersistence.templates);
 
 var domainManagers = module.exports = {};
 
@@ -165,4 +166,66 @@ DocumentManager.prototype.update = function(documentTypeName, documentName, docu
 
 DocumentManager.prototype.del = function(documentTypeName, documentName, onComplete) {
 	documentRepo.del(documentName, onComplete);
+};
+
+//Templates
+var TemplateManager = domainManagers.TemplateManager = function() {
+	//Whatever here
+};
+
+//TODO: Pass documentType to persistence module
+TemplateManager.prototype.create = function(documentTypeName, templateName, template, onComplete) {
+	//TODO: Validate templates on the way in
+	templateRepo.create(templateName, template, function(error, result) {
+		if (error) {
+			return onComplete(error);
+		} 
+
+		return onComplete(null, result);
+	});
+};
+
+TemplateManager.prototype.filter = function(filter, onComplete) {
+	templateRepo.filter(filter, onComplete); //TODO: Fill this out
+};
+
+TemplateManager.prototype.read = function(documentTypeName, templateName, onComplete) {
+	templateRepo.read(templateName, function(error, result) {
+		if (error) {
+			return onComplete(error);
+		} else if (!result) {
+			error = new errors.ResourceNotFound(util.format(templateNotFound, templateName));
+			return onComplete(error);
+		} else {
+			return onComplete(null, result);
+		}
+	});
+};
+
+
+TemplateManager.prototype.readAll = function(onComplete) {
+	templateRepo.readAll(function(error, result) {
+		if (error) {
+			return onComplete(error);
+		} else if (!result) {
+			error = new errors.ResourceNotFound(util.format(templateNotFound, templateName));
+			return onComplete(error);
+		} else {
+			return onComplete(null, result);
+		}
+	});
+};
+
+TemplateManager.prototype.update = function(documentTypeName, templateName, template, onComplete) {
+	templateRepo.update(templateName, template, function(error, result) {
+		if (error) {
+			return onComplete(error);
+		} 
+
+		return onComplete(null, result);
+	});
+};
+
+TemplateManager.prototype.del = function(documentTypeName, templateName, onComplete) {
+	templateRepo.del(templateName, onComplete);
 };
