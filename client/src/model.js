@@ -49,6 +49,7 @@ define(['underscore', 'backbone'], function(_, backbone) {
 		},
 
 		defaults: {
+			id: '',
 			name: '',
 			type: 'object',
 			additionalProperties: false
@@ -60,9 +61,18 @@ define(['underscore', 'backbone'], function(_, backbone) {
 	});
 
 	var Template = exports.Template =  backbone.Model.extend({
+		initialize: function() {
+			this.on('change:name', function() {
+				this.set('id', this.get('name'));
+			});
+			this.trigger('change:name');
+		},
+
 		defaults: {
+			id: '',
 			name: '',
 			documentType: '',
+			isArray: false,
 			body: '<!DOCTYPE html>\n<html>\n	<head>\n	</head>\n	<body>\n 	</body>\n</html>'
 		}
 	});
