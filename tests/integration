@@ -543,13 +543,14 @@ var tests = {
 	*****************************************************************************/
 	createTemplateSuccess: function(callback) {
 		var name = this.name,
-			template = fs.readFileSync(__dirname + '/mock/templates/valid.dust').toString(),
+			template = fs.readFileSync(__dirname + '/mock/templates/template.dust').toString(),
 			templateJson = _.clone(require('./mock/templates/valid.json')),
 			documentType = _.clone(require('./mock/documentTypes/valid.json'));
 
 		documentType.id = this.name;
 		documentType.name = this.name;
-		templateJson.name = this.name + 'Template';
+		templateJson.id = this.name + 'Template';
+		templateJson.name = templateJson.id;
 		templateJson.body = template;
 
 		var expected = expectResponse(name, CREATED, callback, function(body) {
@@ -571,14 +572,20 @@ var tests = {
 			}
 		], expected);
 	},
-	/*createTemplateInvalid: function(callback) {
+	createTemplateInvalid: function(callback) {
 		var name = this.name,
-			document = require('./mock/documents/invalid.json'),
+			templateJson = _.clone(require('./mock/templates/invalid.json')),
 			documentType = _.clone(require('./mock/documentTypes/valid.json')),
-			error400 = require('./mock/documents/error400.json'),
+			error400 = _.clone(require('./mock/templates/error400.json')),
 			expected = expectResponse(name, BAD_REQUEST, callback, function(body) {
-				return body.replace(uuidRegex, uuidReplacement) === JSON.stringify(error400);
+				body = body.replace(uuidRegex, uuidReplacement).replace(schemaUriRegex, schemaUriReplacement);
+				return _.isEqual(JSON.parse(body), error400);
 			});
+
+		documentType.id = this.name;
+		documentType.name = this.name;
+		templateJson.id = this.name + 'Template';
+		templateJson.name = templateJson.id;
 
 		async.waterfall([
 			function(callback) {
@@ -591,23 +598,24 @@ var tests = {
 				});
 			},
 			function(createdDocumentType, callback) {
-				createDocument(name + 'Instance', name, document, callback);
+				createTemplate(templateJson.name, name, templateJson, callback);
 			}
 		], expected);
 	},
 	createTemplateDocumentTypeNotFound: function(callback) {
 		var name = this.name,
-			document = require('./mock/documents/invalid.json'),
-			error404 = require('./mock/documentTypes/error404.json'),
+			templateJson = _.clone(require('./mock/templates/valid.json')),
+			error404 = _.clone(require('./mock/documentTypes/error404.json')),
+
 			expected = expectResponse(name, NOT_FOUND, callback, function(body) {
 				return body.replace(name, 'testName') === JSON.stringify(error404);
 			});
 
-		createDocument(name + 'Instance', name, document, expected);
-	},*/
+		createTemplate(name + 'Template', name, templateJson, expected);
+	},
 	readTemplateSuccess: function(callback) {
 		var name = this.name,
-			template = fs.readFileSync(__dirname + '/mock/templates/valid.dust').toString(),
+			template = fs.readFileSync(__dirname + '/mock/templates/template.dust').toString(),
 			templateJson = _.clone(require('./mock/templates/valid.json')),
 			documentType = _.clone(require('./mock/documentTypes/valid.json'));
 
@@ -641,6 +649,166 @@ var tests = {
 			},
 			function(createdDocument, callback) {
 				readTemplate(templateJson.name, name, callback);
+			}
+		], expected);
+	},
+	readTemplateNotFound: function(callback) {
+		var name = this.name,
+			templateName = name + 'Template',
+			documentType = _.clone(require('./mock/documentTypes/valid.json')),
+			error404 = _.clone(require('./mock/templates/error404.json')),
+			expected = expectResponse(name, NOT_FOUND, callback, function(body) {
+				return body.replace(templateName, 'testName') === JSON.stringify(error404);
+			});
+
+		documentType.id = this.name;
+		documentType.name = this.name;
+
+		async.waterfall([
+			function(callback) {
+				createDocumentType(name, documentType, function(error, response, body) {
+					if (error) {
+						return callback(error);
+					} else {
+						return callback(null, body);
+					}
+				});
+			},
+			function(createdDocumentType, callback) {
+				readTemplate(templateName, name, callback);
+			}
+		], expected);
+	},
+	updateTemplateSuccess: function(callback) {
+		var name = this.name,
+			template = fs.readFileSync(__dirname + '/mock/templates/template.dust').toString(),
+			templateJson = _.clone(require('./mock/templates/valid.json')),
+			documentType = _.clone(require('./mock/documentTypes/valid.json'));
+
+		documentType.id = this.name;
+		documentType.name = this.name;
+		templateJson.id = this.name + 'Template';
+		templateJson.name = templateJson.id;
+		templateJson.body = template;
+
+		var expected = expectResponse(name, ACCEPTED, callback, function(body) {
+			return _.isEqual(JSON.parse(body), templateJson);
+		});
+
+		async.waterfall([
+			function(callback) {
+				createDocumentType(name, documentType, function(error, response, body) {
+					if (error) {
+						return callback(error);
+					} else {
+						return callback(null, body);
+					}
+				});
+			},
+			function(createdDocumentType, callback) {
+				createTemplate(templateJson.name, name, templateJson, function(error, response, body) {
+					if (error) {
+						return callback(error);
+					} else {
+						return callback(null, body);
+					}
+				});
+			},
+			function(createdTemplate, callback) {
+				createdTemplate.isArray = true;
+				templateJson.isArray = true;
+				updateTemplate(templateJson.name, name, createdTemplate, callback);
+			}
+		], expected);
+	},
+	updateTemplateInvalid: function(callback) {
+		var name = this.name,
+			template = fs.readFileSync(__dirname + '/mock/templates/template.dust').toString(),
+			validTemplateJson = _.clone(require('./mock/templates/valid.json')),
+			invalidTemplateJson = _.clone(require('./mock/templates/invalid.json')),
+			documentType = _.clone(require('./mock/documentTypes/valid.json')),
+			error400 = _.clone(require('./mock/templates/error400.json')),
+			expected = expectResponse(name, BAD_REQUEST, callback, function(body) {
+				body = body.replace(uuidRegex, uuidReplacement).replace(schemaUriRegex, schemaUriReplacement);
+				return _.isEqual(JSON.parse(body), error400);
+			});
+
+		documentType.id = this.name;
+		documentType.name = this.name;
+		validTemplateJson.id = this.name + 'Template';
+		validTemplateJson.name = validTemplateJson.id;
+		validTemplateJson.body = template;
+		invalidTemplateJson.id = validTemplateJson.id;
+		invalidTemplateJson.name = validTemplateJson.name;
+
+		async.waterfall([
+			function(callback) {
+				createDocumentType(name, documentType, function(error, response, body) {
+					if (error) {
+						return callback(error);
+					} else {
+						return callback(null, body);
+					}
+				});
+			},
+			function(createdDocumentType, callback) {
+				createTemplate(validTemplateJson.name, name, validTemplateJson, function(error, response, body) {
+					if (error) {
+						return callback(error);
+					} else {
+						return callback(null, body);
+					}
+				});
+			},
+			function(createdTemplate, callback) {
+				updateTemplate(invalidTemplateJson.name, name, invalidTemplateJson, callback);
+			}
+		], expected);
+	},
+	updateTemplateDocumentTypeNotFound: function(callback) {
+		var name = this.name,
+			templateJson = _.clone(require('./mock/templates/valid.json')),
+			error404 = _.clone(require('./mock/documentTypes/error404.json')),
+
+			expected = expectResponse(name, NOT_FOUND, callback, function(body) {
+				return body.replace(name, 'testName') === JSON.stringify(error404);
+			});
+
+		updateTemplate(name + 'Template', name, templateJson, expected);
+	},
+	deleteTemplateSuccess: function(callback) {
+		var name = this.name,
+			template = fs.readFileSync(__dirname + '/mock/templates/template.dust').toString(),
+			templateJson = _.clone(require('./mock/templates/valid.json')),
+			documentType = _.clone(require('./mock/documentTypes/valid.json')),
+			expected = expected = expectResponse(name, NO_CONTENT, callback);
+
+		documentType.id = this.name;
+		documentType.name = this.name;
+		templateJson.name = this.name + 'Template';
+		templateJson.body = template;
+
+		async.waterfall([
+			function(callback) {
+				createDocumentType(name, documentType, function(error, response, body) {
+					if (error) {
+						return callback(error);
+					} else {
+						return callback(null, body);
+					}
+				});
+			},
+			function(createdDocumentType, callback) {
+				createTemplate(templateJson.name, name, templateJson, function(error, response, body) {
+					if (error) {
+						return callback(error);
+					} else {
+						return callback(null, body);
+					}
+				});
+			},
+			function(createdDocument, callback) {
+				deleteTemplate(templateJson.name, name, callback);
 			}
 		], expected);
 	}
