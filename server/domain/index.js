@@ -9,7 +9,6 @@ var util = require('util'),
 	model = require('./model'),
 	validators = model.validators,
 	persistence = require('../persistence'),
-	redisPersistence = require('../persistence/redis'),
 	mongoosePersistence = require('../persistence/mongoose');
 
 var documentTypeNotFound = 'DocumentType with name %s not found.',
@@ -82,40 +81,57 @@ var DocumentManager = domainManagers.DocumentManager = function() {
 	//Whatever here
 };
 
-var preSaveDocument = function(documentTypeName, document, callback) {
-	async.waterfall([
-		function(callback) {
-			documentTypeRepo.read(documentTypeName, function(error, documentType) {
-				if (error) {
-					callback(error);
-				} else {
-					callback(null, documentType);
-				}
-			});
-		},
-
-		function(documentType, callback) {
+var ensureDocumentType = function(documentTypeName) {
+	return function(callback) {
+		documentTypeRepo.read(documentTypeName, function(error, documentType) {
 			if (!documentType) {
 				var error = new errors.ResourceNotFound(util.format(documentTypeNotFound, documentTypeName));
 				return callback(error);
+			} else {
+				callback(null, documentType);
 			}
+		});
+	};
+}
 
-			var validationError = validators.Document(document, documentType);
-			if (validationError) {
-				return callback(validationError);
-			} 
+var preSaveDocument = function(documentTypeName, document) {
+	return function(callback) {
+		async.waterfall([
+			ensureDocumentType(documentTypeName),
 
-			return callback();
-		}
-	], callback);
+			function(documentType, callback) {
+				var validationError = validators.Document(document, documentType);
+				if (validationError) {
+					return callback(validationError);
+				} 
+
+				return callback();
+			}
+		], callback);
+	};
+};
+
+var preSaveTemplate = function(documentTypeName, template) {
+	return function(callback) {
+		async.waterfall([
+			ensureDocumentType(documentTypeName),
+
+			function(documentType, callback) {
+				var validationError = validators.Template(template);
+				if (validationError) {
+					return callback(validationError);
+				} 
+
+				return callback();
+			}
+		], callback);
+	};
 };
 
 //TODO: Pass documentType to persistence module
 DocumentManager.prototype.create = function(documentTypeName, documentName, document, onComplete) {
 	async.waterfall([
-		function(callback) {
-			preSaveDocument(documentTypeName, document, callback);
-		},
+		preSaveDocument(documentTypeName, document),
 
 		function(callback) {
 			documentRepo.create(documentName, document, function(error, result) {
@@ -148,9 +164,7 @@ DocumentManager.prototype.filter = function(filter, tag, onComplete) {
 
 DocumentManager.prototype.update = function(documentTypeName, documentName, document, onComplete) {
 	async.waterfall([
-		function(callback) {
-			preSaveDocument(documentTypeName, document, callback);
-		},
+		preSaveDocument(documentTypeName, document),
 
 		function(callback) {
 			documentRepo.update(documentName, document, function(error, result) {
@@ -175,14 +189,19 @@ var TemplateManager = domainManagers.TemplateManager = function() {
 
 //TODO: Pass documentType to persistence module
 TemplateManager.prototype.create = function(documentTypeName, templateName, template, onComplete) {
-	//TODO: Validate templates on the way in
-	templateRepo.create(templateName, template, function(error, result) {
-		if (error) {
-			return onComplete(error);
-		} 
+	async.waterfall([
+		preSaveTemplate(documentTypeName, template),
 
-		return onComplete(null, result);
-	});
+		function(callback) {
+			templateRepo.create(templateName, template, function(error, result) {
+				if (error) {
+					return onComplete(error);
+				} 
+
+				return onComplete(null, result);
+			});
+		}
+	], onComplete);
 };
 
 TemplateManager.prototype.filter = function(filter, onComplete) {
@@ -217,13 +236,19 @@ TemplateManager.prototype.readAll = function(onComplete) {
 };
 
 TemplateManager.prototype.update = function(documentTypeName, templateName, template, onComplete) {
-	templateRepo.update(templateName, template, function(error, result) {
-		if (error) {
-			return onComplete(error);
-		} 
+	async.waterfall([
+		preSaveTemplate(documentTypeName, template),
 
-		return onComplete(null, result);
-	});
+		function(callback) {
+			templateRepo.update(templateName, template, function(error, result) {
+				if (error) {
+					return onComplete(error);
+				} 
+
+				return onComplete(null, result);
+			});
+		}
+	], onComplete);
 };
 
 TemplateManager.prototype.del = function(documentTypeName, templateName, onComplete) {

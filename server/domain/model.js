@@ -23,6 +23,8 @@ validators.DocumentType = function(documentType) {
 	if (validResult.errors.length) {
 		return new errors.InvalidInput('DocumentType validation failed', validResult.errors);
 	}
+
+	return null;
 };
 
 validators.Document = function(document, documentType) {
@@ -31,44 +33,30 @@ validators.Document = function(document, documentType) {
 	if (validResult.errors.length) {
 		return new errors.InvalidInput('Document validation failed', validResult.errors);
 	}
+
+	return null;
 };
 
-var enforceTypes = function(obj, definition) {
-	var key, property, error;
-	for (key in definition) {
-		if (definition.hasOwnProperty(key)) {
-			property = definition[key];
-			obj[key] = property.type(obj[key] || property.defaultValue);
-		}
+var templateSchema = {
+	"id": "template",
+	"name": "template",
+	"type": "object",
+	"additionalProperties" : false,
+	"properties": {
+		"id": {"type": "string", "required": true},
+		"name": {"type": "string", "required": true},
+		"documentType": {"type": "string", "required": true},
+		"isArray": {"type": "boolean", "required": false},
+		"body": {"type": "string", "required": true}
+	}
+}
+
+validators.Template = function(template) {
+	var validResult = env.validate(template, templateSchema);
+
+	if (validResult.errors.length) {
+		return new errors.InvalidInput('Template validation failed', validResult.errors);
 	}
 
-	return error;
-};
-
-//Functions for enforcing serialization of primitive types on json payloads
-model.String = String;
-model.Number = Number;
-
-//Javascript's default Boolean('false') returns true. Thus, the following
-model.Boolean = function(value) {
-
-	return !(!Boolean(value) || (typeof value === 'string' && value.toLowerCase() === 'false'));
-};
-
-model.DocumentProperty = function(obj) {
-	return enforceTypes(obj, {
-		type: {type: model.String, defaultValue: 'string'},
-		required: {type: model.Boolean, defaultValue: false}
-	});
-};
-
-model.DocumentType = function(obj) {
-	var key, error;
-	for (key in obj) {
-		if (obj.hasOwnProperty(key)) {
-			error = model.DocumentProperty(obj[key]);
-		}
-	}
-
-	return obj;
-};
+	return null;
+}
