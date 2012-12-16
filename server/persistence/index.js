@@ -30,6 +30,10 @@ module.exports = {
 		linkImplementation(impl, this, crud);
 	},
 
+	PageRepo: function(impl) {
+		linkImplementation(impl, this, crud);
+	},
+
 	SiteMapRepo: function(impl) {
 		linkImplementation(impl, this, crud);
 	}
