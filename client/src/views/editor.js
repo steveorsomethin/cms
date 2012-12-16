@@ -62,7 +62,7 @@ define([
 				cleanupEditor.call(viewModel);
 
 				editor = viewModel.editor = ace.edit(elements[0]);
-				editor.setTheme("ace/theme/twilight");
+				editor.setTheme("ace/theme/textmate");
 				editor.getSession().setMode(viewModel.aceMode);
 				editor.setValue(text);
 				editor.clearSelection();
