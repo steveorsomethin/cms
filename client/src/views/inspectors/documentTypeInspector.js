@@ -1,6 +1,6 @@
 'use strict';
 
-define(['knockback', 'knockout', 'EventBus', '../documentTypeForm', '../editor'], function (kb, ko, dispatcher, DocumentTypeForm, DocumentTypeEditor) {
+define(['knockback', 'knockout', 'dispatcher', '../documentTypeForm', '../editor'], function (kb, ko, dispatcher, DocumentTypeForm, DocumentTypeEditor) {
 	return kb.ViewModel.extend({
 		constructor: function () {
 			var self = this;

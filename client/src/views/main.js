@@ -9,7 +9,7 @@ define([
 		'text!./main.html',
 		'../model',
 		'ApplicationContext',
-		'EventBus'
+		'dispatcher'
 	],
 	function($, kb, ko, DocumentTypeViewModel, TemplateViewModel, mainHtml, model, applicationContext, eventBus) {
 		var addHandlers = function() {

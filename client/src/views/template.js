@@ -8,7 +8,7 @@ define([
 		'./editor.js',
 		'../model',
 		'ApplicationContext',
-		'EventBus'
+		'dispatcher'
 	],
 	function(_, backbone, ko, kb, EditorViewModel, model, applicationContext, eventBus) {
 		var refreshModel = function(model) {

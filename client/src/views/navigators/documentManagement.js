@@ -1,6 +1,6 @@
 'use strict';
 
-define(['knockout', 'knockback', 'EventBus'], function (ko, kb, dispatcher) {
+define(['knockout', 'knockback', 'dispatcher'], function (ko, kb, dispatcher) {
 
 	var DocumentTypeExplorerViewModel = kb.ViewModel.extend({
 		constructor: function (collection) {

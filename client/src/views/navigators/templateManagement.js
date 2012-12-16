@@ -1,6 +1,6 @@
 'use strict';
 
-define(['knockout', 'knockback', 'EventBus'], function (ko, kb, dispatcher) {
+define(['knockout', 'knockback', 'dispatcher'], function (ko, kb, dispatcher) {
 
 	//
 	// DataTemplateExplorerViewModel

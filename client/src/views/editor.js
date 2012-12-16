@@ -5,7 +5,7 @@ define([
 		'knockout',
 		'knockback',
 		'ace',
-		'EventBus',
+		'dispatcher',
 	], 
 	function($, ko, kb, ace, eventBus) {
 		var cleanupEditor = function() {

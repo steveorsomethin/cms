@@ -1,6 +1,6 @@
 'use strict';
 
-define(['knockback', 'EventBus', '../context/documentManagement', './navigators/documentManagement'], function (kb, dispatcher, context, DocumentManagementNavigatorViewModel) {
+define(['knockback', 'dispatcher', '../context/documentManagement', './navigators/documentManagement'], function (kb, dispatcher, context, DocumentManagementNavigatorViewModel) {
 
 	//
 	// DocumentManagementViewModel

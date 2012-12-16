@@ -1,6 +1,6 @@
 'use strict';
 
-define(['../core/commandMap', '../context/documentManagement', 'EventBus'], function (CommandMap, context, dispatcher) {
+define(['../core/commandMap', '../context/documentManagement', 'dispatcher'], function (CommandMap, context, dispatcher) {
 
 	return CommandMap.extend({
 		events: {

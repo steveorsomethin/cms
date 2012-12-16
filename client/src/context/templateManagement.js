@@ -1,6 +1,6 @@
 'use strict';
 
-define(['backbone', 'EventBus', '../models/templateManagement'], function (backbone, dispatcher, model) {
+define(['backbone', 'dispatcher', '../models/templateManagement'], function (backbone, dispatcher, model) {
 
 	var TemplateManagementContext = backbone.Model.extend({
 		initialize: function () {
