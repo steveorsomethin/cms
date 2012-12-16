@@ -1,7 +1,6 @@
 'use strict';
 
-define(['common', 'exports'], function (common, exports) {
-	var backbone = common.get('backbone');
+define(['backbone', 'exports'], function (backbone, exports) {
 
 	//
 	// Module

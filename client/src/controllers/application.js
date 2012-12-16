@@ -1,8 +1,6 @@
 'use strict';
 
-define(['common', '../views/shell2'], function (common, ShellViewModel) {
-	var kb = common.get('knockback');
-	var backbone = common.get('backbone');
+define(['backbone', '../views/shell'], function (backbone, ShellViewModel) {
 
 	return backbone.Model.extend({
 		initialize: function () {
