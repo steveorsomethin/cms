@@ -12,6 +12,7 @@ var mongoosePersistence = module.exports = {},
 	documentTypes = mongoosePersistence.documentTypes = {},
 	documents = mongoosePersistence.documents = {},
 	templates = mongoosePersistence.templates = {},
+	pages = mongoosePersistence.pages = {},
 	siteMaps = mongoosePersistence.siteMaps = {};
 
 var db = mongoose.createConnection('mongodb://dbadmin:!Sm3llf4rts@ds041177.mongolab.com:41177/GutenbergMongoLab'),
@@ -23,9 +24,7 @@ var db = mongoose.createConnection('mongodb://dbadmin:!Sm3llf4rts@ds041177.mongo
 	),
 	Document = db.model('Documents',
 		new mongoose.Schema({
-			tags: [String],
 			metadata: Schema.Types.Mixed,
-			document: Schema.Types.Mixed
 			document: {
 				id: String,
 				name: String,
@@ -49,10 +48,10 @@ var db = mongoose.createConnection('mongodb://dbadmin:!Sm3llf4rts@ds041177.mongo
 	);
 
 //Document Types
-documentTypes.create = function(name, documentType, callback) {
+documentTypes.create = function(documentType, callback) {
 	var record = new DocumentType({documentType: documentType});
 	DocumentType.update(
-		{'documentType.name': name},
+		{'documentType.name': documentType.name},
 		{$set: {documentType: documentType}},
 		{upsert: true},
 		function(error, result) {
@@ -110,9 +109,9 @@ documentTypes.del = function(name, callback) {
 };
 
 //Documents
-documents.create = function(name, document, callback) {
+documents.create = function(document, callback) {
 	Document.update(
-		{'document.name': name},
+		{'document.name': document.name},
 		{$set: {document: document}},
 		{upsert: true},
 		function(error, result) {
@@ -142,7 +141,7 @@ documents.filter = function(filter, tag, callback) {
 };
 
 documents.read = function(name, callback) {
-	Document.findOne({'document.id': name}, function(error, result) {
+	Document.findOne({'document.name': name}, function(error, result) {
 		var document;
 
 		if (error) {
@@ -161,7 +160,7 @@ documents.readAll = function(name, callback) {
 documents.update = documents.create; //TODO: Do we need this?
 
 documents.del = function(name, callback) {
-	Document.findOneAndRemove({'document.id': name}, function(error, result) {
+	Document.findOneAndRemove({'document.name': name}, function(error, result) {
 		if (error) {
 			callback(error);
 		} else {
@@ -171,9 +170,9 @@ documents.del = function(name, callback) {
 };
 
 //Templates
-templates.create = function(name, template, callback) {
+templates.create = function(template, callback) {
 	Template.update(
-		{'template.name': name},
+		{'template.name': template.name},
 		{$set: {template: template}},
 		{ upsert: true },
 		function(error, result) {
