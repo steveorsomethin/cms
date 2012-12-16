@@ -7,9 +7,6 @@ define('EventBus', ['underscore', 'backbone'], function(_, backbone) {
 });
 
 
-	return new ApplicationContext();
-});
-
 define([
 		'jquery',
 		'./src/views/main',
