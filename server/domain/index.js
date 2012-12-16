@@ -3,6 +3,7 @@
 'use strict';
 
 var util = require('util'),
+	_ = require('underscore'),
 	async = require('async'),
 	uuid = require('node-uuid'),
 	errors = require('../errors'),
@@ -22,6 +23,90 @@ var documentTypeRepo = new persistence.DocumentTypeRepo(mongoosePersistence.docu
 	pageRepo = new persistence.TemplateRepo(mongoosePersistence.pages);
 
 var domainManagers = module.exports = {};
+
+var ensureDocumentType = function(documentTypeName, callback) {
+	documentTypeRepo.read(documentTypeName, function(error, documentType) {
+		if (!documentType) {
+			var error = new errors.ResourceNotFound(util.format(documentTypeNotFound, documentTypeName));
+			return callback(error);
+		} else {
+			callback(null, documentType);
+		}
+	});
+};
+
+var ensureTemplate = function(templateName, callback) {
+	templateRepo.read(templateName, function(error, template) {
+		if (!template) {
+			var error = new errors.ResourceNotFound(util.format(templateNotFound, templateName));
+			return callback(error);
+		} else {
+			callback(null, template);
+		}
+	});
+};
+
+var preSaveDocument = function(document, callback) {
+	if (typeof document.documentType !== 'string') {
+		return callback(new errors.InvalidInput({documentType: 'Property is required'}));
+	}
+
+	async.waterfall([
+		function(callback) {
+			ensureDocumentType(document.documentType, callback);
+		},
+
+		function(documentType, callback) {
+			document.tags = document.tags || [];
+			var validationError = validators.Document(document, documentType);
+			if (validationError) {
+				return callback(validationError);
+			}
+
+			return callback();
+		}
+	], callback);
+};
+
+var preSaveTemplate = function(template, callback) {
+	var validationError = validators.Template(template);
+	if (validationError) {
+		return callback(validationError);
+	}
+
+	ensureDocumentType(template.documentType, function(error, result) {
+		return error ? callback(error) : callback();
+	});
+};
+
+var preSavePage = function(page, callback) {
+	var validationError = validators.Page(page);
+	if (validationError) {
+		return callback(validationError);
+	}
+
+	var templateTask = function(templateName) {
+		return function(callback) {
+			ensureTemplate(templateName, callback);
+		};
+	};
+
+	var documentTypeTask = function(documentTypeName) {
+		return function(callback) {
+			ensureDocumentType(documentTypeName, callback);
+		};
+	};
+
+	var tasks = [templateTask(page.layout)];
+	_.each(page.sections, function(section) {
+		tasks.push(templateTask(section.template));
+		tasks.push(documentTypeTask(section.filter.documentType));
+	});
+
+	async.parallel(tasks, function(error, result) {
+		return error ? callback(error) : callback();
+	});
+};
 
 //DocumentTypes
 var DocumentTypeManager = domainManagers.DocumentTypeManager = function() {
