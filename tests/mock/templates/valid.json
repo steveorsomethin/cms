@@ -1,7 +1,7 @@
 {
-	"id" : "employee",
-	"name" : "employee",
-	"documentType": "employee",
+	"id" : "IDPLACEHOLDER",
+	"name" : "IDPLACEHOLDER",
+	"documentType": "DOCUMENTTYPEPLACEHOLDER",
 	"isArray": false,
 	"body": ""
 }
