@@ -5,7 +5,7 @@
 			<!-- ko foreach: explorers -->
 			<li data-bind="css: { 'active': $data.isSelected }">
 				<a data-bind="attr: { href: $data.path, title: $data.name }, click: $parent.selectExplorer" data-toggle="tab" rel="tooltip">
-					<img data-bind="attr: { src: $data.icon }">
+					<img data-bind="attr: { src: $data.icon }"></img>
 				</a>
 			</li>
 			<!-- /ko -->
