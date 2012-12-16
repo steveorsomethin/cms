@@ -168,53 +168,6 @@ var DocumentManager = domainManagers.DocumentManager = function() {
 	//Whatever here
 };
 
-var ensureDocumentType = function(documentTypeName) {
-	return function(callback) {
-		documentTypeRepo.read(documentTypeName, function(error, documentType) {
-			if (!documentType) {
-				var error = new errors.ResourceNotFound(util.format(documentTypeNotFound, documentTypeName));
-				return callback(error);
-			} else {
-				callback(null, documentType);
-			}
-		});
-	};
-}
-
-var preSaveDocument = function(documentTypeName, document) {
-	return function(callback) {
-		async.waterfall([
-			ensureDocumentType(documentTypeName),
-
-			function(documentType, callback) {
-				var validationError = validators.Document(document, documentType);
-				if (validationError) {
-					return callback(validationError);
-				} 
-
-				return callback();
-			}
-		], callback);
-	};
-};
-
-var preSaveTemplate = function(documentTypeName, template) {
-	return function(callback) {
-		async.waterfall([
-			ensureDocumentType(documentTypeName),
-
-			function(documentType, callback) {
-				var validationError = validators.Template(template);
-				if (validationError) {
-					return callback(validationError);
-				} 
-
-				return callback();
-			}
-		], callback);
-	};
-};
-
 //TODO: Pass documentType to persistence module
 DocumentManager.prototype.create = function(documentTypeName, documentName, document, onComplete) {
 	async.waterfall([
