@@ -20,7 +20,7 @@ define(['backbone', 'exports'], function (backbone, exports) {
 	//
 	// ModuleCollection
 
-	var ModuleCollection = exports.ModuleCollection = backbone.Collection.extend({
+	var ModuleMetadataCollection = exports.ModuleMetadataCollection = backbone.Collection.extend({
 		model: Module,
 
 		initialize: function () {
