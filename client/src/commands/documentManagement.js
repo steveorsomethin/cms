@@ -4,11 +4,16 @@ define(['../core/commandMap', '../context/documentManagement', 'dispatcher'], fu
 
 	return CommandMap.extend({
 		events: {
-			'documentTypes:load': 'loadDocumentTypes'
+			'documentTypes:load': 'loadDocumentTypes',
+			'documentType:selected': 'selectDocumentType'
 		},
 
 		loadDocumentTypes: function () {
 			context.get('documentTypes').fetch();
+		},
+
+		selectDocumentType: function (e) {
+			context.set('documentType', e.documentType);
 		}
 	})
 });
