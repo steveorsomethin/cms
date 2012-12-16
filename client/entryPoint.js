@@ -1,6 +1,9 @@
 'use strict';
 
-define('EventBus', ['underscore', 'backbone'], function(_, backbone) {
+//
+// dispatcher - application event aggregator
+
+define('dispatcher', ['underscore', 'backbone'], function(_, backbone) {
 	var eventBus = {};
 	_.extend(eventBus, backbone.Events);
 	return eventBus;
