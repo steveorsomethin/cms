@@ -8,8 +8,8 @@ define(['backbone', '../models/application', '../views/viewModelFactory'], funct
 			//
 			// Model Properties
 
-			this.set('module', new model.Module({ id: 'sitemap', name: 'Sitemap', route: 'sitemap', icon: 'content/images/48/tree.png' }));
-			this.set('modules', model.ModuleCollection.default());
+			this.set('module', new model.ModuleMetadata({ id: 'sitemap', name: 'Sitemap', route: 'sitemap', icon: 'content/images/48/tree.png' }));
+			this.set('modules', new model.ModuleMetadataCollection());
 			this.set('viewModel', undefined);
 
 			//

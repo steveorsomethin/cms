@@ -13,7 +13,7 @@ define(['backbone', 'exports'], function (backbone, exports) {
 		}
 	}, {
 		default: function () {
-			return new Module();
+			return new ModuleMetadata();
 		}
 	});
 
@@ -21,7 +21,7 @@ define(['backbone', 'exports'], function (backbone, exports) {
 	// ModuleCollection
 
 	var ModuleMetadataCollection = exports.ModuleMetadataCollection = backbone.Collection.extend({
-		model: Module,
+		model: ModuleMetadata,
 
 		initialize: function () {
 			this.add({ id: 'sitemap', name: 'Sitemap', route: 'sitemap', icon: 'content/images/48/tree.png' });
@@ -30,7 +30,7 @@ define(['backbone', 'exports'], function (backbone, exports) {
 		}
 	}, {
 		default: function () {
-			return new ModuleCollection();
+			return new ModuleMetadataCollection();
 		}
 	})
 })
