@@ -24,6 +24,7 @@
 					<!-- ko foreach: items -->
 					<li>
 						<a href="#" data-bind="text: name"></a>
+					<li data-bind="css: { 'active': $parent.item().id() == $data.id() }">
 					</li>
 					<!-- /ko -->
 				</ul>
