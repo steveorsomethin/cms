@@ -26,6 +26,13 @@ var db = mongoose.createConnection('mongodb://dbadmin:!Sm3llf4rts@ds041177.mongo
 			tags: [String],
 			metadata: Schema.Types.Mixed,
 			document: Schema.Types.Mixed
+			document: {
+				id: String,
+				name: String,
+				documentType: String,
+				tags: [String],
+				body: Schema.Types.Mixed
+			}
 		})
 	),
 	Template = db.model('Templates',
