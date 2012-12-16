@@ -1,6 +1,11 @@
 'use strict';
 
-define(['knockback', 'dispatcher', '../context/documentManagement', './navigators/documentManagement'], function (kb, dispatcher, context, DocumentManagementNavigatorViewModel) {
+define(['knockback',
+	    'dispatcher',
+	    '../context/documentManagement',
+	    './navigators/documentManagement',
+	    './inspectors/documentManagement'
+	   ], function (kb, dispatcher, context, DocumentManagementNavigator, DocumentManagementInspector) {
 
 	//
 	// DocumentManagementViewModel
