@@ -1,0 +1,39 @@
+<div class="tabbable tabs-right stretch-vertical">
+	<ul class="nav nav-tabs stretch-vertical">
+		<li class="active">
+			<a href="#gui" data-toggle="tab" rel="tooltip">
+				<img src="public/content/images/48/document_text.png" />
+			</a>
+		</li>
+		
+		<li>
+			<a href="#source" data-toggle="tab" rel="tooltip">
+				<img src="public/content/images/48/document.png" />
+			</a>
+		</li>
+
+		<li>
+			<a href="#metadata" data-toggle="tab" rel="tooltip">
+				<img src="public/content/images/48/gear.png" />
+			</a>
+		</li>
+	</ul>
+
+	<div class="tab-content stretch-vertical">
+		<div id="gui" class="tab-pane stretch-vertical active">
+			<!-- ko if: documentTypeForm.model() -->
+			<div class="stretch-vertical" data-bind="template: { name: 'documentTypeForm', templateUrl: 'public/src/views', data: documentTypeForm }"></div>
+			<!-- /ko -->
+		</div>
+		
+		<div id="source" class="tab-pane stretch-vertical">
+			<!-- ko if: documentTypeEditor.model() -->
+			<div class="stretch-vertical" data-bind="template: { name: 'editor', templateUrl: 'public/src/views', data: documentTypeEditor }"></div>
+			<!-- /ko -->
+		</div>
+
+		<div id="metadata" class="tab-pane stretch-vertical">
+			<h3>Metadata</h3>
+		</div>
+	</div>
+</div>
