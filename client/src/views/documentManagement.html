@@ -41,5 +41,29 @@
 </div>
 
 <div class="span9 stretch-vertical">
-	Inspector
+	<!-- ko with: inspector -->
+
+	<div class="tabbable tabs-right stretch-vertical">
+		<ul class="nav nav-tabs stretch-vertical">
+			<!-- ko foreach: views -->
+
+			<li>
+				<a data-bind="attr: { href: '#' + $data.path }" data-toggle="tab">
+					<img data-bind="attr: { src: $data.icon }"></img>
+				</a>
+			</li>
+
+			<!-- /ko -->
+		</ul>
+
+		<div class="tab-content">
+			<!-- ko foreach: views -->
+
+			<div class="tab-pane" data-bind="attr: { 'id': $data.path }, template: { name: template.name, templateUrl: template.src, data: template.model }"></div>
+
+			<!-- /ko -->
+		</div>
+	</div>
+
+	<!-- /ko -->
 </div>
