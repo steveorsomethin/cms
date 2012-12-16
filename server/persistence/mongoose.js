@@ -33,6 +33,12 @@ var db = mongoose.createConnection('mongodb://dbadmin:!Sm3llf4rts@ds041177.mongo
 			metadata: Schema.Types.Mixed,
 			template: Schema.Types.Mixed
 		})
+	),
+	Page = db.model('Pages',
+		new mongoose.Schema({
+			metadata: Schema.Types.Mixed,
+			page: Schema.Types.Mixed
+		})
 	);
 
 //Document Types
@@ -209,6 +215,66 @@ templates.update = templates.create; //TODO: Do we need this?
 
 templates.del = function(name, callback) {
 	Template.findOneAndRemove({'template.name': name}, function(error, result) {
+		if (error) {
+			callback(error);
+		} else {
+			callback();
+		}
+	});
+};
+
+//Pages
+pages.create = function(page, callback) {
+	Page.update(
+		{'page.name': page.name},
+		{$set: {page: page}},
+		{ upsert: true },
+		function(error, result) {
+			if (error) {
+				callback(error);
+			} else {
+				callback(null, page);
+			}
+		}
+	);
+};
+
+pages.filter = function(filter, tag, callback) {
+	callback('Not implemented');
+};
+
+pages.read = function(name, callback) {
+	Page.findOne({'page.name': name}, function(error, result) {
+		var page;
+
+		if (error) {
+			callback(error);
+		} else {
+			page = result ? result.page : null;
+			callback(null, page);
+		}
+	});
+};
+
+pages.readAll = function(callback) {
+	Page.find({}, function(error, results) {
+		var pages = [];
+
+		if (error) {
+			callback(error);
+		} else {
+			for (var i = 0; i < results.length; i++) {
+				pages.push(results[i].page);
+			}
+			callback(null, pages);
+		}
+	});
+};
+
+pages.update = pages.create; //TODO: Do we need this?
+
+pages.del = function(name, callback) {
+	Page.findOneAndRemove({'page.name': name}, function(error, result) {
 		if (error) {
 			callback(error);
 		} else {
