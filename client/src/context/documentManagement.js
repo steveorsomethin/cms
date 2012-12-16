@@ -20,7 +20,7 @@ define(['backbone', '../models/documentManagement'], function (backbone, model) 
 			// DocumentCollection State
 
 			this.set('documentCollectionMetadata', defaultDocumentCollectionMetadata);
-			this.set('documentCollections', defaultDocumentCollectionMetadataCollection);
+			this.set('documentCollectionMetadataCollections', defaultDocumentCollectionMetadataCollection);
 
 			//
 			// Document State
