@@ -1,6 +1,6 @@
 'use strict';
 
-define(['../core/commandMap', '../controllers/application'], function (CommandMap, ApplicationController) {
+define(['../core/commandMap', '../controllers/application'], function (CommandMap, controller) {
 
 	return CommandMap.extend({
 		events: {
