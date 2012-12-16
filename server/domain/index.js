@@ -13,11 +13,13 @@ var util = require('util'),
 
 var documentTypeNotFound = 'DocumentType with name %s not found.',
 	documentNotFound = 'Document with name %s not found.',
-	templateNotFound = 'Template with name %s not found.';
+	templateNotFound = 'Template with name %s not found.',
+	pageNotFound = 'Page with name %s not found.';
 
 var documentTypeRepo = new persistence.DocumentTypeRepo(mongoosePersistence.documentTypes),
 	documentRepo = new persistence.DocumentRepo(mongoosePersistence.documents),
-	templateRepo = new persistence.TemplateRepo(mongoosePersistence.templates);
+	templateRepo = new persistence.TemplateRepo(mongoosePersistence.templates),
+	pageRepo = new persistence.TemplateRepo(mongoosePersistence.pages);
 
 var domainManagers = module.exports = {};
 
@@ -253,4 +255,66 @@ TemplateManager.prototype.update = function(documentTypeName, templateName, temp
 
 TemplateManager.prototype.del = function(documentTypeName, templateName, onComplete) {
 	templateRepo.del(templateName, onComplete);
+};
+//Pages
+var PageManager = domainManagers.PageManager = function() {
+	//Whatever here
+};
+
+PageManager.prototype.create = function(page, onComplete) {
+	async.waterfall([
+		function(callback) {
+			preSavePage(page, callback);
+		},
+
+		function(callback) {
+			pageRepo.create(page, callback);
+		}
+	], onComplete);
+};
+
+PageManager.prototype.filter = function(filter, onComplete) {
+	pageRepo.filter(filter, onComplete); //TODO: Fill this out
+};
+
+PageManager.prototype.read = function(pageName, onComplete) {
+	pageRepo.read(pageName, function(error, result) {
+		if (error) {
+			return onComplete(error);
+		} else if (!result) {
+			error = new errors.ResourceNotFound(util.format(pageNotFound, pageName));
+			return onComplete(error);
+		} else {
+			return onComplete(null, result);
+		}
+	});
+};
+
+PageManager.prototype.readAll = function(onComplete) {
+	pageRepo.readAll(function(error, result) {
+		if (error) {
+			return onComplete(error);
+		} else if (!result) {
+			error = new errors.ResourceNotFound(util.format(pageNotFound, pageName));
+			return onComplete(error);
+		} else {
+			return onComplete(null, result);
+		}
+	});
+};
+
+PageManager.prototype.update = function(page, onComplete) {
+	async.waterfall([
+		function(callback) {
+			preSavePage(page, callback);
+		},
+
+		function(callback) {
+			pageRepo.update(page, callback);
+		}
+	], onComplete);
+};
+
+PageManager.prototype.del = function(pageName, onComplete) {
+	pageRepo.del(pageName, onComplete);
 };
