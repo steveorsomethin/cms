@@ -1,6 +1,6 @@
 'use strict';
 
-define(['knockout', 'knockback', 'EventBus', '../context/shell', '../controllers/shell'], function (ko, kb, dispatcher, context, controller) {
+define(['knockout', 'knockback', 'dispatcher', '../context/shell', '../controllers/shell'], function (ko, kb, dispatcher, context, controller) {
 
 	var ModuleViewModel = kb.ViewModel.extend({
 		constructor: function (model) {
