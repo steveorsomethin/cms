@@ -14,7 +14,8 @@ define(['knockback',
 		constructor: function () {
 
 			this.view = { name: 'documentManagement', src: 'src/views', model: this };
-			this.navigator = new DocumentManagementNavigatorViewModel(context);
+			this.navigator = new DocumentManagementNavigator(context);
+			this.inspector = new DocumentManagementInspector(context);
 
 			dispatcher.trigger('documentManagement:loaded');
 			
