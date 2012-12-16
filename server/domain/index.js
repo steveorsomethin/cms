@@ -113,13 +113,13 @@ var DocumentTypeManager = domainManagers.DocumentTypeManager = function() {
 
 };
 
-DocumentTypeManager.prototype.create = function(documentTypeName, documentType, onComplete) {
+DocumentTypeManager.prototype.create = function(documentType, onComplete) {
 	var validationError = validators.DocumentType(documentType);
 	documentType.id = documentType.name;
 	if (validationError) {
 		return onComplete(validationError);
 	} else {
-		return documentTypeRepo.create(documentTypeName, documentType, onComplete);
+		return documentTypeRepo.create(documentType, onComplete);
 	}
 };
 
@@ -149,13 +149,13 @@ DocumentTypeManager.prototype.readAll = function(onComplete) {
 	});
 };
 
-DocumentTypeManager.prototype.update = function(documentTypeName, documentType, onComplete) {
+DocumentTypeManager.prototype.update = function(documentType, onComplete) {
 	var validationError = validators.DocumentType(documentType);
 	documentType.id = documentType.name;
 	if (validationError) {
 		return onComplete(validationError);
 	} else {
-		documentTypeRepo.update(documentTypeName, documentType, onComplete);
+		documentTypeRepo.update(documentType, onComplete);
 	}
 };
 
@@ -169,23 +169,19 @@ var DocumentManager = domainManagers.DocumentManager = function() {
 };
 
 //TODO: Pass documentType to persistence module
-DocumentManager.prototype.create = function(documentTypeName, documentName, document, onComplete) {
+DocumentManager.prototype.create = function(document, onComplete) {
 	async.waterfall([
-		preSaveDocument(documentTypeName, document),
+		function(callback) {
+			preSaveDocument(document, callback);
+		},
 
 		function(callback) {
-			documentRepo.create(documentName, document, function(error, result) {
-				if (error) {
-					return callback(error);
-				} 
-
-				return callback(null, result);
-			});
+			documentRepo.create(document, callback);
 		}
 	], onComplete);
 };
 
-DocumentManager.prototype.read = function(documentTypeName, documentName, onComplete) {
+DocumentManager.prototype.read = function(documentName, onComplete) {
 	documentRepo.read(documentName, function(error, result) {
 		if (error) {
 			return onComplete(error);
@@ -202,23 +198,19 @@ DocumentManager.prototype.filter = function(filter, tag, onComplete) {
 	documentRepo.filter(filter, tag, onComplete); //TODO: Fill this out
 };
 
-DocumentManager.prototype.update = function(documentTypeName, documentName, document, onComplete) {
+DocumentManager.prototype.update = function(document, onComplete) {
 	async.waterfall([
-		preSaveDocument(documentTypeName, document),
+		function(callback) {
+			preSaveDocument(document, callback);
+		},
 
 		function(callback) {
-			documentRepo.update(documentName, document, function(error, result) {
-				if (error) {
-					return callback(error);
-				} 
-
-				return callback(null, result);
-			});
+			documentRepo.update(document, callback);
 		}
 	], onComplete);
 };
 
-DocumentManager.prototype.del = function(documentTypeName, documentName, onComplete) {
+DocumentManager.prototype.del = function(documentName, onComplete) {
 	documentRepo.del(documentName, onComplete);
 };
 
@@ -228,18 +220,14 @@ var TemplateManager = domainManagers.TemplateManager = function() {
 };
 
 //TODO: Pass documentType to persistence module
-TemplateManager.prototype.create = function(documentTypeName, templateName, template, onComplete) {
+TemplateManager.prototype.create = function(template, onComplete) {
 	async.waterfall([
-		preSaveTemplate(documentTypeName, template),
+		function(callback) {
+			preSaveTemplate(template, callback);
+		},
 
 		function(callback) {
-			templateRepo.create(templateName, template, function(error, result) {
-				if (error) {
-					return onComplete(error);
-				} 
-
-				return onComplete(null, result);
-			});
+			templateRepo.create(template, callback);
 		}
 	], onComplete);
 };
@@ -248,7 +236,7 @@ TemplateManager.prototype.filter = function(filter, onComplete) {
 	templateRepo.filter(filter, onComplete); //TODO: Fill this out
 };
 
-TemplateManager.prototype.read = function(documentTypeName, templateName, onComplete) {
+TemplateManager.prototype.read = function(templateName, onComplete) {
 	templateRepo.read(templateName, function(error, result) {
 		if (error) {
 			return onComplete(error);
@@ -275,25 +263,22 @@ TemplateManager.prototype.readAll = function(onComplete) {
 	});
 };
 
-TemplateManager.prototype.update = function(documentTypeName, templateName, template, onComplete) {
+TemplateManager.prototype.update = function(template, onComplete) {
 	async.waterfall([
-		preSaveTemplate(documentTypeName, template),
+		function(callback) {
+			preSaveTemplate(template, callback);
+		},
 
 		function(callback) {
-			templateRepo.update(templateName, template, function(error, result) {
-				if (error) {
-					return onComplete(error);
-				} 
-
-				return onComplete(null, result);
-			});
+			templateRepo.update(template, callback);
 		}
 	], onComplete);
 };
 
-TemplateManager.prototype.del = function(documentTypeName, templateName, onComplete) {
+TemplateManager.prototype.del = function(templateName, onComplete) {
 	templateRepo.del(templateName, onComplete);
 };
+
 //Pages
 var PageManager = domainManagers.PageManager = function() {
 	//Whatever here
