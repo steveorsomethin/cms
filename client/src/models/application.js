@@ -5,7 +5,7 @@ define(['backbone', 'exports'], function (backbone, exports) {
 	//
 	// Module
 
-	var Module = exports.Module = backbone.Model.extend({
+	var ModuleMetadata = exports.ModuleMetadata = backbone.Model.extend({
 		defaults: {
 			id: '',
 			name: '',
