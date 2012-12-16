@@ -5,8 +5,8 @@ var util = require('util'),
 	model = require('../domain/model');
 
 //TODO: Consider moving this into a constructor and making the redis calls an object
-//var redisClient = redis.createClient(6379, 'gutenberg.cloudapp.net');
-var redisClient = redis.createClient();
+var redisClient = redis.createClient(6379, 'gutenberg.cloudapp.net');
+//var redisClient = redis.createClient();
 
 var redisPersistence = module.exports = {},
 	documentTypes = redisPersistence.documentTypes = {},
