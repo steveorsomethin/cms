@@ -3,6 +3,7 @@
 define(['backbone', '../views/shell'], function (backbone, ShellViewModel) {
 
 	return backbone.Model.extend({
+	var ApplicationController = backbone.Model.extend({
 		initialize: function () {
 		}
 	}, {
@@ -10,4 +11,6 @@ define(['backbone', '../views/shell'], function (backbone, ShellViewModel) {
 			ShellViewModel.start(element);
 		}
 	})
+
+	return new ApplicationController();
 });
