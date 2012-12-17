@@ -1,0 +1,5 @@
+<ul>
+	<li>Full Name: {firstName} {lastName}</li>
+	<li>ID: {id}</li>
+	<li>Email: {email}</li>
+</ul>
