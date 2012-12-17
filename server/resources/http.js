@@ -3,11 +3,7 @@
 var util = require('util'),
 	express = require('express'),
 	domain = require('../domain'),
-	model = require('../domain/model'),
-	validators = model.validators,
-	errors = require('../errors'),
-	persistence = require('../persistence'),
-	redisPersistence = require('../persistence/redis');
+	errors = require('../errors');
 
 var httpResources = module.exports = {};
 
@@ -260,7 +256,7 @@ httpResources.initialize = function(port) {
 				dust.loadSource(compiled);
 			});
 
-			var compiled = dust.compile(page.layout.body, page.layout.name);
+			compiled = dust.compile(page.layout.body, page.layout.name);
 			dust.loadSource(compiled);
 			dust.render(page.layout.name, document, function(error, result) {
 				if (error) {
