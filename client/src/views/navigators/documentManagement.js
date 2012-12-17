@@ -58,13 +58,6 @@ define(['knockout', 'knockback', 'dispatcher'], function (ko, kb, dispatcher) {
 
 	return kb.ViewModel.extend({
 		constructor: function (model) {
-			kb.ViewModel.prototype.constructor.call(this, model, {
-				keys: ['documentTypes', 'documentCollections'],
-				//factories: {
-				//	'model.documentTypes': 'DocumentTypeExplorerViewModel',
-				//	'model.documentCollections': 'DocumentCollectionExplorerViewModel'
-				//}
-			});
 
 			this.explorers = [
 				new DocumentTypeExplorerViewModel(this.documentTypes),
