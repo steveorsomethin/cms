@@ -60,8 +60,8 @@ define(['knockout', 'knockback', 'dispatcher'], function (ko, kb, dispatcher) {
 		constructor: function (model) {
 
 			this.explorers = [
-				new DocumentTypeExplorerViewModel(this.documentTypes),
-				new DocumentCollectionExplorerViewModel(this.documentCollections)
+				new DocumentTypeExplorerViewModel(model),
+				new DocumentCollectionExplorerViewModel(model)
 			]
 
 			this.explorers[0].refresh();
