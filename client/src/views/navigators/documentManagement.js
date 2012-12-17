@@ -37,7 +37,9 @@ define(['knockout', 'knockback', 'dispatcher'], function (ko, kb, dispatcher) {
 
 			this.name = 'Collections';
 			this.icon = 'content/images/48/database.png';
-			this.items = collection;
+
+			this.item = this.documentCollection;
+			this.items = this.documentCollections;
 
 			this.isSelected = ko.observable(false);
 		},
