@@ -2,6 +2,9 @@
 
 define(['knockout', 'knockback', 'dispatcher'], function (ko, kb, dispatcher) {
 
+	//
+	// DocumentTypeExplorerViewModel
+
 	var DocumentTypeExplorerViewModel = kb.ViewModel.extend({
 		constructor: function (model) {
 			kb.ViewModel.prototype.constructor.call(this, model, {
@@ -29,6 +32,9 @@ define(['knockout', 'knockback', 'dispatcher'], function (ko, kb, dispatcher) {
 		}
 	});
 
+	//
+	// DocumentCollectionExplorerViewModel
+
 	var DocumentCollectionExplorerViewModel = kb.ViewModel.extend({
 		constructor: function (model) {
 			kb.ViewModel.prototype.constructor.call(this, model, {
@@ -55,6 +61,9 @@ define(['knockout', 'knockback', 'dispatcher'], function (ko, kb, dispatcher) {
 
 		}
 	});
+
+	//
+	// DocumentManagementViewModel
 
 	return kb.ViewModel.extend({
 		constructor: function (model) {
