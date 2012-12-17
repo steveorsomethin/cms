@@ -15,13 +15,13 @@ define([
 				this.propertiesModel = new PropertyListViewModel();
 			},
 			
-		addProperty: function() {
-			eventBus.trigger('addProperty');
-		},
-
-		save: function() {
-			eventBus.trigger('saveDocumentType');
-		}
+			addProperty: function() {
+				eventBus.trigger('addProperty');
+			},
+	
+			save: function() {
+				eventBus.trigger('saveDocumentType');
+			}
 		});
 	}
 );
