@@ -23,6 +23,9 @@ define(['knockout', 'knockback', 'dispatcher'], function (ko, kb, dispatcher) {
 		refresh: function () {
 			dispatcher.trigger('documentTypes:load');
 		},
+
+		selectItem: function (item) {
+			dispatcher.trigger('documentType:selected', { documentType: item.model() });
 		}
 	});
 
