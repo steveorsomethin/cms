@@ -124,18 +124,32 @@ documents.create = function(document, callback) {
 	);
 };
 
-documents.filter = function(filter, tag, callback) {
-	filter = filter ? filter : 'true';
-	Document.$where(filter).all('tags', [tag]).exec(function(error, results) {
-		var documents = [];
+//TODO: BAD cannot trust the vm. This is purely for the new years demo
+var buildMongooseFilter = function(filter) {
+	var params = filter.parameters;
+	params.exports = {};
+	require('vm').runInNewContext('exports = ' + filter.predicate, filter.parameters);
+	return params.exports;
+};
 
+documents.filter = function(filter, callback) {
+	var mongooseFilter = filter ? buildMongooseFilter(filter) : {};
+
+	Document.find(mongooseFilter, function(error, results) {
+		var documents;
+		
 		if (error) {
 			callback(error);
 		} else {
-			for (var i = 0; i < results.length; i++) {
-				documents.push(results[i].document);
+			if (filter.isArray) {
+				documents = [];
+				for (var i = 0; i < results.length; i++) {
+					documents.push(results[i].document);
+				}
+				callback(null, documents);
+			} else {
+				callback(null, results.length ? results[0].document : null);
 			}
-			callback(null, documents);
 		}
 	});
 };
