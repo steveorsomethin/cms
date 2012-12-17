@@ -1,12 +1,8 @@
 'use strict';
 
-var util = require('util'),
-	mongoose = require('mongoose'),
+var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
-	_ = require('underscore'),
-	uuid = require('node-uuid'),
-	async = require('async'),
-	model = require('../domain/model');
+	_ = require('underscore');
 
 var mongoosePersistence = module.exports = {},
 	documentTypes = mongoosePersistence.documentTypes = {},
@@ -49,7 +45,6 @@ var db = mongoose.createConnection('mongodb://dbadmin:!Sm3llf4rts@ds041177.mongo
 
 //Document Types
 documentTypes.create = function(documentType, callback) {
-	var record = new DocumentType({documentType: documentType});
 	DocumentType.update(
 		{'documentType.name': documentType.name},
 		{$set: {documentType: documentType}},
