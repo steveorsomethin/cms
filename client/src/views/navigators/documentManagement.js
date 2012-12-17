@@ -3,8 +3,7 @@
 define(['knockout', 'knockback', 'dispatcher'], function (ko, kb, dispatcher) {
 
 	var DocumentTypeExplorerViewModel = kb.ViewModel.extend({
-		constructor: function (collection) {
-			//kb.CollectionObservable.prototype.constructor.call(this, collection);
+		constructor: function (model) {
 
 			this.id = 'types';
 			this.path = '#types';
@@ -18,6 +17,7 @@ define(['knockout', 'knockback', 'dispatcher'], function (ko, kb, dispatcher) {
 
 		refresh: function () {
 			dispatcher.trigger('documentTypes:load');
+		},
 		}
 	});
 
