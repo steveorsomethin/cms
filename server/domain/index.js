@@ -27,7 +27,7 @@ var domainManagers = module.exports = {};
 var ensureDocumentType = function(documentTypeName, callback) {
 	documentTypeRepo.read(documentTypeName, function(error, documentType) {
 		if (!documentType) {
-			var error = new errors.ResourceNotFound(util.format(documentTypeNotFound, documentTypeName));
+			error = new errors.ResourceNotFound(util.format(documentTypeNotFound, documentTypeName));
 			return callback(error);
 		} else {
 			callback(null, documentType);
@@ -38,7 +38,7 @@ var ensureDocumentType = function(documentTypeName, callback) {
 var ensureTemplate = function(templateName, callback) {
 	templateRepo.read(templateName, function(error, template) {
 		if (!template) {
-			var error = new errors.ResourceNotFound(util.format(templateNotFound, templateName));
+			error = new errors.ResourceNotFound(util.format(templateNotFound, templateName));
 			return callback(error);
 		} else {
 			callback(null, template);
@@ -141,7 +141,7 @@ DocumentTypeManager.prototype.readAll = function(onComplete) {
 		if (error) {
 			return onComplete(error);
 		} else if (!result) {
-			error = new errors.ResourceNotFound(util.format(documentTypeNotFound, documentTypeName));
+			error = new errors.ResourceNotFound(util.format(documentTypeNotFound, 'all'));
 			return onComplete(error);
 		} else {
 			return onComplete(null, result);
@@ -255,7 +255,7 @@ TemplateManager.prototype.readAll = function(onComplete) {
 		if (error) {
 			return onComplete(error);
 		} else if (!result) {
-			error = new errors.ResourceNotFound(util.format(templateNotFound, templateName));
+			error = new errors.ResourceNotFound(util.format(templateNotFound, 'all'));
 			return onComplete(error);
 		} else {
 			return onComplete(null, result);
@@ -318,7 +318,7 @@ PageManager.prototype.readAll = function(onComplete) {
 		if (error) {
 			return onComplete(error);
 		} else if (!result) {
-			error = new errors.ResourceNotFound(util.format(pageNotFound, pageName));
+			error = new errors.ResourceNotFound(util.format(pageNotFound, 'all'));
 			return onComplete(error);
 		} else {
 			return onComplete(null, result);
