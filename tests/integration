@@ -3,7 +3,6 @@
 
 var util = require('util'),
 	fs = require('fs'),
-	uuid = require('node-uuid'),
 	async = require('async'),
 	request = require('request'),
 	_ = require('underscore');
@@ -13,9 +12,7 @@ var port = 8089,
 	uuidRegex = /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/g,
 	uuidReplacement = '00000000-0000-0000-0000-000000000000',
 	schemaUriRegex = /"schemaUri":"urn:[a-zA-Z0-9]+#/g,
-	schemaUriReplacement = '"schemaUri":"urn:SCHEMAURIPLACEHOLDER#',
-	idRegex = /"(id|name)":?"[a-zA-Z0-9]+"/g,
-	idReplacement = '"$1":"IDPLACEHOLDER"';
+	schemaUriReplacement = '"schemaUri":"urn:SCHEMAURIPLACEHOLDER#';
 
 var testResults = {};
 
@@ -769,7 +766,7 @@ var tests = {
 			templateBody = fs.readFileSync(__dirname + '/mock/templates/template.dust').toString(),
 			template = _.clone(require('./mock/templates/valid.json')),
 			documentType = _.clone(require('./mock/documentTypes/valid.json')),
-			expected = expected = expectResponse(name, NO_CONTENT, callback);
+			expected = expectResponse(name, NO_CONTENT, callback);
 
 		documentType.id = name;
 		documentType.name = name;
