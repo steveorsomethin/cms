@@ -28,7 +28,6 @@ validators.DocumentType = function(documentType) {
 	return null;
 };
 
-
 var getDocumentSchema = function(documentType) {
 	return {
 		id: 'Document',
