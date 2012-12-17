@@ -50,6 +50,9 @@ define(['knockout', 'knockback', 'dispatcher'], function (ko, kb, dispatcher) {
 		refresh: function () {
 			dispatcher.trigger('documentCollections:load');
 		},
+
+		selectItem: function () {
+
 		}
 	});
 
