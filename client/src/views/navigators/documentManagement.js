@@ -27,8 +27,7 @@ define(['knockout', 'knockback', 'dispatcher'], function (ko, kb, dispatcher) {
 	});
 
 	var DocumentCollectionExplorerViewModel = kb.ViewModel.extend({
-		constructor: function (collection) {
-			//kb.CollectionObservable.prototype.constructor.call(this, collection);
+		constructor: function (model) {
 
 			this.id = 'collections';
 			this.path = '#collections';
@@ -42,6 +41,7 @@ define(['knockout', 'knockback', 'dispatcher'], function (ko, kb, dispatcher) {
 
 		refresh: function () {
 			dispatcher.trigger('documentCollections:load');
+		},
 		}
 	});
 
