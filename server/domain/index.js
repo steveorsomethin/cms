@@ -5,7 +5,6 @@
 var util = require('util'),
 	_ = require('underscore'),
 	async = require('async'),
-	uuid = require('node-uuid'),
 	errors = require('../errors'),
 	model = require('./model'),
 	validators = model.validators,
