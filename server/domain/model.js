@@ -63,7 +63,7 @@ var templateSchema = {
 	properties: {
 		id: {type: 'string', required: true},
 		name: {type: 'string', required: true},
-		documentType: {type: 'string', required: true},
+		documentType: {type: 'string', required: false},
 		isArray: {type: 'boolean', required: false},
 		isLayout: {type: 'boolean', required: false},
 		body: {type: 'string', required: true}
@@ -75,6 +75,11 @@ validators.Template = function(template) {
 
 	if (validResult.errors.length) {
 		return new errors.InvalidInput('Template validation failed', validResult.errors);
+	}
+
+	if (!template.documentType && !template.isLayout) {
+		return new errors.InvalidInput('Template validation failed', 
+			{documentType: 'Property must be set if template is not a layout'});
 	}
 
 	return null;
