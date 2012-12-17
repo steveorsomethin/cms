@@ -194,38 +194,6 @@ httpResources.initialize = function(port) {
 		pageManager.readAll(getHandler(res));
 	});
 
-	app.post('/dt/:name', function(req, res) {
-		var lastProperty, split, propertyName, subProperty;
-		var documentType = 
-			{
-				"name" : req.body.name,
-				"type" : "object",
-				"additionalProperties" : false,
-				"properties" :{}
-			},
-			properties = documentType.properties;
-
-		for (var key in req.body) {
-			split = key.split(':');
-
-			propertyName = split[0];
-			subProperty = split[1];
-
-			if (key != 'name') {
-				if (!lastProperty || lastProperty !== propertyName) {
-					properties[propertyName] = {}; 
-				} else {
-					properties[propertyName][subProperty] = 
-						subProperty === 'required' ? true : req.body[key];
-				}
-
-				lastProperty = propertyName;
-			}
-		}
-		
-		documentTypeManager.create(req.params.name, documentType, putHandler);
-		res.redirect('/public/index.html');
-	});
 
 	app.get('/documentTypes/:documentType/templates/:template/documents/:document', function(req, res) {
 		require('async').waterfall([
