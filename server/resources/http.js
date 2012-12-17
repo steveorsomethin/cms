@@ -194,40 +194,81 @@ httpResources.initialize = function(port) {
 		pageManager.readAll(getHandler(res));
 	});
 
-
-	app.get('/documentTypes/:documentType/templates/:template/documents/:document', function(req, res) {
-		require('async').waterfall([
+	app.get(pageParamRoute + '/render', function(req, res) {
+		var async = require('async'),
+			_ = require('underscore'),
+			dust = require('dustjs-linkedin');
+		async.waterfall([
 			function(callback) {
-				if (req.query.filter) {
-					documentManager.filter(req.query.filter, req.query.tag, callback);
-				} else {
-					documentManager.read(req.params.documentType, req.params.document, callback);
-				}
+				pageManager.read(req.params.name, callback);
 			},
-			function(document, callback) {
-				if (document instanceof Array) {
-					document = document[0];
-				}
-
-				templateManager.read(req.params.template, function(error, result) {
-					if (error) {
-						return callback(error);
+			function(page, callback) {
+				var tasks = [
+					function(callback) {
+						templateManager.read(page.layout, function(error, result) {
+							if (error) {
+								return callback(error);
+							} else {
+								page.layout = result;
+								callback();
+							}
+						});
 					}
-					return callback(null, document, result);
+				];
+				_.each(page.sections, function(section) {
+					tasks.push(function(callback) {
+						templateManager.read(section.template, function(error, result) {
+							if (error) {
+								return callback(error);
+							} else {
+								section.template = result;
+								callback();
+							}
+						});
+					});
+					tasks.push(function(callback) {
+						section.filter.parameters = req.query;
+						documentManager.filter(section.filter, function(error, result) {
+							if (error) {
+								return callback(error);
+							} else {
+								section.document = result.body;
+								callback();
+							}
+						});
+					});
 				});
-			},
-			function(document, template, callback) {
-				var dust = require('dustjs-linkedin');
-				var compiled = dust.compile(template.body, 'test');
-				dust.loadSource(compiled);
-				dust.render('test', document, callback);
+
+				async.parallel(tasks, function(error, results) {
+					if (error) {
+						callback(error);
+					} else {
+						callback(null, page);
+					}
+				});
 			}
 		], function(error, result) {
 			if (error) {
 				console.error(error);
 				return res.status(INTERNAL_ERROR).send(error.toString());
 			}
-			return res.status(OK).send(result);
+
+			var page = result, document = {}, compiled;
+			_.each(page.sections, function(section) {
+				document[section.placeHolder] = section.document;
+				compiled = dust.compile(section.template.body, section.placeHolder);
+				dust.loadSource(compiled);
+			});
+
+			var compiled = dust.compile(page.layout.body, page.layout.name);
+			dust.loadSource(compiled);
+			dust.render(page.layout.name, document, function(error, result) {
+				if (error) {
+					return res.status(INTERNAL_ERROR).send(error);
+				} else {
+					return res.status(OK).send(result);
+				}
+			});
 		});
 	});
 
