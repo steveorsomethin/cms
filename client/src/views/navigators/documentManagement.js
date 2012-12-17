@@ -13,7 +13,9 @@ define(['knockout', 'knockback', 'dispatcher'], function (ko, kb, dispatcher) {
 
 			this.name = 'Document Types';
 			this.icon = 'content/images/48/document.png';
-			this.items = collection;
+
+			this.item = this.documentType;
+			this.items = this.documentTypes;
 
 			this.isSelected = ko.observable(true);
 		},
