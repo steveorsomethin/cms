@@ -38,43 +38,19 @@ var errorMap = (function() {
 
 var sendError = function(error, response) {
 	var status = error.type && errorMap[error.type] ? errorMap[error.type] : 500;
-	//console.error(JSON.stringify(error));
 	response.status(status).json(error);
 };
 
 //TODO: Blow this out to inspect Accept headers and serialize appropriately
-var sendResponse = function(error, body, successCode, response) {
-	if (error) {
-		return sendError(error, response);
-	} else {
-		return response.status(successCode).json(body);
-	}
-};
-
-var 
-	putHandler = function(response) {
-		return function(error, result) {
-			sendResponse(error, result, CREATED, response);
-		};
-	},
-
-	getHandler = function(response) {
-		return function(error, result) {
-			sendResponse(error, result, OK, response);
-		};
-	},
-
-	postHandler = function(response) {
-		return function(error, result) {
-			sendResponse(error, result, ACCEPTED, response);
-		};
-	},
-
-	deleteHandler = function(response) {
-		return function(error, result) {
-			sendResponse(error, result, NO_CONTENT, response);
-		};
+var sendResponse = function(successCode, response) {
+	return function(error, result) {
+		if (error) {
+			return sendError(error, response);
+		} else {
+			return response.status(successCode).json(result);
+		}
 	};
+};
 
 httpResources.initialize = function(port) {
 	var app = express.createServer(),
@@ -99,23 +75,23 @@ httpResources.initialize = function(port) {
 		documentTypeParamRoute = documentTypeBaseRoute + '/:name';
 
 	app.put(documentTypeBaseRoute, function(req, res) {
-		documentTypeManager.create(req.body, putHandler(res));
+		documentTypeManager.create(req.body, sendResponse(CREATED, res));
 	});	
 
 	app.get(documentTypeParamRoute, function(req, res) {
-		documentTypeManager.read(req.params.name, getHandler(res));
+		documentTypeManager.read(req.params.name, sendResponse(OK, res));
 	});
 
 	app.post(documentTypeBaseRoute, function(req, res) {
-		documentTypeManager.update(req.body, postHandler(res));
+		documentTypeManager.update(req.body, sendResponse(ACCEPTED, res));
 	});
 
 	app.del(documentTypeParamRoute, function(req, res) {
-		documentTypeManager.del(req.params.name, deleteHandler(res));
+		documentTypeManager.del(req.params.name, sendResponse(NO_CONTENT, res));
 	});
 
 	app.get(documentTypeBaseRoute, function(req, res) {
-		documentTypeManager.readAll(getHandler(res));
+		documentTypeManager.readAll(sendResponse(OK, res));
 	});
 
 	//Documents
@@ -123,23 +99,23 @@ httpResources.initialize = function(port) {
 		documentParamRoute = documentBaseRoute + '/:name';
 
 	app.put(documentBaseRoute, function(req, res) {
-		documentManager.create(req.body, putHandler(res));
+		documentManager.create(req.body, sendResponse(CREATED, res));
 	});
 
 	app.get(documentParamRoute, function(req, res) {
-		documentManager.read(req.params.name, getHandler(res));
+		documentManager.read(req.params.name, sendResponse(OK, res));
 	});
 
 	app.post(documentBaseRoute, function(req, res) {
-		documentManager.update(req.body, postHandler(res));
+		documentManager.update(req.body, sendResponse(ACCEPTED, res));
 	});
 
 	app.del(documentParamRoute, function(req, res) {
-		documentManager.del(req.params.name, deleteHandler(res));
+		documentManager.del(req.params.name, sendResponse(NO_CONTENT, res));
 	});
 
 	app.get(documentBaseRoute, function(req, res) {
-		documentManager.filter(req.query.filter, req.query.tag, getHandler(res));
+		documentManager.filter(req.query.filter, req.query.tag, sendResponse(OK, res));
 	});
 
 	//Templates
@@ -147,23 +123,23 @@ httpResources.initialize = function(port) {
 		templateParamRoute = templateBaseRoute + '/:name';
 
 	app.put(templateBaseRoute, function(req, res) {
-		templateManager.create(req.body, putHandler(res));
+		templateManager.create(req.body, sendResponse(CREATED, res));
 	});
 
 	app.get(templateParamRoute, function(req, res) {
-		templateManager.read(req.params.name, getHandler(res));
+		templateManager.read(req.params.name, sendResponse(OK, res));
 	});
 
 	app.post(templateBaseRoute, function(req, res) {
-		templateManager.update(req.body, postHandler(res));
+		templateManager.update(req.body, sendResponse(ACCEPTED, res));
 	});
 
 	app.del(templateParamRoute, function(req, res) {
-		templateManager.del(req.params.name, deleteHandler(res));
+		templateManager.del(req.params.name, sendResponse(NO_CONTENT, res));
 	});
 
 	app.get(templateBaseRoute, function(req, res) {
-		templateManager.readAll(getHandler(res));
+		templateManager.readAll(sendResponse(OK, res));
 	});
 
 	//Pages
@@ -171,23 +147,23 @@ httpResources.initialize = function(port) {
 		pageParamRoute = pageBaseRoute + '/:name';
 
 	app.put(pageBaseRoute, function(req, res) {
-		pageManager.create(req.body, putHandler(res));
+		pageManager.create(req.body, sendResponse(CREATED, res));
 	});
 
 	app.get(pageParamRoute, function(req, res) {
-		pageManager.read(req.params.name, getHandler(res));
+		pageManager.read(req.params.name, sendResponse(OK, res));
 	});
 
 	app.post(pageBaseRoute, function(req, res) {
-		pageManager.update(req.body, postHandler(res));
+		pageManager.update(req.body, sendResponse(ACCEPTED, res));
 	});
 
 	app.del(pageParamRoute, function(req, res) {
-		pageManager.del(req.params.name, deleteHandler(res));
+		pageManager.del(req.params.name, sendResponse(NO_CONTENT, res));
 	});
 
 	app.get(pageBaseRoute, function(req, res) {
-		pageManager.readAll(getHandler(res));
+		pageManager.readAll(sendResponse(OK, res));
 	});
 
 	app.get(pageParamRoute + '/render', function(req, res) {
@@ -269,4 +245,6 @@ httpResources.initialize = function(port) {
 	});
 
 	app.listen(port);
+
+	return app;
 };
