@@ -167,7 +167,6 @@ var DocumentManager = domainManagers.DocumentManager = function() {
 	//Whatever here
 };
 
-//TODO: Pass documentType to persistence module
 DocumentManager.prototype.create = function(document, onComplete) {
 	async.waterfall([
 		function(callback) {
@@ -218,7 +217,6 @@ var TemplateManager = domainManagers.TemplateManager = function() {
 	//Whatever here
 };
 
-//TODO: Pass documentType to persistence module
 TemplateManager.prototype.create = function(template, onComplete) {
 	async.waterfall([
 		function(callback) {
