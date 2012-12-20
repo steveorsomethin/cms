@@ -10,11 +10,12 @@ var model = module.exports = {},
 
 validators.DocumentType = function(documentType) {
 	//TODO: Create a better way of self-validating document types
-	if (!documentType.properties || !documentType.type) {
+	if (!documentType.name || !documentType.properties || !documentType.type) {
 		return new errors.InvalidInput('DocumentType validation failed', 
 			{
-				'type': 'Property is required',
-				'properties': 'Property is required'
+				name: 'Property is required',
+				type: 'Property is required',
+				properties: 'Property is required'
 			});
 	}
 
@@ -23,52 +24,107 @@ validators.DocumentType = function(documentType) {
 	if (validResult.errors.length) {
 		return new errors.InvalidInput('DocumentType validation failed', validResult.errors);
 	}
+
+	return null;
+};
+
+var getDocumentSchema = function(documentType) {
+	return {
+		id: 'Document',
+		name: 'Document',
+		type: 'object',
+		additionalProperties: false,
+		properties: {
+			id: {type: 'string', required: true},
+			name: {type: 'string', required: true},
+			documentType: {type: 'string', required: true},
+			tags: {type: 'array', items: {type: 'string'}},
+			body: documentType
+		}
+	};
 };
 
 validators.Document = function(document, documentType) {
-	var validResult = env.validate(document, documentType);
+	var validResult = env.validate(document, getDocumentSchema(documentType));
 
 	if (validResult.errors.length) {
 		return new errors.InvalidInput('Document validation failed', validResult.errors);
 	}
+
+	return null;
 };
 
-var enforceTypes = function(obj, definition) {
-	var key, property, error;
-	for (key in definition) {
-		if (definition.hasOwnProperty(key)) {
-			property = definition[key];
-			obj[key] = property.type(obj[key] || property.defaultValue);
-		}
+var templateSchema = {
+	id: 'Template',
+	name: 'Template',
+	type: 'object',
+	additionalProperties: false,
+	properties: {
+		id: {type: 'string', required: true},
+		name: {type: 'string', required: true},
+		documentType: {type: 'string', required: false},
+		isArray: {type: 'boolean', required: false},
+		isLayout: {type: 'boolean', required: false},
+		body: {type: 'string', required: true}
+	}
+};
+
+validators.Template = function(template) {
+	var validResult = env.validate(template, templateSchema);
+
+	if (validResult.errors.length) {
+		return new errors.InvalidInput('Template validation failed', validResult.errors);
 	}
 
-	return error;
-};
-
-//Functions for enforcing serialization of primitive types on json payloads
-model.String = String;
-model.Number = Number;
-
-//Javascript's default Boolean('false') returns true. Thus, the following
-model.Boolean = function(value) {
-
-	return !(!Boolean(value) || (typeof value === 'string' && value.toLowerCase() === 'false'));
-};
-
-model.DocumentProperty = function(obj) {
-	return enforceTypes(obj, {
-		type: {type: model.String, defaultValue: 'string'},
-		required: {type: model.Boolean, defaultValue: false}
-	});
-};
-
-model.DocumentType = function(obj) {
-	var key, error;
-	for (key in obj) {
-		if (obj.hasOwnProperty(key)) {
-			error = model.DocumentProperty(obj[key]);
-		}
+	if (!template.documentType && !template.isLayout) {
+		return new errors.InvalidInput('Template validation failed', 
+			{documentType: 'Property must be set if template is not a layout'});
 	}
 
-	return obj;
+	return null;
+};
+
+var pageSchema = {
+	id: 'Page',
+	name: 'Page',
+	type: 'object',
+	additionalProperties: false,
+	properties: {
+		id: {type: 'string', required: true},
+		name: {type: 'string', required: true},
+		layout: {type: 'string', required: true},
+		sections: {
+			type: 'array',
+			items: {
+				type: 'object',
+				properties: {
+					template: {type: 'string', required: true},
+					placeHolder: {type: 'string', required: true},
+					filter: {
+						type: 'object',
+						properties: {
+							predicate: {type: 'string', required: true},
+							documentType: {type: 'string', required: true},
+							isArray: {type: 'boolean', required: false},
+							parameters: {
+								type: 'object',
+								additionalProperties: true,
+								required: false
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+
+validators.Page = function(page) {
+	var validResult = env.validate(page, pageSchema);
+
+	if (validResult.errors.length) {
+		return new errors.InvalidInput('Page validation failed', validResult.errors);
+	}
+
+	return null;
 };

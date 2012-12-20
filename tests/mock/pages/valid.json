@@ -1,0 +1,25 @@
+{
+	"id": "IDPLACEHOLDER",
+	"name": "IDPLACEHOLDER",
+	"layout": "LAYOUTPLACEHOLDER",
+	"sections": [
+		{
+			"template": "leftColumn",
+			"placeHolder": "leftColumn",
+			"filter": {
+				"predicate": "{'document.name': leftName}",
+				"documentType": "DOCUMENTTYPEPLACEHOLDER",
+				"parameters": {"leftName": ""}
+			}
+		},
+		{
+			"template": "rightColumn",
+			"placeHolder": "rightColumn",
+			"filter": {
+				"predicate": "{'document.name': rightName}",
+				"documentType": "DOCUMENTTYPEPLACEHOLDER",
+				"parameters": {"rightName": ""}
+			}
+		}
+	]
+}

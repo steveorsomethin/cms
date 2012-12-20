@@ -1,0 +1,7 @@
+{
+	"id" : "employee",
+	"name" : "employee",
+	"documentType": "employee",
+	"isArray": false,
+	"author": ""
+}

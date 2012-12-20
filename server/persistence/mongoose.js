@@ -1,17 +1,14 @@
 'use strict';
 
-var util = require('util'),
-	mongoose = require('mongoose'),
+var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
-	_ = require('underscore'),
-	uuid = require('node-uuid'),
-	async = require('async'),
-	model = require('../domain/model');
+	_ = require('underscore');
 
 var mongoosePersistence = module.exports = {},
 	documentTypes = mongoosePersistence.documentTypes = {},
 	documents = mongoosePersistence.documents = {},
 	templates = mongoosePersistence.templates = {},
+	pages = mongoosePersistence.pages = {},
 	siteMaps = mongoosePersistence.siteMaps = {};
 
 var db = mongoose.createConnection('mongodb://dbadmin:!Sm3llf4rts@ds041177.mongolab.com:41177/GutenbergMongoLab'),
@@ -23,22 +20,43 @@ var db = mongoose.createConnection('mongodb://dbadmin:!Sm3llf4rts@ds041177.mongo
 	),
 	Document = db.model('Documents',
 		new mongoose.Schema({
-			tags: [String],
 			metadata: Schema.Types.Mixed,
-			document: Schema.Types.Mixed
+			document: {
+				id: String,
+				name: String,
+				documentType: String,
+				tags: [String],
+				body: Schema.Types.Mixed
+			}
+		})
+	),
+	Template = db.model('Templates',
+		new mongoose.Schema({
+			metadata: Schema.Types.Mixed,
+			template: Schema.Types.Mixed
+		})
+	),
+	Page = db.model('Pages',
+		new mongoose.Schema({
+			metadata: Schema.Types.Mixed,
+			page: Schema.Types.Mixed
 		})
 	);
 
 //Document Types
-documentTypes.create = function(name, documentType, callback) {
-	var record = new DocumentType({documentType: documentType});
-	DocumentType.create(record, function(error, result) {
-		if (error) {
-			callback(error);
-		} else {
-			callback(null, documentType);
+documentTypes.create = function(documentType, callback) {
+	DocumentType.update(
+		{'documentType.name': documentType.name},
+		{$set: {documentType: documentType}},
+		{upsert: true},
+		function(error, result) {
+			if (error) {
+				callback(error);
+			} else {
+				callback(null, documentType);
+			}
 		}
-	});
+	);
 };
 
 documentTypes.filter = function(filter, callback) {
@@ -73,15 +91,7 @@ documentTypes.readAll = function(callback) {
 	});
 };
 
-documentTypes.update = function(name, documentType, callback) {
-	DocumentType.findOneAndUpdate({'documentType.id': name}, {documentType: documentType}, function(error, result) {
-		if (error) {
-			callback(error);
-		} else {
-			callback(null, documentType);
-		}
-	});
-};
+documentTypes.update = documentTypes.create; //TODO: Do we need this?
 
 documentTypes.del = function(name, callback) {
 	DocumentType.findOneAndRemove({'documentType.id': name}, function(error, result) {
@@ -94,35 +104,53 @@ documentTypes.del = function(name, callback) {
 };
 
 //Documents
-documents.create = function(name, document, callback) {
-	var record = new Document({tags: ['Test'], document: document});
-	Document.create(record, function(error, result) {
-		if (error) {
-			callback(error);
-		} else {
-			callback(null, document);
+documents.create = function(document, callback) {
+	Document.update(
+		{'document.name': document.name},
+		{$set: {document: document}},
+		{upsert: true},
+		function(error, result) {
+			if (error) {
+				callback(error);
+			} else {
+				callback(null, document);
+			}
 		}
-	});
+	);
 };
 
-documents.filter = function(filter, tag, callback) {
-	filter = filter ? filter : 'true';
-	Document.$where(filter).all('tags', [tag]).exec(function(error, results) {
-		var documents = [];
+//TODO: BAD cannot trust the vm. This is purely for the new years demo
+var buildMongooseFilter = function(filter) {
+	var params = filter.parameters;
+	params.exports = {};
+	require('vm').runInNewContext('exports = ' + filter.predicate, filter.parameters);
+	return params.exports;
+};
 
+documents.filter = function(filter, callback) {
+	var mongooseFilter = filter ? buildMongooseFilter(filter) : {};
+
+	Document.find(mongooseFilter, function(error, results) {
+		var documents;
+		
 		if (error) {
 			callback(error);
 		} else {
-			for (var i = 0; i < results.length; i++) {
-				documents.push(results[i].document);
+			if (filter.isArray) {
+				documents = [];
+				for (var i = 0; i < results.length; i++) {
+					documents.push(results[i].document);
+				}
+				callback(null, documents);
+			} else {
+				callback(null, results.length ? results[0].document : null);
 			}
-			callback(null, documents);
 		}
 	});
 };
 
 documents.read = function(name, callback) {
-	Document.findOne({'document.id': name}, function(error, result) {
+	Document.findOne({'document.name': name}, function(error, result) {
 		var document;
 
 		if (error) {
@@ -138,18 +166,10 @@ documents.readAll = function(name, callback) {
 	callback('Not implemented');
 };
 
-documents.update = function(name, document, callback) {
-	Document.findOneAndUpdate({'document.id': name}, {document: document}, function(error, result) {
-		if (error) {
-			callback(error);
-		} else {
-			callback(null, document);
-		}
-	});
-};
+documents.update = documents.create; //TODO: Do we need this?
 
 documents.del = function(name, callback) {
-	Document.findOneAndRemove({'document.id': name}, function(error, result) {
+	Document.findOneAndRemove({'document.name': name}, function(error, result) {
 		if (error) {
 			callback(error);
 		} else {
@@ -159,24 +179,123 @@ documents.del = function(name, callback) {
 };
 
 //Templates
-templates.create = function(name, template, callback) {
+templates.create = function(template, callback) {
+	Template.update(
+		{'template.name': template.name},
+		{$set: {template: template}},
+		{ upsert: true },
+		function(error, result) {
+			if (error) {
+				callback(error);
+			} else {
+				callback(null, template);
+			}
+		}
+	);
+};
+
+templates.filter = function(filter, tag, callback) {
 	callback('Not implemented');
 };
 
 templates.read = function(name, callback) {
-	callback('Not implemented');
+	Template.findOne({'template.name': name}, function(error, result) {
+		var template;
+
+		if (error) {
+			callback(error);
+		} else {
+			template = result ? result.template : null;
+			callback(null, template);
+		}
+	});
 };
 
 templates.readAll = function(callback) {
-	callback('Not implemented');
+	Template.find({}, function(error, results) {
+		var templates = [];
+
+		if (error) {
+			callback(error);
+		} else {
+			for (var i = 0; i < results.length; i++) {
+				templates.push(results[i].template);
+			}
+			callback(null, templates);
+		}
+	});
 };
 
-templates.update = function(name, template, callback) {
-	callback('Not implemented');
-};
+templates.update = templates.create; //TODO: Do we need this?
 
 templates.del = function(name, callback) {
+	Template.findOneAndRemove({'template.name': name}, function(error, result) {
+		if (error) {
+			callback(error);
+		} else {
+			callback();
+		}
+	});
+};
+
+//Pages
+pages.create = function(page, callback) {
+	Page.update(
+		{'page.name': page.name},
+		{$set: {page: page}},
+		{ upsert: true },
+		function(error, result) {
+			if (error) {
+				callback(error);
+			} else {
+				callback(null, page);
+			}
+		}
+	);
+};
+
+pages.filter = function(filter, tag, callback) {
 	callback('Not implemented');
+};
+
+pages.read = function(name, callback) {
+	Page.findOne({'page.name': name}, function(error, result) {
+		var page;
+
+		if (error) {
+			callback(error);
+		} else {
+			page = result ? result.page : null;
+			callback(null, page);
+		}
+	});
+};
+
+pages.readAll = function(callback) {
+	Page.find({}, function(error, results) {
+		var pages = [];
+
+		if (error) {
+			callback(error);
+		} else {
+			for (var i = 0; i < results.length; i++) {
+				pages.push(results[i].page);
+			}
+			callback(null, pages);
+		}
+	});
+};
+
+pages.update = pages.create; //TODO: Do we need this?
+
+pages.del = function(name, callback) {
+	Page.findOneAndRemove({'page.name': name}, function(error, result) {
+		if (error) {
+			callback(error);
+		} else {
+			callback();
+		}
+	});
 };
 
 //Site Maps

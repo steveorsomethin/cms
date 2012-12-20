@@ -18,14 +18,13 @@ define([
 
 			loadTemplates: function() {
 				var templates = applicationContext.get('templates');
-				templates.url = '/templates';
+				templates.url = '/services/templates';
 				templates.fetch();
 			},
 
 			saveTemplate: function() {
 				var template = applicationContext.get('template');
-				backbone.sync('update', template, {url: '/documentTypes/' + template.get('documentType')
-					+ '/templates/' + template.get('name')});
+				backbone.sync('update', template, {url: '/services/templates/' + template.get('name')});
 			},
 
 			selectTemplate: function(template) {

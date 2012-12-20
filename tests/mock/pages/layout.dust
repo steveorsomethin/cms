@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Layout test</title>
+		<style>
+		ul {
+		  list-style-type: none;
+		}
+
+		#left-column {
+			float: left;
+		}
+
+		#right-column {
+			float: right;
+		}
+		</style>
+	</head>
+	<body>
+		<div id="left-column">{>leftColumn:leftColumn/}</div>
+		<div id="right-column">{>rightColumn:rightColumn/}</div>
+	</body>
+</html>

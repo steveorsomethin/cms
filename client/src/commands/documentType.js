@@ -31,7 +31,7 @@ define([
 
 			loadDocumentTypes: function() {
 				var documentTypes = applicationContext.get('documentTypes');
-				documentTypes.url = '/documentTypes';
+				documentTypes.url = '/services/documentTypes';
 				documentTypes.fetch();
 			},
 

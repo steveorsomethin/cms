@@ -4,6 +4,6 @@ var httpResources = require('./resources/http');
 
 var application = module.exports = {};
 
-application.run = function() {
-	httpResources.initialize(8088);
+application.run = function(port) {
+	httpResources.initialize(port || 8088);
 };

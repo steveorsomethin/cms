@@ -21,7 +21,6 @@
 		"express": "2.x.x",
 		"underscore": "1.x.x",
 		"async": "0.x.x",
-		"azure": "0.x.x",
 		"rethinkdb": "1.x.x",
 		"mongoose": "3.x.x",
 		"hiredis": "0.x.x",

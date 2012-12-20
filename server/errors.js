@@ -5,8 +5,8 @@ var util = require('util');
 var errors = module.exports = {};
 
 var ErrorBase = function(message, constructor) {
-  Error.captureStackTrace(this, constructor || this);
-  this.message = message || 'Error';
+	Error.captureStackTrace(this, constructor || this);
+	this.message = message || 'Error';
 };
 util.inherits(ErrorBase, Error);
 
@@ -33,7 +33,6 @@ var defineError = function(name, definition) {
 
 defineError('ResourceNotFound');
 defineError('ResourceExists');
-defineError('TypeMismatch');
 
 /* 
 * The 'details' argument here should come in the form of a map

@@ -1,7 +1,6 @@
 {
 	"id" : "IDPLACEHOLDER",
 	"name" : "IDPLACEHOLDER",
-	"documentType": "DOCUMENTTYPEPLACEHOLDER",
-	"isArray": false,
+	"isLayout": true,
 	"body": ""
 }
