@@ -70,105 +70,64 @@ httpResources.initialize = function(port) {
 
 	var serviceBaseRoute = '/services';
 
+	var crud = function(manager) {
+		return function(req, res) {
+			switch (req.method) {
+				case 'PUT':
+					manager.create(req.body, sendResponse(CREATED, res));
+					break;
+				case 'GET':
+					manager.read(req.params.name, sendResponse(OK, res));
+					break;
+				case 'POST':
+					manager.update(req.body, sendResponse(ACCEPTED, res));
+					break;
+				case 'DELETE':
+					manager.del(req.params.name, sendResponse(NO_CONTENT, res));
+					break;
+			}
+		};
+	};
+
+	//Set up boilerplate crud routes
+	[
+		['documentTypes', documentTypeManager], 
+		['documents', documentManager],
+		['templates', templateManager],
+		['pages', pageManager]
+	].forEach(function(tuple, i) {
+		var baseRoute = util.format('%s/%s', serviceBaseRoute, tuple[0]),
+			paramRoute = util.format('%s/:name', baseRoute),
+			manager = tuple[1];
+
+		app.put(baseRoute, crud(manager));
+		app.get(paramRoute, crud(manager));
+		app.post(baseRoute, crud(manager));
+		app.del(paramRoute, crud(manager));
+	});
+
 	//DocumentTypes
-	var documentTypeBaseRoute = serviceBaseRoute + '/documentTypes',
-		documentTypeParamRoute = documentTypeBaseRoute + '/:name';
-
-	app.put(documentTypeBaseRoute, function(req, res) {
-		documentTypeManager.create(req.body, sendResponse(CREATED, res));
-	});	
-
-	app.get(documentTypeParamRoute, function(req, res) {
-		documentTypeManager.read(req.params.name, sendResponse(OK, res));
-	});
-
-	app.post(documentTypeBaseRoute, function(req, res) {
-		documentTypeManager.update(req.body, sendResponse(ACCEPTED, res));
-	});
-
-	app.del(documentTypeParamRoute, function(req, res) {
-		documentTypeManager.del(req.params.name, sendResponse(NO_CONTENT, res));
-	});
-
-	app.get(documentTypeBaseRoute, function(req, res) {
+	app.get(serviceBaseRoute + '/documentTypes', function(req, res) {
 		documentTypeManager.readAll(sendResponse(OK, res));
 	});
 
 	//Documents
-	var documentBaseRoute = serviceBaseRoute + '/documents',
-		documentParamRoute = documentBaseRoute + '/:name';
-
-	app.put(documentBaseRoute, function(req, res) {
-		documentManager.create(req.body, sendResponse(CREATED, res));
-	});
-
-	app.get(documentParamRoute, function(req, res) {
-		documentManager.read(req.params.name, sendResponse(OK, res));
-	});
-
-	app.post(documentBaseRoute, function(req, res) {
-		documentManager.update(req.body, sendResponse(ACCEPTED, res));
-	});
-
-	app.del(documentParamRoute, function(req, res) {
-		documentManager.del(req.params.name, sendResponse(NO_CONTENT, res));
-	});
-
-	app.get(documentBaseRoute, function(req, res) {
+	app.get(serviceBaseRoute + '/documents', function(req, res) {
 		documentManager.filter(req.query.filter, req.query.tag, sendResponse(OK, res));
 	});
 
 	//Templates
-	var templateBaseRoute = serviceBaseRoute + '/templates',
-		templateParamRoute = templateBaseRoute + '/:name';
-
-	app.put(templateBaseRoute, function(req, res) {
-		templateManager.create(req.body, sendResponse(CREATED, res));
-	});
-
-	app.get(templateParamRoute, function(req, res) {
-		templateManager.read(req.params.name, sendResponse(OK, res));
-	});
-
-	app.post(templateBaseRoute, function(req, res) {
-		templateManager.update(req.body, sendResponse(ACCEPTED, res));
-	});
-
-	app.del(templateParamRoute, function(req, res) {
-		templateManager.del(req.params.name, sendResponse(NO_CONTENT, res));
-	});
-
-	app.get(templateBaseRoute, function(req, res) {
+	app.get(serviceBaseRoute + '/templates', function(req, res) {
 		templateManager.readAll(sendResponse(OK, res));
 	});
 
 	//Pages
-	var pageBaseRoute = serviceBaseRoute + '/pages',
-		pageParamRoute = pageBaseRoute + '/:name';
-
-	app.put(pageBaseRoute, function(req, res) {
-		pageManager.create(req.body, sendResponse(CREATED, res));
-	});
-
-	app.get(pageParamRoute, function(req, res) {
-		pageManager.read(req.params.name, sendResponse(OK, res));
-	});
-
-	app.post(pageBaseRoute, function(req, res) {
-		pageManager.update(req.body, sendResponse(ACCEPTED, res));
-	});
-
-	app.del(pageParamRoute, function(req, res) {
-		pageManager.del(req.params.name, sendResponse(NO_CONTENT, res));
-	});
-
-	app.get(pageBaseRoute, function(req, res) {
+	app.get(serviceBaseRoute + '/pages', function(req, res) {
 		pageManager.readAll(sendResponse(OK, res));
 	});
 
-	app.get(pageParamRoute + '/render', function(req, res) {
+	app.get(serviceBaseRoute + '/pages/:name/render', function(req, res) {
 		var async = require('async'),
-			_ = require('underscore'),
 			dust = require('dustjs-linkedin');
 		async.waterfall([
 			function(callback) {
@@ -187,7 +146,7 @@ httpResources.initialize = function(port) {
 						});
 					}
 				];
-				_.each(page.sections, function(section) {
+				page.sections.forEach(function(section) {
 					tasks.push(function(callback) {
 						templateManager.read(section.template, function(error, result) {
 							if (error) {
@@ -204,7 +163,7 @@ httpResources.initialize = function(port) {
 							if (error) {
 								return callback(error);
 							} else {
-								section.document = result.body;
+								section.document = result;
 								callback();
 							}
 						});
@@ -226,8 +185,8 @@ httpResources.initialize = function(port) {
 			}
 
 			var page = result, document = {}, compiled;
-			_.each(page.sections, function(section) {
-				document[section.placeHolder] = section.document;
+			page.sections.forEach(function(section) {
+				document[section.placeHolder] = section.document.body;
 				compiled = dust.compile(section.template.body, section.placeHolder);
 				dust.loadSource(compiled);
 			});
