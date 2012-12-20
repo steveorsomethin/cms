@@ -1,0 +1,50 @@
+<!-- Top Navbar -->
+
+<div class="navbar navbar-fixed-top">
+	<div class="navbar-inner">
+		<div class="container-fluid">
+			<a class="brand">Gutenberg</a>
+
+			<div data-bind="template: { name: navigator.name, templateUrl: navigator.src, data: navigator.model }"></div>
+		</div>
+	</div>
+</div>
+
+<!-- Content Container -->
+
+<div class="container-fluid stretch-vertical">
+	<div class="row-fluid stretch-vertical content-outer">
+
+		<!-- ko if: viewModel -->
+		<div class="span12 stretch-vertical content-inner" data-bind="template: { name: viewModel().view.name, templateUrl: viewModel().view.src, data: viewModel().view.model }"></div>
+		<!-- /ko -->
+
+		<!-- ko if: presenter.active --
+		<div class="span12 stretch-vertical content-inner" data-bind="template: { name: 'documents', templateUrl: 'public/src/views', data: presenter.active() }"></div>
+		!-- /ko -->
+	</div>
+</div>
+
+<!-- Console Panel -->
+
+<!--<div class="navbar navbar-fixed-bottom">
+	<div class="navbar-inner">
+		<div class="container-fluid">
+			<ul class="nav divided pull-left">
+				<li class="divider-vertical"></li>
+
+				<!-- ko if: console.messages().length > 0 --
+				<li class="navbar-text" data-bind="text: console.messages()[console.messages().length - 1].message"></li>
+				<!-- /ko --
+			</ul>
+			<ul class="nav divided pull-right">
+				<li class="divider-vertical"></li>
+				<li>
+					<a href="#">
+						<i class="icon-chevron-up"></i>
+					</a>
+				<li class="divider-vertical"></li>
+			<ul>
+		</class>
+	</div>
+</div>-->

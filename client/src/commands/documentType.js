@@ -3,7 +3,7 @@
 define([
 		'backbone',
 		'ApplicationContext',
-		'EventBus',
+		'dispatcher',
 		'../core/commandMap',
 		'../model'
 	],

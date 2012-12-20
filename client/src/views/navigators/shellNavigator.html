@@ -1,0 +1,18 @@
+<ul class="nav divided pull-left">
+	<!-- ko if: module -->
+	<li class="navbar-text module"><span data-bind="text: module().name"></span></li>
+	<!-- /ko -->
+</ul>
+
+<ul class="nav divided pull-right">
+	<li class="divider-vertical"></li>
+	
+	<!-- ko foreach: modules -->
+	<li data-bind="css: { 'active': $parent.module().id() === $data.id() }">
+		<a href="#" rel="tooltip" data-bind="attr: { title: name }, click: $parent.selectModule">
+			<img data-bind="attr: { src: icon }" />
+		</a>
+	</li>
+	<li class="divider-vertical"></li>
+	<!-- /ko -->
+</ul>

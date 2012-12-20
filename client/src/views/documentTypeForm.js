@@ -5,7 +5,7 @@ define([
 		'knockback',
 		'./propertyList',
 		'ApplicationContext',
-		'EventBus'
+		'dispatcher'
 	], 
 	function(ko, kb, PropertyListViewModel, applicationContext, eventBus) {
 		return kb.ViewModel.extend({

@@ -1,46 +1,45 @@
 'use strict';
 
-define('EventBus', ['underscore', 'backbone'], function(_, backbone) {
+//
+// dispatcher - application event aggregator
+
+define('dispatcher', ['underscore', 'backbone'], function(_, backbone) {
 	var eventBus = {};
 	_.extend(eventBus, backbone.Events);
 	return eventBus;
 });
 
-define('ApplicationContext', ['backbone', './src/model'], function(backbone, model) {
-	var ApplicationContext = backbone.Model.extend({
-		initialize: function() {
-			//TODO: localize, move to view
-			var defaultDocumentType = new model.DocumentType({name: 'New Document Type'}),
-				defaultTemplate = new model.Template({name: 'New Template'});
+//
+// commands - instantiates all command maps
 
-			this.set('documentType', defaultDocumentType);
-			this.set('documentTypes', new model.DocumentTypeCollection([defaultDocumentType]));
-			this.set('template', defaultTemplate);
-			this.set('templates', new model.TemplateCollection([defaultTemplate]));
-		}
-	});
-
-	return new ApplicationContext();
-});
-
-define([
-		'jquery',
-		'./src/views/main',
-		'./src/commands/documentType',
-		'./src/commands/template',
-		'EventBus'
+define('commands', [
+	'./src/commands/application', 
+	'./src/commands/shell', 
+	'./src/commands/documentManagement',
+	'./src/commands/templateManagement'
 	], 
-	function($, MainViewModel, DocumentTypeCommandMap, TemplateCommandMap, eventBus) {
-		$(function() {
-			var documentTypeMap = new DocumentTypeCommandMap(eventBus),
-			templateMap = new TemplateCommandMap(eventBus);
+	function (ApplicationCommands, ShellCommands, DocumentManagementCommands, TemplateManagementCommands) {
+		var dispatcher = require('dispatcher');
 
-			MainViewModel.start($('body'));
-
-			eventBus.trigger('loadDocumentTypes');
-			eventBus.trigger('loadTemplates');
-
-			console.log('Application started');
-		});
+		var applicationCommands = new ApplicationCommands(dispatcher);
+		var shellCommands = new ShellCommands(dispatcher);
+		var documentManagementCommands = new DocumentManagementCommands(dispatcher);
+		var templateManagementCommands = new TemplateManagementCommands(dispatcher);
 	}
 );
+
+//
+// entryPoint - loads all modules required to start the application
+
+define(['jquery', 'backbone', 'dispatcher', 'commands'], function($, backbone, dispatcher) {
+	var contexts = [];
+	var commands = [];
+
+	$(function () {
+		dispatcher.trigger('application:start', { 'element': $('body').get(0) });
+
+		if (backbone.History.started) {
+			backbone.History.start();
+		}
+	});
+});
