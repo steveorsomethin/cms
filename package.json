@@ -31,6 +31,8 @@
 	},
 	"devDependencies": {
 		"nodelint": "0.x.x",
-		"request": "2.x.x"
+		"request": "2.x.x",
+		"zombie": "1.x.x",
+		"mocha": "1.x.x"
 	}
 }
