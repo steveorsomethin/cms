@@ -128,7 +128,8 @@ var buildMongooseFilter = function(filter) {
 };
 
 documents.filter = function(filter, callback) {
-	var mongooseFilter = filter ? buildMongooseFilter(filter) : {};
+	filter = filter || {isArray: true, parameters: {}, predicate: '{}'};
+	var mongooseFilter = buildMongooseFilter(filter);
 
 	Document.find(mongooseFilter, function(error, results) {
 		var documents;

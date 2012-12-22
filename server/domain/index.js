@@ -192,8 +192,8 @@ DocumentManager.prototype.read = function(documentName, onComplete) {
 	});
 };
 
-DocumentManager.prototype.filter = function(filter, tag, onComplete) {
-	documentRepo.filter(filter, tag, onComplete); //TODO: Fill this out
+DocumentManager.prototype.filter = function(filter, onComplete) {
+	documentRepo.filter(filter, onComplete); //TODO: Fill this out
 };
 
 DocumentManager.prototype.update = function(document, onComplete) {

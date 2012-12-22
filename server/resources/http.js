@@ -113,7 +113,7 @@ httpResources.initialize = function(port) {
 
 	//Documents
 	app.get(serviceBaseRoute + '/documents', function(req, res) {
-		documentManager.filter(req.query.filter, req.query.tag, sendResponse(OK, res));
+		documentManager.filter(null, sendResponse(OK, res));
 	});
 
 	//Templates
