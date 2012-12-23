@@ -1,0 +1,16 @@
+<ul class="nav nav-list">
+	<li class="divider"><li>
+	<li>
+		<a href="#" data-bind="click: $parent.createItem">
+			<img src="content/images/48/document-add.png" />
+		</a>
+	</li>
+
+	<!-- ko if: item().id -->
+	<li>
+		<a href="#" data-bind="click: $parent.removeItem">
+			<img src="content/images/48/document-remove.png" />
+		</a>
+	</li>
+	<!-- /ko -->
+</ul>
