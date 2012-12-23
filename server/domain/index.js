@@ -7,7 +7,6 @@ var util = require('util'),
 	async = require('async'),
 	errors = require('../errors'),
 	model = require('./model'),
-	persistence = require('../persistence'),
 	validators = model.validators;
 
 var documentTypeNotFound = 'DocumentType with name %s not found.',
@@ -15,16 +14,11 @@ var documentTypeNotFound = 'DocumentType with name %s not found.',
 	templateNotFound = 'Template with name %s not found.',
 	pageNotFound = 'Page with name %s not found.';
 
-var domain = module.exports = function(persistenceImpl) {
+var domain = module.exports = function(persistence) {
 	var domain = {};
 
-	var documentTypeRepo = new persistence.DocumentTypeRepo(persistenceImpl.documentTypes),
-		documentRepo = new persistence.DocumentRepo(persistenceImpl.documents),
-		templateRepo = new persistence.TemplateRepo(persistenceImpl.templates),
-		pageRepo = new persistence.TemplateRepo(persistenceImpl.pages);
-
 	var ensureDocumentType = function(documentTypeName, callback) {
-		documentTypeRepo.read(documentTypeName, function(error, documentType) {
+		persistence.documentTypes.read(documentTypeName, function(error, documentType) {
 			if (!documentType) {
 				error = new errors.ResourceNotFound(util.format(documentTypeNotFound, documentTypeName));
 				return callback(error);
@@ -35,7 +29,7 @@ var domain = module.exports = function(persistenceImpl) {
 	};
 
 	var ensureTemplate = function(templateName, callback) {
-		templateRepo.read(templateName, function(error, template) {
+		persistence.templates.read(templateName, function(error, template) {
 			if (!template) {
 				error = new errors.ResourceNotFound(util.format(templateNotFound, templateName));
 				return callback(error);
@@ -46,6 +40,7 @@ var domain = module.exports = function(persistenceImpl) {
 	};
 
 	var preSaveDocument = function(document, callback) {
+		//While this validation really should be in the model, we have a chicken and egg problem
 		if (typeof document.documentType !== 'string') {
 			return callback(new errors.InvalidInput({documentType: 'Property is required'}));
 		}
@@ -116,12 +111,12 @@ var domain = module.exports = function(persistenceImpl) {
 		if (validationError) {
 			return onComplete(validationError);
 		} else {
-			return documentTypeRepo.create(documentType, onComplete);
+			return persistence.documentTypes.create(documentType, onComplete);
 		}
 	};
 
 	documentTypes.read = function(documentTypeName, onComplete) {
-		documentTypeRepo.read(documentTypeName, function(error, result) {
+		persistence.documentTypes.read(documentTypeName, function(error, result) {
 			if (error) {
 				return onComplete(error);
 			} else if (!result) {
@@ -134,12 +129,11 @@ var domain = module.exports = function(persistenceImpl) {
 	};
 
 	documentTypes.readAll = function(onComplete) {
-		documentTypeRepo.readAll(function(error, result) {
+		persistence.documentTypes.readAll(function(error, result) {
 			if (error) {
 				return onComplete(error);
 			} else if (!result) {
-				error = new errors.ResourceNotFound(util.format(documentTypeNotFound, 'all'));
-				return onComplete(error);
+				return onComplete(null, []);
 			} else {
 				return onComplete(null, result);
 			}
@@ -152,12 +146,12 @@ var domain = module.exports = function(persistenceImpl) {
 		if (validationError) {
 			return onComplete(validationError);
 		} else {
-			documentTypeRepo.update(documentType, onComplete);
+			persistence.documentTypes.update(documentType, onComplete);
 		}
 	};
 
 	documentTypes.del = function(documentTypeName, onComplete) {
-		documentTypeRepo.del(documentTypeName, onComplete);
+		persistence.documentTypes.del(documentTypeName, onComplete);
 	};
 
 	//Documents
@@ -170,13 +164,13 @@ var domain = module.exports = function(persistenceImpl) {
 			},
 
 			function(callback) {
-				documentRepo.create(document, callback);
+				persistence.documents.create(document, callback);
 			}
 		], onComplete);
 	};
 
 	documents.read = function(documentName, onComplete) {
-		documentRepo.read(documentName, function(error, result) {
+		persistence.documents.read(documentName, function(error, result) {
 			if (error) {
 				return onComplete(error);
 			} else if (!result) {
@@ -189,7 +183,13 @@ var domain = module.exports = function(persistenceImpl) {
 	};
 
 	documents.filter = function(filter, onComplete) {
-		documentRepo.filter(filter, onComplete); //TODO: Fill this out
+		persistence.documents.filter(filter, function(error, result) {
+			if (error) {
+				onComplete(error);
+			} else {
+				onComplete(null, filter.isArray && !Array.isArray(result) ? [result]: result);
+			}
+		});
 	};
 
 	documents.update = function(document, onComplete) {
@@ -199,13 +199,13 @@ var domain = module.exports = function(persistenceImpl) {
 			},
 
 			function(callback) {
-				documentRepo.update(document, callback);
+				persistence.documents.update(document, callback);
 			}
 		], onComplete);
 	};
 
 	documents.del = function(documentName, onComplete) {
-		documentRepo.del(documentName, onComplete);
+		persistence.documents.del(documentName, onComplete);
 	};
 
 	//Templates
@@ -218,17 +218,23 @@ var domain = module.exports = function(persistenceImpl) {
 			},
 
 			function(callback) {
-				templateRepo.create(template, callback);
+				persistence.templates.create(template, callback);
 			}
 		], onComplete);
 	};
 
 	templates.filter = function(filter, onComplete) {
-		templateRepo.filter(filter, onComplete); //TODO: Fill this out
+		persistence.templates.filter(filter, function(error, result) {
+			if (error) {
+				onComplete(error);
+			} else {
+				onComplete(null, filter.isArray && !Array.isArray(result) ? [result]: result);
+			}
+		});
 	};
 
 	templates.read = function(templateName, onComplete) {
-		templateRepo.read(templateName, function(error, result) {
+		persistence.templates.read(templateName, function(error, result) {
 			if (error) {
 				return onComplete(error);
 			} else if (!result) {
@@ -241,7 +247,7 @@ var domain = module.exports = function(persistenceImpl) {
 	};
 
 	templates.readAll = function(onComplete) {
-		templateRepo.readAll(function(error, result) {
+		persistence.templates.readAll(function(error, result) {
 			if (error) {
 				return onComplete(error);
 			} else if (!result) {
@@ -260,13 +266,13 @@ var domain = module.exports = function(persistenceImpl) {
 			},
 
 			function(callback) {
-				templateRepo.update(template, callback);
+				persistence.templates.update(template, callback);
 			}
 		], onComplete);
 	};
 
 	templates.del = function(templateName, onComplete) {
-		templateRepo.del(templateName, onComplete);
+		persistence.templates.del(templateName, onComplete);
 	};
 
 	//Pages
@@ -279,17 +285,23 @@ var domain = module.exports = function(persistenceImpl) {
 			},
 
 			function(callback) {
-				pageRepo.create(page, callback);
+				persistence.pages.create(page, callback);
 			}
 		], onComplete);
 	};
 
 	pages.filter = function(filter, onComplete) {
-		pageRepo.filter(filter, onComplete); //TODO: Fill this out
+		persistence.pages.filter(filter, function(error, result) {
+			if (error) {
+				onComplete(error);
+			} else {
+				onComplete(null, filter.isArray && !Array.isArray(result) ? [result]: result);
+			}
+		});
 	};
 
 	pages.read = function(pageName, onComplete) {
-		pageRepo.read(pageName, function(error, result) {
+		persistence.pages.read(pageName, function(error, result) {
 			if (error) {
 				return onComplete(error);
 			} else if (!result) {
@@ -302,7 +314,7 @@ var domain = module.exports = function(persistenceImpl) {
 	};
 
 	pages.readAll = function(onComplete) {
-		pageRepo.readAll(function(error, result) {
+		persistence.pages.readAll(function(error, result) {
 			if (error) {
 				return onComplete(error);
 			} else if (!result) {
@@ -321,13 +333,13 @@ var domain = module.exports = function(persistenceImpl) {
 			},
 
 			function(callback) {
-				pageRepo.update(page, callback);
+				persistence.pages.update(page, callback);
 			}
 		], onComplete);
 	};
 
 	pages.del = function(pageName, onComplete) {
-		pageRepo.del(pageName, onComplete);
+		persistence.pages.del(pageName, onComplete);
 	};
 
 	return domain;
