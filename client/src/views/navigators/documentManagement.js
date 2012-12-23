@@ -11,14 +11,11 @@ define(['knockout', 'knockback', 'dispatcher'], function (ko, kb, dispatcher) {
 				keys: ['documentType', 'documentTypes']
 			});
 
-			this.id = 'types';
-			this.path = '#types';
-
-			this.name = 'Document Types';
-			this.icon = 'content/images/48/document.png';
-
 			this.item = this.documentType;
 			this.items = this.documentTypes;
+
+			this.tab = { name: 'Document Types', path: 'types', icon: 'content/images/48/document.png' },
+			this.contextMenu = { name: 'documentTypeContextMenu', src: 'src/views/navigators', model: this }
 
 			this.isSelected = ko.observable(true);
 		},
@@ -41,14 +38,11 @@ define(['knockout', 'knockback', 'dispatcher'], function (ko, kb, dispatcher) {
 				keys: ['documentCollection', 'documentCollections']
 			});
 
-			this.id = 'collections';
-			this.path = '#collections';
-
-			this.name = 'Collections';
-			this.icon = 'content/images/48/database.png';
-
 			this.item = this.documentCollection;
 			this.items = this.documentCollections;
+
+			this.tab = { name: 'Document Collections', path: 'collections', icon: 'content/images/48/database.png' };
+			this.contextMenu = { name: 'documentCollectionContextMenu', src: 'src/views/navigators', data: this };
 
 			this.isSelected = ko.observable(false);
 		},
