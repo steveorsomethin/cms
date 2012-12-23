@@ -1,7 +1,7 @@
 {
 	"id": "IDPLACEHOLDER",
 	"name": "IDPLACEHOLDER",
-	"layout": "LAYOUTPLACEHOLDER",
+	"layout": "TEMPLATEPLACEHOLDER",
 	"sections": [
 		{
 			"template": "leftColumn",
