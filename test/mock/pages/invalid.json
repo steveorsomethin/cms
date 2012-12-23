@@ -1,0 +1,24 @@
+{
+	"id": "IDPLACEHOLDER",
+	"name": "IDPLACEHOLDER",
+	"sectionz": [
+		{
+			"template": "leftColumn",
+			"placeHolder": "leftColumn",
+			"filter": {
+				"predicate": "{'document.name': leftName}",
+				"documentType": "DOCUMENTTYPEPLACEHOLDER",
+				"parameters": {"leftName": ""}
+			}
+		},
+		{
+			"template": "rightColumn",
+			"placeHolder": "rightColumn",
+			"filter": {
+				"predicate": "{'document.name': rightName}",
+				"documentType": "DOCUMENTTYPEPLACEHOLDER",
+				"parameters": {"rightName": ""}
+			}
+		}
+	]
+}
