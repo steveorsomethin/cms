@@ -118,7 +118,9 @@ httpResources.initialize = function(port) {
 
 	//Templates
 	app.get(serviceBaseRoute + '/templates', function(req, res) {
-		templateManager.readAll(sendResponse(OK, res));
+		//TODO: Hack, we need a generalized filter ability
+		var filter = req.query.isLayout === 'true' ? {'template.isLayout': true} : {};
+		domain.templates.filter(filter, sendResponse(OK, res));
 	});
 
 	//Pages
