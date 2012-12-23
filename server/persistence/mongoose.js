@@ -206,10 +206,14 @@ var mongoosePersistence = module.exports = function(connectionString) {
 			if (error) {
 				callback(error);
 			} else {
-				for (var i = 0; i < results.length; i++) {
-					templates.push(results[i].template);
+				if (filter.isArray) {
+					for (var i = 0; i < results.length; i++) {
+						templates.push(results[i].template);
+					}
+					callback(null, templates);
+				} else {
+					callback(null, results.length ? results[0].template : null);
 				}
-				callback(null, templates);
 			}
 		});
 	};
