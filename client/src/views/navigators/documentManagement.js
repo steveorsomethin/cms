@@ -26,6 +26,14 @@ define(['knockout', 'knockback', 'dispatcher'], function (ko, kb, dispatcher) {
 
 		selectItem: function (item) {
 			dispatcher.trigger('documentType:selected', { documentType: item.model() });
+		},
+
+		createItem: function () {
+			dispatcher.trigger('documentType:create');
+		},
+
+		removeItem: function (item) {
+			dispatcher.trigger('documentType:remove', { documentType: documentType().model() });
 		}
 	});
 
