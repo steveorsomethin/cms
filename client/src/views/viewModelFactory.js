@@ -2,14 +2,14 @@
 
 define([
 		'knockback',
-		'./documentManagement',
-		'./templateManagement'
-	], function (kb, DocumentManagementViewModel, TemplateManagementViewModel) {
+		'./documentModule',
+		'./templateModule'
+	], function (kb, DocumentModuleViewModel, TemplateModuleViewModel) {
 
 	var factory = new kb.Factory();
 
-	factory.addPathMapping('documentManagement', DocumentManagementViewModel);
-	factory.addPathMapping('templateManagement', TemplateManagementViewModel);
+	factory.addPathMapping('documentModule', DocumentModuleViewModel);
+	factory.addPathMapping('templateModule', TemplateModuleViewModel);
 
 	return factory;
 });
