@@ -2,7 +2,6 @@
 
 var util = require('util'),
 	express = require('express'),
-	domain = require('../domain'),
 	errors = require('../errors');
 
 var httpResources = module.exports = {};
@@ -52,12 +51,9 @@ var sendResponse = function(successCode, response) {
 	};
 };
 
-httpResources.initialize = function(port) {
+httpResources.initialize = function(config) {
 	var app = express.createServer(),
-		documentTypeManager = new domain.DocumentTypeManager(),
-		documentManager = new domain.DocumentManager(),
-		templateManager = new domain.TemplateManager(),
-		pageManager = new domain.PageManager();
+		domain = config.domain;
 
 	app.use('/public', express.static(__dirname + '/../../client'));
 
@@ -91,10 +87,10 @@ httpResources.initialize = function(port) {
 
 	//Set up boilerplate crud routes
 	[
-		['documentTypes', documentTypeManager], 
-		['documents', documentManager],
-		['templates', templateManager],
-		['pages', pageManager]
+		['documentTypes', domain.documentTypes], 
+		['documents', domain.documents],
+		['templates', domain.templates],
+		['pages', domain.pages]
 	].forEach(function(tuple, i) {
 		var baseRoute = util.format('%s/%s', serviceBaseRoute, tuple[0]),
 			paramRoute = util.format('%s/:name', baseRoute),
@@ -108,12 +104,12 @@ httpResources.initialize = function(port) {
 
 	//DocumentTypes
 	app.get(serviceBaseRoute + '/documentTypes', function(req, res) {
-		documentTypeManager.readAll(sendResponse(OK, res));
+		domain.documentTypes.readAll(sendResponse(OK, res));
 	});
 
 	//Documents
 	app.get(serviceBaseRoute + '/documents', function(req, res) {
-		documentManager.filter(null, sendResponse(OK, res));
+		domain.documents.filter(null, sendResponse(OK, res));
 	});
 
 	//Templates
@@ -125,7 +121,7 @@ httpResources.initialize = function(port) {
 
 	//Pages
 	app.get(serviceBaseRoute + '/pages', function(req, res) {
-		pageManager.readAll(sendResponse(OK, res));
+		domain.pages.readAll(sendResponse(OK, res));
 	});
 
 	app.get(serviceBaseRoute + '/pages/:name/render', function(req, res) {
@@ -133,12 +129,12 @@ httpResources.initialize = function(port) {
 			dust = require('dustjs-linkedin');
 		async.waterfall([
 			function(callback) {
-				pageManager.read(req.params.name, callback);
+				domain.pages.read(req.params.name, callback);
 			},
 			function(page, callback) {
 				var tasks = [
 					function(callback) {
-						templateManager.read(page.layout, function(error, result) {
+						domain.templates.read(page.layout, function(error, result) {
 							if (error) {
 								return callback(error);
 							} else {
@@ -150,7 +146,7 @@ httpResources.initialize = function(port) {
 				];
 				page.sections.forEach(function(section) {
 					tasks.push(function(callback) {
-						templateManager.read(section.template, function(error, result) {
+						domain.templates.read(section.template, function(error, result) {
 							if (error) {
 								return callback(error);
 							} else {
@@ -161,7 +157,7 @@ httpResources.initialize = function(port) {
 					});
 					tasks.push(function(callback) {
 						section.filter.parameters = req.query;
-						documentManager.filter(section.filter, function(error, result) {
+						domain.documents.filter(section.filter, function(error, result) {
 							if (error) {
 								return callback(error);
 							} else {
@@ -205,7 +201,7 @@ httpResources.initialize = function(port) {
 		});
 	});
 
-	app.listen(port);
+	app.listen(config.port);
 
 	return app;
 };
