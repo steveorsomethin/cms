@@ -332,9 +332,8 @@ var tests = {
 	* Documents
 	*****************************************************************************/
 	createDocumentSuccess: function(callback) {
-		var document,
-			name = this.name,
-			documentBody = _.clone(require('./mock/documents/valid.json')),
+		var name = this.name,
+			document = _.clone(require('./mock/documents/valid.json')),
 			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			expected = expectResponse(name, CREATED, callback, function(body) {
 				return body === JSON.stringify(document);
@@ -342,13 +341,9 @@ var tests = {
 
 		documentType.id = name;
 		documentType.name = name;
-		document = {
-			id: name + 'Instance',
-			name: name + 'Instance',
-			documentType: name,
-			tags: [],
-			body: documentBody
-		};
+		document.id = name + 'Instance';
+		document.name = document.id;
+		document.documentType = name;
 
 		async.waterfall([
 			function(callback) {
@@ -360,9 +355,8 @@ var tests = {
 		], expected);
 	},
 	createDocumentInvalid: function(callback) {
-		var document,
-			name = this.name,
-			documentBody = _.clone(require('./mock/documents/invalid.json')),
+		var name = this.name,
+			document = _.clone(require('./mock/documents/invalid.json')),
 			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			error400 = require('./mock/documents/error400.json'),
 			expected = expectResponse(name, BAD_REQUEST, callback, function(body) {
@@ -372,13 +366,9 @@ var tests = {
 
 		documentType.id = name;
 		documentType.name = name;
-		document = {
-			id: name + 'Instance',
-			name: name + 'Instance',
-			documentType: name,
-			tags: [],
-			body: documentBody
-		};
+		document.id = name + 'Instance';
+		document.name = document.id;
+		document.documentType = name;
 
 		async.waterfall([
 			function(callback) {
@@ -390,28 +380,22 @@ var tests = {
 		], expected);
 	},
 	createDocumentDocumentTypeNotFound: function(callback) {
-		var document,
-			name = this.name,
-			documentBody = _.clone(require('./mock/documents/valid.json')),
+		var name = this.name,
+			document = _.clone(require('./mock/documents/valid.json')),
 			error404 = require('./mock/documentTypes/error404.json'),
 			expected = expectResponse(name, NOT_FOUND, callback, function(body) {
 				return body.replace(name, 'DOCUMENTTYPEPLACEHOLDER') === JSON.stringify(error404);
 			});
 
-		document = {
-			id: name + 'Instance',
-			name: name + 'Instance',
-			documentType: name,
-			tags: [],
-			body: documentBody
-		};
+		document.id = name + 'Instance';
+		document.name = document.id;
+		document.documentType = name;
 
 		createDocument(document, expected);
 	},
 	readDocumentSuccess: function(callback) {
-		var document,
-			name = this.name,
-			documentBody = _.clone(require('./mock/documents/valid.json')),
+		var name = this.name,
+			document = _.clone(require('./mock/documents/valid.json')),
 			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			expected = expectResponse(name, OK, callback, function(body) {
 				return _.isEqual(JSON.parse(body), document);
@@ -419,13 +403,9 @@ var tests = {
 
 		documentType.id = name;
 		documentType.name = name;
-		document = {
-			id: name + 'Instance',
-			name: name + 'Instance',
-			documentType: name,
-			tags: [],
-			body: documentBody
-		};
+		document.id = name + 'Instance';
+		document.name = document.id;
+		document.documentType = name;
 
 		async.waterfall([
 			function(callback) {
@@ -445,7 +425,7 @@ var tests = {
 			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			error404 = require('./mock/documents/error404.json'),
 			expected = expectResponse(name, NOT_FOUND, callback, function(body) {
-				return body.replace(documentName, 'testName') === JSON.stringify(error404);
+				return body.replace(documentName, 'DOCUMENTPLACEHOLDER') === JSON.stringify(error404);
 			});
 
 		documentType.id = name;
@@ -461,9 +441,8 @@ var tests = {
 		], expected);
 	},
 	updateDocumentSuccess: function(callback) {
-		var document,
-			name = this.name,
-			documentBody = _.clone(require('./mock/documents/valid.json')),
+		var name = this.name,
+			document = _.clone(require('./mock/documents/valid.json')),
 			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			expected = expectResponse(name, ACCEPTED, callback, function(body) {
 				return _.isEqual(JSON.parse(body), document);
@@ -471,13 +450,9 @@ var tests = {
 
 		documentType.id = name;
 		documentType.name = name;
-		document = {
-			id: name + 'Instance',
-			name: name + 'Instance',
-			documentType: name,
-			tags: [],
-			body: documentBody
-		};
+		document.id = name + 'Instance';
+		document.name = document.id;
+		document.documentType = name;
 
 		async.waterfall([
 			function(callback) {
@@ -492,10 +467,9 @@ var tests = {
 		], expected);
 	},
 	updateDocumentInvalid: function(callback) {
-		var document,
-			name = this.name,
-			validDocumentBody = _.clone(require('./mock/documents/valid.json')),
-			invalidDocumentBody = _.clone(require('./mock/documents/invalid.json')),
+		var name = this.name,
+			validDocument = _.clone(require('./mock/documents/valid.json')),
+			invalidDocument = _.clone(require('./mock/documents/invalid.json')),
 			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			error400 = require('./mock/documents/error400.json'),
 			expected = expectResponse(name, BAD_REQUEST, callback, function(body) {
@@ -505,43 +479,34 @@ var tests = {
 
 		documentType.id = name;
 		documentType.name = name;
-		document = {
-			id: name + 'Instance',
-			name: name + 'Instance',
-			documentType: name,
-			tags: [],
-			body: validDocumentBody
-		};
+		validDocument.id = name + 'Instance';
+		validDocument.name = validDocument.id;
+		validDocument.documentType = name;
 
 		async.waterfall([
 			function(callback) {
 				createDocumentType(documentType, standardCallback(callback));
 			},
 			function(createdDocumentType, callback) {
-				createDocument(document, standardCallback(callback));
+				createDocument(validDocument, standardCallback(callback));
 			},
 			function(createdDocument, callback) {
-				document.body = invalidDocumentBody;
-				updateDocument(document, callback);
+				validDocument.body = invalidDocument.body;
+				updateDocument(validDocument, callback);
 			}
 		], expected);
 	},
 	updateDocumentDocumentTypeNotFound: function(callback) {
-		var document,
-			name = this.name,
-			documentBody = _.clone(require('./mock/documents/invalid.json')),
+		var name = this.name,
+			document = _.clone(require('./mock/documents/invalid.json')),
 			error404 = require('./mock/documentTypes/error404.json'),
 			expected = expectResponse(name, NOT_FOUND, callback, function(body) {
 				return body.replace(name, 'DOCUMENTTYPEPLACEHOLDER') === JSON.stringify(error404);
 			});
 
-		document = {
-			id: name + 'Instance',
-			name: name + 'Instance',
-			documentType: name,
-			tags: [],
-			body: documentBody
-		};
+		document.id = name + 'Instance';
+		document.name = document.id;
+		document.documentType = name;
 
 		updateDocument(document, expected);
 	},
@@ -668,7 +633,7 @@ var tests = {
 			documentType = _.clone(require('./mock/documentTypes/valid.json')),
 			error404 = _.clone(require('./mock/templates/error404.json')),
 			expected = expectResponse(name, NOT_FOUND, callback, function(body) {
-				return body.replace(templateName, 'testName') === JSON.stringify(error404);
+				return body.replace(templateName, 'TEMPLATEPLACEHOLDER') === JSON.stringify(error404);
 			});
 
 		documentType.id = name;
