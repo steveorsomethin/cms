@@ -1,5 +1,11 @@
 {
-	"email": "steveorsomethin@gmail.com",
-	"firstName": "Steve",
-	"lastName": "McGuire"
+	"id": "IDPLACEHOLDER",
+	"name": "IDPLACEHOLDER",
+	"documentType": "DOCUMENTTYPEPLACEHOLDER",
+	"tags": [],
+	"body": {
+		"email": "steveorsomethin@gmail.com",
+		"firstName": "Steve",
+		"lastName": "McGuire"
+	}
 }

@@ -1,5 +1,11 @@
 {
-	"email": null,
-	"firstName": "Steve",
-	"age": 0
+	"id": "IDPLACEHOLDER",
+	"name": "IDPLACEHOLDER",
+	"documentType": "DOCUMENTTYPEPLACEHOLDER",
+	"tags": [],
+	"body":{
+		"email": null,
+		"firstName": "Steve",
+		"age": 0
+	}
 }
