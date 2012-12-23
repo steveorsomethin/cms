@@ -803,7 +803,9 @@ var tests = {
 };
 
 //TODO: Fork a process to isolate log events instead of printing them in this context
-require('../server/application').run(port);
+var config = require('../server/config');
+config.port = 8089;
+require('../server/application').run(config);
 
 //Run tests
 async.parallel((function() {
