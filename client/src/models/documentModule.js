@@ -19,7 +19,7 @@ define(['backbone', 'exports'], function (backbone, exports) {
 
 	var DocumentTypeCollection = exports.DocumentTypeCollection = backbone.Collection.extend({
 		model: DocumentType,
-		url: '/documentTypes'
+		url: '/services/documentTypes'
 	});
 
 	//

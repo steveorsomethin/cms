@@ -7,7 +7,7 @@ define([
 		'ApplicationContext',
 		'dispatcher'
 	], 
-	function(ko, kb, PropertyListViewModel, applicationContext, eventBus) {
+	function(ko, kb, PropertyListViewModel, applicationContext, dispatcher) {
 		return kb.ViewModel.extend({
 			constructor: function(model) {
 				kb.ViewModel.prototype.constructor.apply(this, arguments);
@@ -16,11 +16,11 @@ define([
 			},
 			
 			addProperty: function() {
-				eventBus.trigger('addProperty');
+				dispatcher.trigger('addProperty');
 			},
 	
 			save: function() {
-				eventBus.trigger('saveDocumentType');
+				dispatcher.trigger('saveDocumentType');
 			}
 		});
 	}

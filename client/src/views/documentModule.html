@@ -1,0 +1,61 @@
+<!-- ko with: navigator -->
+<div class="span3 stretch-vertical">
+	<div class="tabbable tabs-right stretch-vertical">
+		<ul class="nav nav-tabs stretch-vertical">
+			<!-- ko foreach: explorers -->
+			<li data-bind="css: { 'active': $index() === 0 }">
+				<a data-bind="attr: { href: '#' + $data.anchor }, click: $parent.selectExplorer" data-toggle="tab">
+					<img data-bind="attr: { src: $data.icon }"></img>
+				</a>
+			</li>
+			<!-- /ko -->
+
+			<!-- ko with: contextMenu -->
+			<div data-bind="template: { name: name, templateUrl: src, data: model }"></div>
+			<!-- /ko -->
+		</ul>
+
+		<div class="tab-content">
+			<!-- ko foreach: explorers -->
+			<div class="tab-pane" data-bind="attr: { 'id': $data.anchor }, css: { 'active': $index() === 0, hasfocus: $data.isActive}">
+				<!-- ko with: $data.model -->
+				<ul class="nav nav-list">
+					<li class="nav-header" data-bind="text: $parent.name"></li>
+
+					<!-- ko foreach: items -->
+					<li data-bind="css: { 'active': $parent.item().id() === $data.id() }">
+						<a href="#" data-bind="click: $parent.selectItem, text: $data.name"></a>
+					</li>
+					<!-- /ko -->
+				</ul>
+				<!-- /ko -->
+			</div>
+			<!-- /ko -->
+		</div>
+	</div>
+</div>
+<!-- /ko -->
+
+<!-- ko with: navigator.inspector -->
+<div class="span9 stretch-vertical">
+	<div class="tabbable tabs-right stretch-vertical">
+		<ul class="nav nav-tabs stretch-vertical">
+			<!-- ko foreach: views -->
+			<li data-bind="css: { 'active': $index() === 0 }">
+				<a data-bind="attr: { href: '#' + $data.anchor }" data-toggle="tab">
+					<img data-bind="attr: { src: $data.icon }"></img>
+				</a>
+			</li>
+			<!-- /ko -->
+		</ul>
+
+		<div class="tab-content">
+			<!-- ko foreach: views -->
+			<div class="tab-pane" data-bind="attr: { 'id': $data.anchor }, css: { 'active': $index() === 0}">
+				<h1 class="text: $data.name"></h1>
+			</div>
+			<!-- /ko -->
+		</div>
+	</div>
+</div>
+<!-- /ko -->

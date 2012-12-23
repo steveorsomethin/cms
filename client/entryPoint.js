@@ -13,18 +13,19 @@ define('dispatcher', ['underscore', 'backbone'], function(_, backbone) {
 // commands - instantiates all command maps
 
 define('commands', [
+	'dispatcher',
 	'./src/commands/application', 
 	'./src/commands/shell', 
-	'./src/commands/documentManagement',
-	'./src/commands/templateManagement'
+	'./src/commands/documentModule',
+	'./src/commands/templateModule'
 	], 
-	function (ApplicationCommands, ShellCommands, DocumentManagementCommands, TemplateManagementCommands) {
-		var dispatcher = require('dispatcher');
-
-		var applicationCommands = new ApplicationCommands(dispatcher);
-		var shellCommands = new ShellCommands(dispatcher);
-		var documentManagementCommands = new DocumentManagementCommands(dispatcher);
-		var templateManagementCommands = new TemplateManagementCommands(dispatcher);
+	function (dispatcher, ApplicationCommands, ShellCommands, DocumentModuleCommands, TemplateModuleCommands) {
+		var commands = [
+			new ApplicationCommands(dispatcher),
+			new ShellCommands(dispatcher),
+			new DocumentModuleCommands(dispatcher),
+			new TemplateModuleCommands(dispatcher)
+		]
 	}
 );
 

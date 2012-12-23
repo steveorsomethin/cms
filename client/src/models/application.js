@@ -24,9 +24,9 @@ define(['backbone', 'exports'], function (backbone, exports) {
 		model: ModuleMetadata,
 
 		initialize: function () {
-			this.add({ id: 'sitemap', name: 'Sitemap', route: 'sitemap', icon: 'content/images/48/tree.png' });
-			this.add({ id: 'documentManagement', name: 'Document Management', route: 'documents', icon: 'content/images/48/documents.png' });
-			this.add({ id: 'templateManagement', name: 'Layouts and Templates', route: 'templates', icon: 'content/images/48/window_sel.png' });
+			this.add({ id: 'sitemapModule', name: 'Sitemap', route: 'sitemap', icon: 'content/images/48/tree.png' });
+			this.add({ id: 'documentModule', name: 'Document Management', route: 'documents', icon: 'content/images/48/documents.png' });
+			this.add({ id: 'templateModule', name: 'Layouts and Templates', route: 'templates', icon: 'content/images/48/window_sel.png' });
 		}
 	}, {
 		default: function () {
