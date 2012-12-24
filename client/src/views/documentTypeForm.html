@@ -1,28 +1,14 @@
-<div class="container-fluid">
-	<div class="row-fluid">
-		<div class="span12">
-			<legend>Document Type Name</legend>
-			<input type="text" class="input-xxlarge span12" data-bind="value: name, valueUpdate: 'afterkeydown'" />
-			
-			<legend>Properties</legend>
-			<div data-bind="template: {name: 'propertyList', templateUrl: 'public/src/views', data: propertiesModel}">
-		</div>
+<input type="text" class="textbox-main span12"
+	data-bind="value: name, valueUpdate: 'afterkeydown'" />
+
+<fieldset>
+	<legend>
+		<span>Fields</span>
+			<div class="btn-group">
+				<button type="button" class="btn btn-primary" href="#" data-bind="click: addProperty">+</button>
+				<button type="button" class="btn btn-primary" href="#" data-bind="click: save">Save</button>
+			</div>
+	</legend>
+	<div data-bind="template: {name: 'propertyList', templateUrl: 'src/views', data: propertiesModel}">
 	</div>
-</div>
-
-<!--<div class="tabbed-form">
-	<input type="text" class="textbox-main span12"
-		data-bind="value: name, valueUpdate: 'afterkeydown'" />
-
-	<fieldset>
-		<legend>
-			<span>Fields</span>
-				<div class="btn-group">
-					<button type="button" class="btn btn-primary" href="#" data-bind="click: addProperty"><i class="icon-plus icon-white"></i></button>
-					<button type="button" class="btn btn-primary" href="#" data-bind="click: save">Save</button>
-				</div>
-		</legend>
-		<div data-bind="template: {name: 'propertyList', templateUrl: 'src/views', data: propertiesModel}">
-		</div>
-	</fieldset>
-</div>-->
+</fieldset>

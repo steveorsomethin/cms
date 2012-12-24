@@ -5,7 +5,7 @@ define([
 		'knockout',
 		'knockback',
 		'ace',
-		'dispatcher',
+		'EventBus',
 	], 
 	function($, ko, kb, ace, eventBus) {
 		var cleanupEditor = function() {
@@ -62,7 +62,7 @@ define([
 				cleanupEditor.call(viewModel);
 
 				editor = viewModel.editor = ace.edit(elements[0]);
-				editor.setTheme("ace/theme/textmate");
+				editor.setTheme("ace/theme/twilight");
 				editor.getSession().setMode(viewModel.aceMode);
 				editor.setValue(text);
 				editor.clearSelection();

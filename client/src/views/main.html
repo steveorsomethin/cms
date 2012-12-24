@@ -1,98 +1,4 @@
-<div class="container-fluid">
-	<div class="row-fluid">
-		<div class="span1">
-			<ul class="nav nav-tabs nav-stacked">
-				<li>
-					<a href="#">
-						<img src="content/images/48/documents.png" /></a>
-				</li>
-				<li>
-					<a href="#">
-						<img src="content/images/48/pictures.png" /></a>
-				</li>
-			</ul>
-		</div>
-
-		<div class="span3">
-			<div class="tabbable tabs-right">
-				<ul class="nav nav-tabs">
-					<li class="active">
-						<a href="#docTypes" data-toggle="tab" rel="tooltip" title="Document Types">
-							<img src="content/images/48/documents-info.png" />
-						</a>
-					</li>
-
-					<li>
-						<a href="#docs" data-toggle="tab" rel="tooltip" title="Documents">
-							<img src="content/images/48/documents-edit.png" />
-						</a>
-					</li>
-
-					<li>
-						<a data-bind="click: createDocumentType" rel="tooltip" title="New Document Type">
-							<img src="content/images/48/document-new.png" />
-						</a>
-					</li>
-
-					<li>
-						<a rel="tooltip" title="Delete Document Type">
-							<img src="content/images/48/documents-delete.png" />
-						</a>
-					</li>
-				</ul>
-
-				<div class="tab-content">
-					<div class="tab-pane active" id="docTypes">
-						<ul class="nav nav-list">
-							<li class="nav-header">
-								<span>Document Types</span>
-							</li>
-							<!-- ko foreach: documentTypes -->
-							<li data-bind="css: { active: $parent.active().model.model() === $data.model() }">
-								<a href="#" data-bind="text: name, click: $parent.selectDocumentType"></a>
-							</li>
-							<!-- /ko -->
-						</li>
-					</div>
-					<div class="tab-pane" id="docs">
-						Documents
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="span8">
-			<div data-bind="template: {name: active().view, templateUrl: active().url, data: active().model}"></div>
-
-			<!--<div class="tabbable tabs-right">
-				<ul class="nav nav-tabs">
-					<li class="active">
-						<a href="#gui" data-toggle="tab">
-							<img src="content/images/48/document-edit.png" />
-						</a>
-					</li>
-
-					<li>
-						<a href="#source" data-toggle="tab">
-							<img src="content/images/48/document-gear.png" />
-						</a>
-					</li>
-				</ul>
-
-				<div class="tab-content" style="background-color: #fff;">
-					<div class="tab-pane active" id="gui">
-						<div data-bind="template: {name: active().view, templateUrl: active().url, data: active().model}"></div>
-					</div>
-					<div class="tab-pane" id="source">
-						SOURCE EDITOR
-					</div>
-				</div>-->
-			</div>
-		</div>
-	</div>
-</div>
-
-<!--<div class="navbar navbar-inverse navbar-fixed-top">
+<div class="navbar navbar-inverse navbar-fixed-top">
 	<div class="navbar-inner">
 		<div class="container-fluid">
 			<a class="brand" href="#">Selected Site Name Here</a>
@@ -109,22 +15,22 @@
 						<button class="btn btn-primary btn-nav-header"
 							data-bind="click: createDocumentType">+</button>
 					</li>
-					<!-- ko foreach: documentTypes --
+					<!-- ko foreach: documentTypes -->
 					<li data-bind="css: { active: $parent.active().model.model() === $data.model() }">
 						<a href="#" data-bind="text: name, click: $parent.selectDocumentType"></a>
 					</li>
-					<!-- /ko --
+					<!-- /ko -->
 
 					<li class="nav-header">
 						<span>Templates</span>
 						<button class="btn btn-primary btn-nav-header"
 							data-bind="click: createTemplate">+</button>
 					</li>
-					<!-- ko foreach: templates --
+					<!-- ko foreach: templates -->
 					<li data-bind="css: { active: $parent.active().model.model() === $data.model() }">
 						<a href="#" data-bind="text: name, click: $parent.selectTemplate"></a>
 					</li>
-					<!-- /ko --
+					<!-- /ko -->
 				</ul>
 			</div>
 		</div>
@@ -133,4 +39,3 @@
 		</div>
 	</div>
 </div>
--->

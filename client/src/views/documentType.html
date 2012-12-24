@@ -1,33 +1,8 @@
-<div class="tabbable tabs-right">
-	<ul class="nav nav-tabs tabs-right">
-		<li class="active">
-			<a href="#editor" rel="tooltip" title="Editor" data-bind="click: setFormView" data-toggle="tab">
-				<img src="content/images/48/document-edit.png" />
-			</a>
-		</li>
-		<li>
-			<a href="#source" rel="tooltip" title="Source" data-bind="click: setSourceView" data-toggle="tab">
-				<img src="content/images/48/document-gear.png" />
-			</a>
-		</li>
-	</ul>
-
-	<div class="tab-content">
-		<div id="editor" class="tab-pane active">
-			<div data-bind="template: { name: 'documentTypeForm', templateUrl: 'src/views', data: active().model }"></div>
-		</div>
-
-		<div id="source" class="tab-pane">
-			<div data-bind="template: { name: 'editor', templateUrl: 'src/views', data: active().model }"></div>
-		</div>
-	</div>
-</div>
-
-<!--<div class="document-type hero-unit">
+<div class="document-type hero-unit">
 	<div class="btn-group" data-toggle="buttons-radio">
 		<button type="button" class="btn btn-primary active" data-bind="click: setFormView">Form</button>
 		<button type="button" class="btn btn-primary" data-bind="click: setSourceView">Source</button>
 	</div>
 	<div data-bind="template: {name: active().view, templateUrl: active().url, data: active().model}">
 	</div>
-​</div>-->
+​</div>
