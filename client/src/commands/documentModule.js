@@ -7,11 +7,17 @@ define(['../core/commandMap', '../context/documentModule', '../models/documentMo
 			'documentTypes:load': 'loadDocumentTypes',
 			'documentType:select': 'selectDocumentType',
 			'documentType:create': 'createDocumentType',
-			'documentType:remove': 'removeDocumentType'
+			'documentType:remove': 'removeDocumentType',
+
+			'documentType:addProperty': 'addProperty'
 		},
 
 		loadDocumentTypes: function () {
-			context.get('documentTypes').fetch();
+			context.get('documentTypes').fetch({
+				success: function (collection) {
+					dispatcher.trigger('documentType:select', { 'documentType': collection.first() });
+				}
+			});
 		},
 
 		selectDocumentType: function (e) {
@@ -22,11 +28,20 @@ define(['../core/commandMap', '../context/documentModule', '../models/documentMo
 			var documentType = new model.DocumentType({ name: 'New Document Type'});
 
 			context.get('documentTypes').add(documentType);
-			dispatcher.trigger('documentType:selected', { 'documentType': documentType });
+			dispatcher.trigger('documentType:select', { 'documentType': documentType });
 		},
 
 		removeDocumentType: function (e) {
 			context.get('documentTypes').remove(e.documentType);
+		},
+
+		addProperty: function (e) {
+			var property = new model.Property(e.property);
+			var properties = context.get('documentType').get('properties');
+
+			if (!properties.contains(property)) {
+				properties.add(property);
+			}
 		}
 	})
 });
