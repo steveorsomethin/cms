@@ -1,6 +1,5 @@
 'use strict';
 
-define(['backbone', 'exports'], function (backbone, exports) {
 define(['underscore', 'backbone', 'exports'], function (_, backbone, exports) {
 
 	//
@@ -83,6 +82,7 @@ define(['underscore', 'backbone', 'exports'], function (_, backbone, exports) {
 	// DocumentCollectionMetadataCollection
 
 	var DocumentCollectionMetadataCollection = exports.DocumentCollectionMetadataCollection = backbone.Collection.extend({
-		model: DocumentCollectionMetadata
+		model: DocumentCollectionMetadata,
+		url: '/services/documents'
 	})
 });
