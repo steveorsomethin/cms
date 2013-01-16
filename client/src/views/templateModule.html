@@ -38,8 +38,29 @@
 
 <!-- ko with: navigator.inspector -->
 <div class="span9 stretch-vertical">
-	<div class="editor-container">
-		<div class="editor-inner"></div>
+	<div class="tabbable tabs-right stretch-vertical">
+		<ul class="nav nav-tabs stretch-vertical">
+			<li class="active">
+				<a href="#editor" title="Editor" data-toggle="tab">
+					<img src="content/images/48/document.png"></img>
+				</a>
+			</li>
+			<li>
+				<a href="#metadata" title="Metadata" data-toggle="tab">
+					<img src="content/images/48/gear.png"></img>
+				</a>
+			</li>
+		</ul>
+
+		<div class="tab-content">
+			<div id="editor" class="tab-pane active">
+				<div data-bind="template: { 'name': view(), 'templateUrl': $data.src, 'data': $data.model }"></div>
+				<span data-bind="text: $data.src"></span>
+			</div>
+
+			<div id="metadata" class="tab-pane">
+			</div>
+		</div>
 	</div>
 </div>
 <!-- /ko -->
