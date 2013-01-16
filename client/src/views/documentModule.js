@@ -3,6 +3,16 @@
 define(['knockout', 'knockback', 'dispatcher', '../context/documentModule'], function (ko, kb, dispatcher, context) {
 
 	//
+	// DocumentTypeItemViewModel
+
+	var DocumentTypeItemViewModel = kb.ViewModel.extend({
+		constructor: function (model) {
+			kb.ViewModel.prototype.constructor.call(this, model, {
+				keys: ['id', 'name']
+			});
+		}
+	});
+
 	// DocumentTypeInspectorViewModel
 
 	var DocumentTypeInspectorViewModel = kb.ViewModel.extend({
@@ -25,7 +35,10 @@ define(['knockout', 'knockback', 'dispatcher', '../context/documentModule'], fun
 	var DocumentTypeExplorerViewModel = kb.ViewModel.extend({
 		constructor: function (model) {
 			kb.ViewModel.prototype.constructor.call(this, model, {
-				keys: ['documentType', 'documentTypes']
+				keys: ['documentType', 'documentTypes'],
+				factories: {
+					'documentTypes.models': DocumentTypeItemViewModel
+				}
 			});
 
 			this.item = this.documentType;
