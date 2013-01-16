@@ -45,9 +45,21 @@ define(['knockout', 'knockback', 'dispatcher', '../context/documentModule'], fun
 			});
 
 			this.views = [
-				{ anchor: 'editor', name: 'Editor', icon: 'content/images/48/window.png' },
-				{ anchor: 'source', name: 'Source', icon: 'content/images/48/document.png' },
-				{ anchor: 'metadata', name: 'Metadata', icon: 'content/images/48/gear.png' }
+				{
+					anchor: 'editor',
+					name: 'Editor',
+					icon: 'content/images/48/window.png',
+					template: {
+						name: 'documentTypeForm',
+						src: 'src/views',
+						model: this.documentType
+					}
+				},
+				{
+					anchor: 'metadata',
+					name: 'Metadata',
+					icon: 'content/images/48/gear.png'
+				}
 			];
 		}
 	});
@@ -96,8 +108,16 @@ define(['knockout', 'knockback', 'dispatcher', '../context/documentModule'], fun
 			});
 
 			this.views = [
-				{ anchor: 'contents', name: 'Contents', icon: 'content/images/48/list.png' },
-				{ anchor: 'metadata', name: 'Metadata', icon: 'content/images/48/gear.png' }
+				{
+					anchor: 'contents',
+					name: 'Contents',
+					icon: 'content/images/48/list.png'
+				},
+				{
+					anchor: 'metadata',
+					name: 'Metadata',
+					icon: 'content/images/48/gear.png'
+				}
 			];
 		}
 	});
