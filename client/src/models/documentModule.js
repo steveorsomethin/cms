@@ -29,7 +29,10 @@ define(['underscore', 'backbone', 'exports'], function (_, backbone, exports) {
 			id: '',
 			name: '',
 			type: 'object',
-			additionalProperties: false
+			additionalProperties: false,
+			properties: new PropertyCollection()
+		},
+
 		}
 	});
 
