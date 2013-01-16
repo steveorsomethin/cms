@@ -1,6 +1,6 @@
 'use strict';
 
-define(['knockout', 'knockback', 'dispatcher', '../context/templateModule'], function (ko, kb, dispatcher, context) {
+define(['knockout', 'knockback', 'dispatcher', '../context/templateModule', './shared/editor'], function (ko, kb, dispatcher, context, EditorViewModel) {
 
 	//
 	// LayoutExplorerViewModel
@@ -17,7 +17,12 @@ define(['knockout', 'knockback', 'dispatcher', '../context/templateModule'], fun
 					return t.get('isLayout') === false;
 				}
 			});
-			this.inspector = { view: [] };
+
+			//
+			// TODO: implement inspector
+
+			this.inspector = { view: 'editor', src: 'src/views/shared', model: new EditorViewModel() };
+			this.inspector.model.setMode('html');
 
 			return this;
 		},
@@ -56,7 +61,9 @@ define(['knockout', 'knockback', 'dispatcher', '../context/templateModule'], fun
 					return t.get('isLayout') === true;
 				}
 			});
-			this.inspector = { views: [] };
+
+			this.inspector = { view: 'editor', src: 'src/views/shared', model: new EditorViewModel() };
+			this.inspector.model.setMode('html');
 
 			return this;
 		},
