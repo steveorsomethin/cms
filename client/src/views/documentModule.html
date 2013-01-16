@@ -52,7 +52,9 @@
 		<div class="tab-content">
 			<!-- ko foreach: views -->
 			<div class="tab-pane" data-bind="attr: { 'id': $data.anchor }, css: { 'active': $index() === 0}">
-				<h1 class="text: $data.name"></h1>
+				<!-- ko if: $data.template -->
+				<div data-bind="template: { name: template.name, templateUrl: template.src, data: template.model }"></div>
+				<!-- /ko -->
 			</div>
 			<!-- /ko -->
 		</div>
