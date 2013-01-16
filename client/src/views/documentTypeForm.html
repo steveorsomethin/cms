@@ -1,4 +1,3 @@
-<!-- ko with: documentType -->
 <div class="container-fluid">
 	<div class="row-fluid">
 		<div class="span12">
@@ -24,11 +23,10 @@
 			</thead>
 			<tbody>
 				
-				<!-- foreach: properties -->
+				<!-- ko foreach: properties -->
 				<tr>
 					<td>
-						<!--<input type="text" data-bind="value: name, valueUpdate: 'afterkeydown'" placeholder="Enter a name..." />-->
-						<input type="text" placeholder="Enter a name..." />
+						<input type="text" data-bind="hasfocus: !name(), value: name" placeholder="Enter a name..." />
 					</td>
 					<td>
 						<!--<select data-bind="options: $parent.types, value: type"></select>-->
@@ -41,7 +39,7 @@
 						</div>-->
 						<div class="btn-group" data-toggle="buttons-radio">
 						  <button type="button" class="btn">Yes</button>
-						  <button type="button" class="btn" data-bind="hasfocus: $parent.createProperty">No</button>
+						  <button type="button" class="btn">No</button>
 						</div>
 					</td>
 					<td>
@@ -50,7 +48,7 @@
 						</a>
 					</td>
 				</tr>
-				<!-- / -->
+				<!-- /ko -->
 
 				<tr>
 					<td>
@@ -72,7 +70,6 @@
 		</table>
 	</div>
 </div>
-<!-- /ko -->
 
 <!--<div class="tabbed-form">
 	<input type="text" class="textbox-main span12"
