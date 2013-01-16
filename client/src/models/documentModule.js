@@ -33,6 +33,14 @@ define(['underscore', 'backbone', 'exports'], function (_, backbone, exports) {
 			properties: new PropertyCollection()
 		},
 
+		parse: function (response) {
+			response.properties = new PropertyCollection(_.map(_.pairs(response.properties), function (p) {
+				p[1].name = p[0];
+
+				return new Property(p[1]);
+			}));
+
+			return response;
 		}
 	});
 
