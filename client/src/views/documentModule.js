@@ -13,12 +13,35 @@ define(['knockout', 'knockback', 'dispatcher', '../context/documentModule'], fun
 		}
 	});
 
+	//
+	// DocumentTypeFormViewModel
+
+	var DocumentTypeFormViewModel = kb.ViewModel.extend({
+		constructor: function (model) {
+			kb.ViewModel.prototype.constructor.call(this, model);
+
+			var self = this;
+
+			self.triggerAddProperty = ko.observable(false);
+			self.triggerAddProperty.subscribe(function (value) {
+				if (value === true) {
+					//dispatcher.trigger('documentType:addProperty', { 'property': { name: '', type: 'object', required: false } });
+					context.get('documentType').get('properties').add({ name: '', type: 'object', required: false });
+				}
+			});
+		}
+	});
+
+	//
 	// DocumentTypeInspectorViewModel
 
 	var DocumentTypeInspectorViewModel = kb.ViewModel.extend({
 		constructor: function (model) {
 			kb.ViewModel.prototype.constructor.call(this, model, {
-				keys: ['documentType']
+				keys: ['documentType'],
+				factories: {
+					'documentType': DocumentTypeFormViewModel
+				}
 			});
 
 			this.views = [
