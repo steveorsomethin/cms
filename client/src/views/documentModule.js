@@ -25,8 +25,7 @@ define(['knockout', 'knockback', 'dispatcher', '../context/documentModule'], fun
 			self.triggerAddProperty = ko.observable(false);
 			self.triggerAddProperty.subscribe(function (value) {
 				if (value === true) {
-					//dispatcher.trigger('documentType:addProperty', { 'property': { name: '', type: 'object', required: false } });
-					context.get('documentType').get('properties').add({ name: '', type: 'object', required: false });
+					dispatcher.trigger('documentType:addProperty', { 'property': { name: '', type: 'object', required: false } });
 				}
 			});
 		}
