@@ -23,7 +23,7 @@
 					<li class="nav-header" data-bind="text: $parent.name"></li>
 
 					<!-- ko foreach: items -->
-					<li data-bind="css: { 'active': $parent.item().id() === $data.id() }">
+					<li data-bind="css: { 'active': $parent.item().model().cid === $data.model().cid }">
 						<a href="#" data-bind="click: $parent.selectItem, text: $data.name"></a>
 					</li>
 					<!-- /ko -->
