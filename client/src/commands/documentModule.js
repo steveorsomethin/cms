@@ -24,10 +24,11 @@ define(['../core/commandMap', '../context/documentModule', '../models/documentMo
 			context.set('documentType', e.documentType);
 		},
 
-		createDocumentType: function () {
-			var documentType = new model.DocumentType({ name: 'New Document Type'});
+		createDocumentType: function (e) {
+			var documentType = new model.DocumentType(e.documentType);
+			var documentTypes = context.get('documentTypes');
 
-			context.get('documentTypes').add(documentType);
+			documentTypes.add(documentType);
 			dispatcher.trigger('documentType:select', { 'documentType': documentType });
 		},
 
