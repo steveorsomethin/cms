@@ -85,7 +85,7 @@ define(['knockout', 'knockback', 'dispatcher', '../context/documentModule'], fun
 		},
 
 		createItem: function () {
-			// TODO: create a new item in the module context
+			dispatcher.trigger('documentType:create', { 'documentType': { name: 'New Document Type'} });
 		},
 
 		deleteItem: function (item) {
