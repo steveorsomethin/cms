@@ -22,6 +22,13 @@ define(['knockout', 'knockback', 'dispatcher', '../context/documentModule'], fun
 
 			var self = this;
 
+			self.propertyTypes = ko.observableArray([
+				{ id: '0', name: 'string' },
+				{ id: '1', name: 'integer' },
+				{ id: '2', name: 'float' },
+				{ id: '3', name: 'boolean' }
+			]);
+
 			self.triggerAddProperty = ko.observable(false);
 			self.triggerAddProperty.subscribe(function (value) {
 				if (value === true) {
