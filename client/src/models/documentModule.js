@@ -25,7 +25,6 @@ define(['underscore', 'backbone', 'exports'], function (_, backbone, exports) {
 
 	var DocumentType = exports.DocumentType = backbone.Model.extend({
 		defaults: {
-			id: '',
 			name: '',
 			type: 'object',
 			additionalProperties: false,
