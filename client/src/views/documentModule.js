@@ -35,6 +35,10 @@ define(['knockout', 'knockback', 'dispatcher', '../context/documentModule'], fun
 					dispatcher.trigger('documentType:addProperty', { 'property': { name: '', type: 'object', required: false } });
 				}
 			});
+
+			self.removeProperty = function (item) {
+				dispatcher.trigger('documentType:removeProperty', { 'property': item.model() });
+			};
 		}
 	});
 
