@@ -9,7 +9,8 @@ define(['../core/commandMap', '../context/documentModule', '../models/documentMo
 			'documentType:create': 'createDocumentType',
 			'documentType:remove': 'removeDocumentType',
 
-			'documentType:addProperty': 'addProperty'
+			'documentType:addProperty': 'addProperty',
+			'documentType:removeProperty': 'removeProperty'
 		},
 
 		loadDocumentTypes: function () {
@@ -43,6 +44,10 @@ define(['../core/commandMap', '../context/documentModule', '../models/documentMo
 			if (!properties.contains(property)) {
 				properties.add(property);
 			}
+		},
+
+		removeProperty: function (e) {
+			context.get('documentType').get('properties').remove(e.property);
 		}
 	})
 });
