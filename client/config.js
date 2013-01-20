@@ -30,7 +30,7 @@ var require = {
 		_.noConflict();
 		backbone.noConflict();
 
-		backbone.setDomLibrary($);
+		backbone.$ = $;
 
 		console.log('Configuration loaded');
 	}
