@@ -29,16 +29,16 @@
 						<input type="text" data-bind="hasfocus: !name(), value: name" placeholder="Enter a name..." />
 					</td>
 					<td>
-						<select></select>
+						<select data-bind="options: $parent.propertyTypes, optionsCaption: 'Select a Type', optionsText: 'name', optionsValue: 'name', value: type"></select>
 					</td>
 					<td>
 						<div class="btn-group" data-toggle="buttons-radio">
-						  <button type="button" class="btn">Yes</button>
-						  <button type="button" class="btn">No</button>
+						  <button type="button" class="btn" data-bind="css: { click: required(true), 'active': required }">Yes</button>
+						  <button type="button" class="btn" data-bind="css: { click: required(false), 'active': !required() }">No</button>
 						</div>
 					</td>
 					<td>
-						<a class="btn-img" href="#">
+						<a class="btn-img" href="#" data-bind="click: $parent.removeProperty">
 							<i class="icon-remove"></i>
 						</a>
 					</td>
