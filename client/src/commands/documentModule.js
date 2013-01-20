@@ -33,8 +33,15 @@ define(['../core/commandMap', '../context/documentModule', '../models/documentMo
 			dispatcher.trigger('documentType:select', { 'documentType': documentType });
 		},
 
-		removeDocumentType: function (e) {
-			context.get('documentTypes').remove(e.documentType);
+		removeDocumentType: function () {
+			var documentType = context.get('documentType');
+
+			documentType.destroy({
+				success: function (model) {
+					console.log(model.get('name') + ' was successfully deleted');
+				},
+				wait: true
+			});
 		},
 
 		addProperty: function (e) {
