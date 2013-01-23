@@ -36,6 +36,14 @@ define(['knockout', 'knockback', 'dispatcher', '../context/documentModule'], fun
 				}
 			});
 
+			self.toggleRequired = function (item) {
+				item.required(true);
+			};
+
+			self.toggleOptional = function (item) {
+				item.required(false);
+			};
+
 			self.removeProperty = function (item) {
 				dispatcher.trigger('documentType:removeProperty', { 'property': item.model() });
 			};
