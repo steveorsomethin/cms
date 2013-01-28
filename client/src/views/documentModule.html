@@ -17,7 +17,7 @@
 
 		<div class="tab-content">
 			<!-- ko foreach: explorers -->
-			<div class="tab-pane" data-bind="attr: { 'id': $data.anchor }, css: { 'active': $index() === 0, hasfocus: $data.isActive}">
+			<div class="tab-pane" data-bind="attr: { 'id': $data.anchor }, css: { 'active': $index() === 0, hasfocus: $data.isActive }">
 				<!-- ko with: $data.model -->
 				<ul class="nav nav-list">
 					<li class="nav-header" data-bind="text: $parent.name"></li>

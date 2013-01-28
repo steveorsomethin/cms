@@ -17,13 +17,13 @@
 
 		<div class="tab-content">
 			<!-- ko foreach: explorers -->
-			<div class="tab-pane" data-bind="attr: { 'id': $data.anchor }, css: { 'active': $index() === 0, hasfocus: $data.isActive}">
+			<div class="tab-pane" data-bind="attr: { 'id': $data.anchor }, css: { 'active': $index() === 0, hasfocus: $data.isActive }">
 				<!-- ko with: $data.model -->
 				<ul class="nav nav-list">
 					<li class="nav-header" data-bind="text: $parent.name"></li>
 
 					<!-- ko foreach: items -->
-					<li data-bind="css: { 'active': $parent.item().id() === $data.id() }">
+					<li data-bind="css: { 'active': $parent.item().model().cid === $data.model().cid }">
 						<a href="#" data-bind="click: $parent.selectItem, text: $data.name"></a>
 					</li>
 					<!-- /ko -->
@@ -54,8 +54,7 @@
 
 		<div class="tab-content">
 			<div id="editor" class="tab-pane active">
-				<div data-bind="template: { 'name': view(), 'templateUrl': $data.src, 'data': $data.model }"></div>
-				<span data-bind="text: $data.src"></span>
+				<div data-bind="template: { name: name, templateUrl: src, data: model }"></div>
 			</div>
 
 			<div id="metadata" class="tab-pane">
