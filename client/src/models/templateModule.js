@@ -3,27 +3,6 @@
 define(['backbone', 'exports'], function (backbone, exports) {
 
 	//
-
-	//
-	// LayoutTemplate
-
-	var LayoutTemplate = exports.LayoutTemplate =  backbone.Model.extend({
-		defaults: {
-			id: '',
-			name: '',
-			body: '<!DOCTYPE html>\n<html>\n	<head>\n	</head>\n	<body>\n 	</body>\n</html>'
-		}
-	});
-
-	//
-	// LayoutTemplateCollection
-
-	var LayoutTemplateCollection = exports.LayoutTemplateCollection = backbone.Collection.extend({
-		model: LayoutTemplate,
-		url: '/services/templates'
-	});
-
-	//
 	// Template
 
 	var Template = exports.Template = backbone.Model.extend({
