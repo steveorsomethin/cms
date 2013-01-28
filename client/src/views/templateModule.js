@@ -3,9 +3,31 @@
 define(['knockout', 'knockback', 'dispatcher', '../context/templateModule', './shared/editor'], function (ko, kb, dispatcher, context, EditorViewModel) {
 
 	//
-	// LayoutExplorerViewModel
+	// LayoutTemplateInspectorViewModel
 
-	var LayoutExplorerViewModel = kb.ViewModel.extend({
+	var LayoutTemplateInspectorViewModel = kb.ViewModel.extend({
+		constructor: function (model) {
+			kb.ViewModel.prototype.constructor.call(this, model, {
+				keys: ['layoutTemplate']
+			});
+		}
+	});
+
+	//
+	// DataTemplateInspectorViewModel
+
+	var DataTemplateInspectorViewModel = kb.ViewModel.extend({
+		constructor: function (model) {
+			kb.ViewModel.prototype.constructor.call(this, model, {
+				keys: ['dataTemplate']
+			});
+		}
+	});
+
+	//
+	// LayoutTemplateExplorerViewModel
+
+	var LayoutTemplateExplorerViewModel = kb.ViewModel.extend({
 		constructor: function (model) {
 			kb.ViewModel.prototype.constructor.call(this, model, {
 				keys: ['layoutTemplate']
@@ -18,11 +40,7 @@ define(['knockout', 'knockback', 'dispatcher', '../context/templateModule', './s
 				}
 			});
 
-			//
-			// TODO: implement inspector
-
-			this.inspector = { view: 'editor', src: 'src/views/shared', model: new EditorViewModel() };
-			this.inspector.model.setMode('html');
+			this.inspector = { name: 'layoutTemplateInspector', src: 'src/views', model: new LayoutTemplateInspectorViewModel(model) };
 
 			return this;
 		},
@@ -62,8 +80,8 @@ define(['knockout', 'knockback', 'dispatcher', '../context/templateModule', './s
 				}
 			});
 
-			this.inspector = { view: 'editor', src: 'src/views/shared', model: new EditorViewModel() };
-			this.inspector.model.setMode('html');
+			this.inspector = { name: 'dataTemplateInspector', src: 'src/views', model: new DataTemplateInspectorViewModel(model) };
+			//this.inspector.model.setMode('html');
 
 			return this;
 		},
@@ -93,7 +111,7 @@ define(['knockout', 'knockback', 'dispatcher', '../context/templateModule', './s
 	var TemplateModuleNavigatorViewModel = kb.ViewModel.extend({
 		constructor: function (model) {
 			var self = this;
-			var layoutExplorer = new LayoutExplorerViewModel(model);
+			var layoutExplorer = new LayoutTemplateExplorerViewModel(model);
 			var dataTemplateExplorer = new DataTemplateExplorerViewModel(model);
 
 			//
@@ -164,6 +182,17 @@ define(['knockout', 'knockback', 'dispatcher', '../context/templateModule', './s
 
 		selectExplorer: function (explorer) {
 			dispatcher.trigger('explorer:activate', { 'explorer': explorer });
+		}
+	});
+
+	//
+	// TemplateInspectorViewModel
+
+	var TemplateInspectorViewModel = kb.ViewModel.extend({
+		constructor: function (model) {
+			kb.ViewModel.prototype.constructor.call(this, model, {
+
+			});
 		}
 	});
 
