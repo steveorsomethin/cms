@@ -3,24 +3,6 @@
 define(['backbone', 'exports'], function (backbone, exports) {
 
 	//
-	// DataTemplate
-
-	var DataTemplate = exports.DataTemplate =  backbone.Model.extend({
-		defaults: {
-			id: '',
-			name: '',
-			documentType: '',
-			body: ''
-		}
-	});
-
-	//
-	// DataTemplateCollection
-
-	var DataTemplateCollection = exports.DataTemplateCollection = backbone.Collection.extend({
-		model: DataTemplate,
-		url: '/services/templates'
-	});
 
 	//
 	// LayoutTemplate
