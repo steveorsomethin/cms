@@ -4,6 +4,7 @@ define(['backbone', 'dispatcher', '../models/templateModule'], function (backbon
 
 	var TemplateManagementContext = backbone.Model.extend({
 		initialize: function () {
+			this.set('template', new model.Template());
 			this.set('dataTemplate', new model.Template());
 			this.set('layoutTemplate', new model.Template());
 			
