@@ -1,6 +1,6 @@
 'use strict';
 
-define(['../core/commandMap', '../context/templateModule', '../models/templateModule', 'dispatcher'], function (CommandMap, context, model, dispatcher) {
+define(['../core/commandMap', '../context/templateModule', '../models/templateModule', 'underscore', 'dispatcher'], function (CommandMap, context, model, _, dispatcher) {
 
 	return CommandMap.extend({
 		events: {
@@ -14,10 +14,16 @@ define(['../core/commandMap', '../context/templateModule', '../models/templateMo
 		},
 
 		loadTemplates: function () {
-			context.get('templates').fetch();
+			context.get('templates').fetch({
+				success: function (collection) {
+					dispatcher.trigger('layoutTemplate:select', { 'template': _.first(collection.where({ isLayout: true })) });
+					dispatcher.trigger('dataTemplate:select', { 'template': _.first(collection.where({ isLayout: false })) });
+				}
+			});
 		},
 
 		selectDataTemplate: function (e) {
+			context.set('template', e.template);
 			context.set('dataTemplate', e.template);
 		},
 
@@ -26,6 +32,7 @@ define(['../core/commandMap', '../context/templateModule', '../models/templateMo
 		},
 
 		selectLayoutTemplate: function (e) {
+			context.set('template', e.template);
 			context.set('layoutTemplate', e.template);
 		},
 
