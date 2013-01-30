@@ -161,13 +161,10 @@ td > select
  * ACE Adjustments
  */
 
-.editor_container {
+.editor-container {
     height: 100%;
     position: relative;
     border: 1px solid transparent;
-    /*border-radius: 4px;
-    border-bottom-right-radius: 0px;
-    margin-top: 5px;*/
 }
 
 .editor { 
