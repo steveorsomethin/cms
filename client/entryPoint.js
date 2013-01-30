@@ -42,5 +42,7 @@ define(['jquery', 'backbone', 'dispatcher', 'commands'], function($, backbone, d
 		if (backbone.History.started) {
 			backbone.History.start();
 		}
+
+		console.log('Application started')
 	});
 });
