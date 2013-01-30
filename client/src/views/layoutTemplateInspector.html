@@ -1,3 +1,19 @@
 <!-- ko with: layoutTemplate -->
-<h1 data-bind="text: name"></h1>
+<div class="container-fluid">
+	<legend data-bind="text: name"></legend>
+
+	<div class="form-horizontal">
+		<div class="control-group">
+			<label class="control-label" for="templateName">Name:</label>
+			<div class="controls">
+				<input id="templateName" type="text" data-bind="value: name" />
+			</div>
+		</div>
+	</div>
+
+	<div class="editor-container">
+		<div class="editor" data-bind="ace: { body: 'body' }">
+		</div>
+	</div>
+</div>
 <!-- /ko -->

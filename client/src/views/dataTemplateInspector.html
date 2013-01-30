@@ -1,3 +1,20 @@
 <!-- ko with: dataTemplate -->
-<h1 data-bind="text: name"></h1>
+<div class="container-fluid">
+	<legend data-bind="text: name"></legend>
+
+	<div class="form-horizontal">
+		<div class="control-group">
+			<label class="control-label" for="templateName">Name:</label>
+			<div class="controls">
+				<input id="templateName" type="text" data-bind="value: name" />
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="templateDocumentType">Document Type:</label>
+			<div class="controls">
+				<select id="templateDocumentType" type="text"></select>
+			</div>
+		</div>
+	</div>
+</div>
 <!-- /ko -->
