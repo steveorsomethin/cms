@@ -21,6 +21,7 @@ var require = {
 		'order!bootstrap',
 		'order!underscore',
 		'order!backbone',
+		'order!src/core/bindings',
 		'order!./entryPoint'
 	],
 
